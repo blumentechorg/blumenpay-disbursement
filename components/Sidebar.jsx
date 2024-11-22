@@ -2,26 +2,45 @@ import Image from "next/image";
 import { FaHome, FaCog, FaUser, FaSignOutAlt } from "react-icons/fa";
 import logo from "@/public/images/logo.png";
 import title from "@/public/images/title.png";
+import Caretupdown from "@/public/icons/sidebar/caretupdown";
+import Overview from "@/public/icons/sidebar/overview";
+import Transactions from "@/public/icons/sidebar/transactions";
+import Disbursements from "@/public/icons/sidebar/disbursements";
+import Providers from "@/public/icons/sidebar/providers";
+import Logout from "@/public/icons/sidebar/logout";
 
 export default function Sidebar() {
   const menus = [
-    { name: "Overview", href: "/Explore/overview/", icon: <FaHome /> },
-    { name: "Transaction", href: "/Explore/transactions/", icon: <FaCog /> },
-    { name: "Disbursement", href: "/Explore/disbursement/", icon: <FaUser /> },
+    { name: "Overview", href: "/Explore/overview/", icon: <Overview /> },
+    {
+      name: "Transactions",
+      href: "/Explore/transactions/",
+      icon: <Transactions />,
+    },
+    {
+      name: "Disbursement",
+      href: "/Explore/disbursement/",
+      icon: <Disbursements />,
+    },
     {
       name: "Service Providers",
       href: "/Explore/serviceprovider",
-      icon: <FaUser />,
+      icon: <Providers />,
     },
-    { name: "Logout", href: "/", icon: <FaSignOutAlt /> },
+    { name: "Logout", href: "/", icon: <Logout /> },
   ];
 
   return (
     <div className="h-screen w-64 bg-white text-black flex flex-col">
       {/* Logo and Title */}
-      <div className="flex items-center justify-center h-20 border-b border-gray-300 space-x-2">
-        <Image src={logo} alt="" width={30} height={30} />
-        <Image src={title} alt="" width={100} height={100} />
+      <div className="flex items-center justify-between h-20 border-b border-gray-300 px-2  ">
+        <div className="flex space-x-1">
+          <Image src={logo} alt="" width={30} height={30} />
+          <Image src={title} alt="" width={100} height={100} />
+        </div>
+        <div>
+          <Caretupdown />
+        </div>
       </div>
 
       {/* Menu Items */}
