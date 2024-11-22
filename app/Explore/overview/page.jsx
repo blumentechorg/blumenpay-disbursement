@@ -5,6 +5,7 @@ import Activeusers from "@/components/cards/Activeusers";
 import Totaldisbursements from "@/components/cards/Totaldisbursements";
 import Pendingdisbursements from "@/components/cards/Pendingdisbursements";
 import Failedtransactions from "@/components/cards/Failedtransactions";
+import Activityfeed from "@/components/overview/Activityfeed";
 
 export default function page() {
   return (
@@ -17,6 +18,9 @@ export default function page() {
           <Totaldisbursements />
           <Pendingdisbursements />
           <Failedtransactions />
+        </div>
+        <div>
+          <Activityfeed />
         </div>
         <div>Transactions table</div>
       </div>

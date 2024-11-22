@@ -2,8 +2,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import Breadcrumb from "@/components/Breadcrumb";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
-import Search from "@/components/transactions/Tsearch";
+import Dsearch from "@/components/disbursements/Dsearch";
 import TFilter from "@/components/transactions/TFilter";
+import Label from "@/components/disbursements/Label";
 
 const OverviewLayout = ({ children }) => {
   return (
@@ -22,8 +23,9 @@ const OverviewLayout = ({ children }) => {
             </div>
 
             {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto pt-5 bg-gray-100 ">
-              <Search />
+            <div className="flex-1 overflow-y-auto pt-5 space-y-4 bg-gray-100 ">
+              <Label />
+              <Dsearch />
               {children}
             </div>
           </div>
