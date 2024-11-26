@@ -56,8 +56,8 @@ const FilterComponent = ({ onFilterChange }) => {
         </select>
       </div>
 
-      {/* Status */}
-      <div className="mb-4">
+      {/* Service Provider */}
+      <div className="mb-4 ">
         <select
           value={filters.status}
           onChange={(e) => handleFilterChange("status", e.target.value)}
@@ -95,7 +95,7 @@ const FilterComponent = ({ onFilterChange }) => {
         <select
           value={filters.paymentMethod}
           onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
-          className="w-[200px] h-[32px] border-gray-300 rounded-lg bg-[#DADDE1] text-xs p-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] px-2 h-[32px] border-gray-300 rounded-lg bg-[#DADDE1] text-xs p-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
           <option value="">Payment Method</option>
           {paymentMethods.map((method) => (

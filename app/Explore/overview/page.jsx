@@ -6,11 +6,12 @@ import Totaldisbursements from "@/components/cards/Totaldisbursements";
 import Pendingdisbursements from "@/components/cards/Pendingdisbursements";
 import Failedtransactions from "@/components/cards/Failedtransactions";
 import Activityfeed from "@/components/overview/Activityfeed";
+import ActivityTable from "@/components/overview/ActivityTable";
 
 export default function page() {
   return (
     <>
-      <div>
+      <div className="space-y-12">
         <div className="grid grid-cols-3 gap-y-10 gap-x-5 py-5">
           <Totalcollections />
           <Activeproviders />
@@ -19,10 +20,15 @@ export default function page() {
           <Pendingdisbursements />
           <Failedtransactions />
         </div>
-        <div>
-          <Activityfeed />
+
+        <div className="space-y-5">
+          <div>
+            <Activityfeed />
+          </div>
+          <div>
+            <ActivityTable />
+          </div>
         </div>
-        <div>Transactions table</div>
       </div>
     </>
   );

@@ -15,7 +15,7 @@ const OverviewLayout = ({ children }) => {
           </div>
           <div className="flex-1 flex flex-col min-h-screen pl-5 ">
             {/* Sticky Navbar */}
-            <div className="sticky top-0 z-10 space-y-2">
+            <div className=" space-y-2">
               <Breadcrumbs />
               <Breadcrumb />
             </div>

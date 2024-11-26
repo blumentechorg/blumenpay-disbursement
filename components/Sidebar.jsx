@@ -31,7 +31,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="h-screen w-64 bg-white text-black flex flex-col">
+    <div className="h-screen w-64 bg-white text-black flex flex-col sticky top-0">
       {/* Logo and Title */}
       <div className="flex items-center justify-between h-20 border-b border-gray-300 px-2  ">
         <div className="flex space-x-1">

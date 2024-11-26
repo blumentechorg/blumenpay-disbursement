@@ -17,13 +17,13 @@ const OverviewLayout = ({ children }) => {
           </div>
           <div className="flex-1 flex flex-col min-h-screen pl-5 ">
             {/* Sticky Navbar */}
-            <div className="sticky top-0 z-10 space-y-2">
+            <div className=" space-y-2">
               <Breadcrumbs />
               <Breadcrumb />
             </div>
 
             {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto pt-5 space-y-4 bg-gray-100 ">
+            <div className="flex-1 overflow-y-auto pt-5 space-y-5 bg-gray-100 ">
               <Label />
               <Dsearch />
               {children}

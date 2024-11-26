@@ -28,8 +28,8 @@ const SignInForm = () => {
 
   // Handle form submission
   const onSubmit = (data) => {
-    console.log("Form Submitted", data);
-    alert("Login successful!");
+    // console.log("Form Submitted", data);
+    // alert("Login successful!");
     router.push("/Explore/overview"); // Redirect to the dashboard page
   };
 

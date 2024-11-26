@@ -3,6 +3,7 @@ import Totalcollections from "@/components/cards/Totalcollections";
 import Activeproviders from "@/components/cards/Activeproviders";
 import Activeusers from "@/components/cards/Activeusers";
 import PSearch from "@/components/providers/PSearch";
+import ServiceProviderTable from "@/components/providers/Table";
 
 export default function page() {
   return (
@@ -13,8 +14,9 @@ export default function page() {
           <Activeproviders />
           <Activeusers />
         </div>
-        <div>
+        <div className="space-y-5">
           <PSearch />
+          <ServiceProviderTable />
         </div>
       </div>
     </>

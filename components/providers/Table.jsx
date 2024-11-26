@@ -89,38 +89,51 @@ const TransactionTable = () => {
         className="w-full text-xs border-collapse border border-gray-300 rounded-lg"
       >
         <thead className="bg-gray-100 text-gray-700 font-semibold">
-          {headerGroups.map((headerGroup) => (
-            <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th
-                  key={column.id}
-                  {...column.getHeaderProps()}
-                  className="border border-gray-300 px-4 py-2 text-left"
-                >
-                  {column.render("Header")}
-                </th>
-              ))}
-            </tr>
-          ))}
+          {headerGroups.map((headerGroup) => {
+            const { key: headerGroupKey, ...headerGroupProps } =
+              headerGroup.getHeaderGroupProps();
+            return (
+              <tr key={headerGroupKey} {...headerGroupProps}>
+                {headerGroup.headers.map((column) => {
+                  const { key: columnKey, ...columnProps } =
+                    column.getHeaderProps();
+                  return (
+                    <th
+                      key={columnKey}
+                      {...columnProps}
+                      className="border border-gray-300 px-4 py-2 text-left"
+                    >
+                      {column.render("Header")}
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </thead>
+
         <tbody {...getTableBodyProps()}>
           {page.map((row) => {
             prepareRow(row);
+            const { key: rowKey, ...rowProps } = row.getRowProps(); // Extract key explicitly for <tr>
             return (
               <tr
-                key={row.id}
-                {...row.getRowProps()}
+                key={rowKey}
+                {...rowProps}
                 className="hover:bg-gray-50 hover:font-semibold"
               >
-                {row.cells.map((cell) => (
-                  <td
-                    key={cell.column.id}
-                    {...cell.getCellProps()}
-                    className="border border-gray-300 px-4 py-2"
-                  >
-                    {cell.render("Cell")}
-                  </td>
-                ))}
+                {row.cells.map((cell) => {
+                  const { key: cellKey, ...cellProps } = cell.getCellProps(); // Extract key explicitly for <td>
+                  return (
+                    <td
+                      key={cellKey}
+                      {...cellProps}
+                      className="border border-gray-300 px-4 py-2"
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}

@@ -6,10 +6,10 @@ export default function Label() {
   const [activeTab, setActiveTab] = useState(null);
 
   return (
-    <div>
-      <div className="flex border rounded-lg bg-white w-[420px]">
+    <div className="w-[440px]">
+      <div className="flex border rounded-lg bg-white font-semibold">
         <div
-          className={`border-r px-4 py-2 cursor-pointer ${
+          className={`border-r px-4 py-2 cursor-pointer  ${
             activeTab === "pending" ? "bg-[#F5F7FA] text-" : "hover:bg-gray-100"
           }`}
           onClick={() => setActiveTab("pending")}
