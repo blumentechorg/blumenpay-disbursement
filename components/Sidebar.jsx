@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { FaHome, FaCog, FaUser, FaSignOutAlt } from "react-icons/fa";
 import logo from "@/public/images/logo.png";
@@ -8,8 +9,28 @@ import Transactions from "@/public/icons/sidebar/transactions";
 import Disbursements from "@/public/icons/sidebar/disbursements";
 import Providers from "@/public/icons/sidebar/providers";
 import Logout from "@/public/icons/sidebar/logout";
+import LogoutModal from "./Logout";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // Close the modal
+    closeModal();
+
+    // Add your logout logic here (e.g., clearing session, cookies, etc.)
+    console.log("Logged out");
+
+    // Redirect to the home page
+    router.push("/"); // Replace with your logout logic
+  };
+
   const menus = [
     { name: "Overview", href: "/Explore/overview/", icon: <Overview /> },
     {
@@ -27,7 +48,7 @@ export default function Sidebar() {
       href: "/Explore/serviceprovider",
       icon: <Providers />,
     },
-    { name: "Logout", href: "/", icon: <Logout /> },
+    // { name: "Logout", href: "/", icon: <Logout /> },
   ];
 
   return (
@@ -57,6 +78,24 @@ export default function Sidebar() {
               </a>
             </li>
           ))}
+
+          <div className="hover:bg-[#F5F7FA] rounded">
+            <button
+              onClick={openModal}
+              className="flex items-center px-4 py-2 text-sm font-light  "
+            >
+              <span className="text-lg mr-3">
+                <Logout />
+              </span>
+              <span>Log Out</span>
+            </button>
+
+            <LogoutModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              onLogout={handleLogout}
+            />
+          </div>
         </ul>
       </nav>
     </div>

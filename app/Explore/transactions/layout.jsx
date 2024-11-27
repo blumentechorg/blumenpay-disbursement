@@ -9,7 +9,7 @@ const OverviewLayout = ({ children }) => {
       <div>
         <div className="flex">
           {/* Sticky Sidebar */}
-          <div className=" border-r min-h-screen sticky top-0  ">
+          <div className=" border-r min-h-screen top-0  ">
             <TFilter />
           </div>
           <div className="flex-1 flex flex-col min-h-screen pl-5 ">

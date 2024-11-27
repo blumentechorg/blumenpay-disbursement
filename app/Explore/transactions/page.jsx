@@ -7,7 +7,7 @@ import TransactionTable from "@/components/transactions/Table";
 export default function page() {
   return (
     <>
-      <div>
+      <div className="pb-7">
         <TransactionTable />
       </div>
     </>

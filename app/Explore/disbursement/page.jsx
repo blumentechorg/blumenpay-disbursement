@@ -4,7 +4,7 @@ import DisbursementTable from "@/components/disbursements/Table";
 export default function page() {
   return (
     <>
-      <div>
+      <div className="pb-7">
         <DisbursementTable />
       </div>
     </>

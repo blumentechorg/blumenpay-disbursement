@@ -4,6 +4,7 @@ import React from "react";
 import { useTable, usePagination } from "react-table";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
+import { TbAlertCircleFilled } from "react-icons/tb";
 
 const ActivityTable = () => {
   const data = React.useMemo(
@@ -36,7 +37,7 @@ const ActivityTable = () => {
             {value === "Successful" ? (
               <FaCheckCircle className="text-green-700" size={16} />
             ) : (
-              <FaTimesCircle className="text-red-500" size={16} />
+              <TbAlertCircleFilled className="text-red-500" size={18} />
             )}
           </div>
         ),
@@ -60,7 +61,7 @@ const ActivityTable = () => {
         accessor: "action",
         Cell: ({ value }) => (
           <button
-            className="text-blue-500 text-sm underline hover:text-blue-700"
+            className=" text-sm underline hover:text-blue-700"
             title={value === "Retry" ? "Retry the action" : "View the details"}
           >
             {value}

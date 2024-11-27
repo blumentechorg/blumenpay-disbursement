@@ -21,7 +21,7 @@ export default function page() {
           <Failedtransactions />
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-5 py-7">
           <div>
             <Activityfeed />
           </div>

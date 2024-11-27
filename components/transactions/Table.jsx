@@ -1,13 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useTable, usePagination } from "react-table";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
+import TransactionModal from "./Modal";
 
 const TransactionTable = () => {
-  // Data for the table
+  const [modalContent, setModalContent] = useState(null);
+
+  const openModal = (row) => {
+    setModalContent(row);
+  };
+
+  const closeModal = () => {
+    setModalContent(null);
+  };
+
   const data = React.useMemo(
     () =>
       Array.from({ length: 20 }, (_, index) => ({
@@ -22,7 +32,6 @@ const TransactionTable = () => {
     []
   );
 
-  // Columns for the table
   const columns = React.useMemo(
     () => [
       { Header: "ID", accessor: "id" },
@@ -47,12 +56,12 @@ const TransactionTable = () => {
       {
         Header: "Action",
         accessor: "action",
-        Cell: ({ value }) => (
+        Cell: ({ row }) => (
           <button
+            onClick={() => openModal(row.original)}
             className="text-[#343A40] text-xs underline hover:text-blue-700"
-            title={value === "Retry" ? "Retry Payment" : "View Details"}
           >
-            {value}
+            {row.original.action}
           </button>
         ),
       },
@@ -60,7 +69,6 @@ const TransactionTable = () => {
     []
   );
 
-  // React Table hook
   const {
     getTableProps,
     getTableBodyProps,
@@ -72,6 +80,8 @@ const TransactionTable = () => {
     nextPage,
     previousPage,
     setPageSize,
+    gotoPage,
+    pageOptions,
     state: { pageIndex, pageSize },
   } = useTable(
     {
@@ -83,97 +93,114 @@ const TransactionTable = () => {
   );
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <table
-        {...getTableProps()}
-        className="w-full text-xs border-collapse border border-gray-300 rounded-lg"
-      >
-        <thead className="bg-gray-100 text-gray-700 font-semibold">
-          {headerGroups.map((headerGroup) => (
-            <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th
-                  key={column.id}
-                  {...column.getHeaderProps()}
-                  className="border border-gray-300 px-4 py-2 text-left"
-                >
-                  {column.render("Header")}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
-            prepareRow(row);
-            return (
-              <tr
-                key={row.id}
-                {...row.getRowProps()}
-                className="hover:bg-gray-50 hover:font-semibold"
-              >
-                {row.cells.map((cell) => (
-                  <td
-                    key={cell.column.id}
-                    {...cell.getCellProps()}
-                    className="border border-gray-300 px-4 py-2"
+    <div>
+      {/* Table */}
+      <div className="bg-white rounded-lg shadow-md p-4">
+        <table
+          {...getTableProps()}
+          className="w-full text-xs border-collapse border border-gray-300 rounded-lg"
+        >
+          <thead className="bg-gray-100 text-gray-700 font-semibold">
+            {headerGroups.map((headerGroup) => (
+              <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th
+                    key={column.id}
+                    {...column.getHeaderProps()}
+                    className="border border-gray-300 px-4 py-2 text-left"
                   >
-                    {cell.render("Cell")}
-                  </td>
+                    {column.render("Header")}
+                  </th>
                 ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="flex justify-between items-center text-xs p-4 bg-gray-50 border-t border-gray-300">
-        {/* Rows per page */}
-        <div className="flex items-center space-x-2">
-          <span>Rows per page:</span>
-          <select
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-            className="px-2 py-1 border rounded-md"
-          >
-            {[5, 10, 20, 50].map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
             ))}
-          </select>
-        </div>
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row) => {
+              prepareRow(row);
+              return (
+                <tr
+                  key={row.id}
+                  {...row.getRowProps()}
+                  className="hover:bg-gray-50 hover:font-semibold"
+                >
+                  {row.cells.map((cell) => (
+                    <td
+                      key={cell.column.id}
+                      {...cell.getCellProps()}
+                      className="border border-gray-300 px-4 py-2"
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
 
-        {/* Pagination controls */}
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={previousPage}
-            disabled={!canPreviousPage}
-            className={`px-2 py-1 border rounded-md ${
-              !canPreviousPage
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <IoMdArrowDropleft />
-          </button>
-          <span>
-            Page {pageIndex + 1} of {Math.ceil(data.length / pageSize)}
-          </span>
-          <button
-            onClick={nextPage}
-            disabled={!canNextPage}
-            className={`px-2 py-1 border rounded-md ${
-              !canNextPage
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <IoMdArrowDropright />
-          </button>
+        {/* Pagination */}
+        <div className="flex justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300">
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-700">Rows per page:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="px-1 py-1 border rounded-md bg-white text-gray-700"
+            >
+              {[4, 8, 10, 20].map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={previousPage}
+              disabled={!canPreviousPage}
+              className={`px-1 py-1 border rounded-md ${
+                !canPreviousPage
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-black text-white hover:bg-gray-100"
+              }`}
+            >
+              <IoMdArrowDropleft size={15} />
+            </button>
+            {pageOptions.map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => gotoPage(pageNum)}
+                className={`px-2 py-1 border rounded-md ${
+                  pageIndex === pageNum
+                    ? "bg-black text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {pageNum + 1}
+              </button>
+            ))}
+            <button
+              onClick={nextPage}
+              disabled={!canNextPage}
+              className={`px-1 py-1 border rounded-md ${
+                !canNextPage
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-black text-white hover:bg-gray-100"
+              }`}
+            >
+              <IoMdArrowDropright size={15} />
+            </button>
+          </div>
+          <div className="text-gray-600">
+            Showing {pageIndex * pageSize + 1}-
+            {Math.min((pageIndex + 1) * pageSize, data.length)} of {data.length}
+          </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <TransactionModal modalContent={modalContent} onClose={closeModal} />
     </div>
   );
 };

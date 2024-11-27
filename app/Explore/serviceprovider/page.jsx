@@ -14,7 +14,7 @@ export default function page() {
           <Activeproviders />
           <Activeusers />
         </div>
-        <div className="space-y-5">
+        <div className="space-y-5 pb-7">
           <PSearch />
           <ServiceProviderTable />
         </div>
