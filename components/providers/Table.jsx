@@ -1,12 +1,30 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+
 import { useTable, usePagination } from "react-table";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
 
 const TransactionTable = () => {
+  const [modalContent, setModalContent] = useState(null);
+  const [selectedRows, setSelectedRows] = useState({});
+
+  const openModal = (row) => {
+    setModalContent(row);
+  };
+
+  const closeModal = () => {
+    setModalContent(null);
+  };
+
+  const toggleRowSelection = (id) => {
+    setSelectedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
   // Data for the table
   const data = React.useMemo(
     () =>
@@ -25,6 +43,17 @@ const TransactionTable = () => {
   // Columns for the table
   const columns = React.useMemo(
     () => [
+      {
+        Header: "",
+        accessor: "checkbox",
+        Cell: ({ row }) => (
+          <input
+            type="checkbox"
+            checked={selectedRows[row.original.id] || false}
+            onChange={() => toggleRowSelection(row.original.id)}
+          />
+        ),
+      },
       { Header: "ID", accessor: "id" },
       { Header: "Service Provider", accessor: "provider" },
       { Header: "Amount", accessor: "amount" },
@@ -57,7 +86,7 @@ const TransactionTable = () => {
         ),
       },
     ],
-    []
+    [selectedRows]
   );
 
   // React Table hook

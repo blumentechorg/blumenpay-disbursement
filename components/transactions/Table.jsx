@@ -9,6 +9,7 @@ import TransactionModal from "./Modal";
 
 const TransactionTable = () => {
   const [modalContent, setModalContent] = useState(null);
+  const [selectedRows, setSelectedRows] = useState({});
 
   const openModal = (row) => {
     setModalContent(row);
@@ -16,6 +17,13 @@ const TransactionTable = () => {
 
   const closeModal = () => {
     setModalContent(null);
+  };
+
+  const toggleRowSelection = (id) => {
+    setSelectedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
   const data = React.useMemo(
@@ -34,6 +42,17 @@ const TransactionTable = () => {
 
   const columns = React.useMemo(
     () => [
+      {
+        Header: "",
+        accessor: "checkbox",
+        Cell: ({ row }) => (
+          <input
+            type="checkbox"
+            checked={selectedRows[row.original.id] || false}
+            onChange={() => toggleRowSelection(row.original.id)}
+          />
+        ),
+      },
       { Header: "ID", accessor: "id" },
       { Header: "Service Provider", accessor: "provider" },
       { Header: "Amount", accessor: "amount" },
@@ -66,7 +85,7 @@ const TransactionTable = () => {
         ),
       },
     ],
-    []
+    [selectedRows]
   );
 
   const {
@@ -101,38 +120,49 @@ const TransactionTable = () => {
           className="w-full text-xs border-collapse border border-gray-300 rounded-lg"
         >
           <thead className="bg-gray-100 text-gray-700 font-semibold">
-            {headerGroups.map((headerGroup) => (
-              <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th
-                    key={column.id}
-                    {...column.getHeaderProps()}
-                    className="border border-gray-300 px-4 py-2 text-left"
-                  >
-                    {column.render("Header")}
-                  </th>
-                ))}
-              </tr>
-            ))}
+            {headerGroups.map((headerGroup) => {
+              const { key, ...rest } = headerGroup.getHeaderGroupProps(); // Separate key
+              return (
+                <tr key={key} {...rest}>
+                  {headerGroup.headers.map((column) => {
+                    const { key: columnKey, ...columnRest } =
+                      column.getHeaderProps(); // Separate key for <th>
+                    return (
+                      <th
+                        key={columnKey}
+                        {...columnRest}
+                        className="border border-gray-300 px-4 py-2 text-left"
+                      >
+                        {column.render("Header")}
+                      </th>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </thead>
           <tbody {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
+              const { key, ...rowProps } = row.getRowProps(); // Separate key for <tr>
               return (
                 <tr
-                  key={row.id}
-                  {...row.getRowProps()}
+                  key={key}
+                  {...rowProps}
                   className="hover:bg-gray-50 hover:font-semibold"
                 >
-                  {row.cells.map((cell) => (
-                    <td
-                      key={cell.column.id}
-                      {...cell.getCellProps()}
-                      className="border border-gray-300 px-4 py-2"
-                    >
-                      {cell.render("Cell")}
-                    </td>
-                  ))}
+                  {row.cells.map((cell) => {
+                    const { key: cellKey, ...cellProps } = cell.getCellProps(); // Separate key for <td>
+                    return (
+                      <td
+                        key={cellKey}
+                        {...cellProps}
+                        className="border border-gray-300 px-4 py-2"
+                      >
+                        {cell.render("Cell")}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}

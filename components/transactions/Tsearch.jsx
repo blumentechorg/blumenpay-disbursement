@@ -8,6 +8,7 @@ const FloatingSearchContainer = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFilter = () => {
     console.log("Filter clicked with:", {
@@ -95,7 +96,7 @@ const FloatingSearchContainer = () => {
 
         {/* Menu Dropdown */}
         {isMenuOpen && (
-          <div className="mt-4 bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
+          <div className=" fixed right-0 flex-none mt-10 bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
             <ul className="text-sm text-gray-700">
               <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 1</li>
               <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 2</li>

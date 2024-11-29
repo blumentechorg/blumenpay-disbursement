@@ -8,6 +8,7 @@ const FloatingSearchContainer = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFilter = () => {
     console.log("Filter clicked with:", {
@@ -85,9 +86,70 @@ const FloatingSearchContainer = () => {
           </div>
         )}
 
-        <button className="w-[150px] h-[32px] bg-blue-700 text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none">
+        <button
+          className="w-[150px] h-[32px] bg-blue-700 text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
+          onClick={() => setIsModalOpen(true)}
+        >
           Manual Disbursement
         </button>
+
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+              <header className="flex justify-between items-center">
+                <h3 className="text-lg font-bold">Manual Disbursement</h3>
+                <button
+                  className="text-gray-600"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ✕
+                </button>
+              </header>
+              <form className="mt-4">
+                <select
+                  className="w-full mb-4 px-4 py-2 border rounded-md"
+                  placeholder="Service Provider"
+                >
+                  <option>Service Provider</option>
+                </select>
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  className="w-full mb-4 px-4 py-2 border rounded-md"
+                />
+                <input
+                  type="date"
+                  className="w-full mb-4 px-4 py-2 border rounded-md"
+                />
+                <select
+                  className="w-full mb-4 px-4 py-2 border rounded-md"
+                  placeholder="Payment Method"
+                >
+                  <option className="">Bank Transfer</option>
+                </select>
+                <div className="text-sm text-gray-600 mb-4">
+                  <p>Bank Name: GTBank</p>
+                  <p>Account Number: 0104647462</p>
+                  <p>Account Name: KAEDC</p>
+                </div>
+                <div className="flex  space-x-2 text-[10px] ">
+                  <button
+                    className="bg-[#0052CC] text-white px-6 py-2 rounded-sm w-full"
+                    type="button"
+                  >
+                    DISBURSE NOW
+                  </button>
+                  <button
+                    className="bg-gray-200 text-gray-600 px-6 py-2 rounded-sm w-full"
+                    type="button"
+                  >
+                    SAVE
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Three-Dot Menu */}
         <div className="flex items-center justify-end ">
@@ -101,8 +163,8 @@ const FloatingSearchContainer = () => {
 
         {/* Menu Dropdown */}
         {isMenuOpen && (
-          <div className=" flex-none mt-4 bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
-            <ul className="text-sm text-gray-700">
+          <div className=" fixed right-0  flex-none mt-10  bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
+            <ul className="text-sm text-gray-900">
               <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 1</li>
               <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 2</li>
               <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 3</li>

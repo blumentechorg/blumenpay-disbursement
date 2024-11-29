@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTable, usePagination } from "react-table";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -8,8 +8,36 @@ import { FaCheckCircle } from "react-icons/fa";
 import { TbAlertCircleFilled } from "react-icons/tb";
 
 function CustomTable() {
+  const [modalContent, setModalContent] = useState(null);
+  const [selectedRows, setSelectedRows] = useState({});
+
+  const openModal = (row) => {
+    setModalContent(row);
+  };
+
+  const closeModal = () => {
+    setModalContent(null);
+  };
+
+  const toggleRowSelection = (id) => {
+    setSelectedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
   const columns = useMemo(
     () => [
+      {
+        Header: "",
+        accessor: "checkbox",
+        Cell: ({ row }) => (
+          <input
+            type="checkbox"
+            checked={selectedRows[row.original.id] || false}
+            onChange={() => toggleRowSelection(row.original.id)}
+          />
+        ),
+      },
       { Header: "ID", accessor: "id" },
       { Header: "Service Provider", accessor: "serviceProvider" },
       { Header: "Amount", accessor: "amount" },
@@ -47,7 +75,7 @@ function CustomTable() {
         ),
       },
     ],
-    []
+    [selectedRows]
   );
 
   const data = useMemo(
@@ -139,7 +167,7 @@ function CustomTable() {
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 4 },
+      initialState: { pageIndex: 0, pageSize: 7 },
     },
     usePagination
   );
