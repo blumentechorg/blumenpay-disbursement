@@ -96,11 +96,17 @@ const FloatingSearchContainer = () => {
 
         {/* Menu Dropdown */}
         {isMenuOpen && (
-          <div className=" fixed right-0 flex-none mt-10 bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
+          <div className=" fixed right-2 flex-none mt-12 bg-gray-50 border border-gray-200 rounded-md shadow-lg">
             <ul className="text-sm text-gray-700">
-              <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 1</li>
-              <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 2</li>
-              <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 3</li>
+              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b">
+                Disburse All Selected
+              </li>
+              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b">
+                Reschedule Disbursements
+              </li>
+              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer ">
+                Export Selected
+              </li>
             </ul>
           </div>
         )}

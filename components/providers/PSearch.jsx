@@ -150,7 +150,7 @@ const FloatingSearchContainer = () => {
         )}
 
         {/* Three-Dot Menu */}
-        <div className="flex items-center justify-end ">
+        <div className="flex items-center d ">
           <button
             onClick={toggleMenu}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -161,7 +161,7 @@ const FloatingSearchContainer = () => {
 
         {/* Menu Dropdown */}
         {isMenuOpen && (
-          <div className=" fixed right-0 flex-none mt-10 bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
+          <div className=" fixed right-0 flex-none mt-2 bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
             <ul className="text-sm text-gray-700">
               <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 1</li>
               <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 2</li>

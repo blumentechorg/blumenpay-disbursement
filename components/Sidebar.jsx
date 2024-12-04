@@ -9,11 +9,14 @@ import Transactions from "@/public/icons/sidebar/transactions";
 import Disbursements from "@/public/icons/sidebar/disbursements";
 import Providers from "@/public/icons/sidebar/providers";
 import Logout from "@/public/icons/sidebar/logout";
-import LogoutModal from "./Logout";
+import LogoutModal from "./LogoutModal";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar() {
+  const { user, logout } = useAuth();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
@@ -21,14 +24,9 @@ export default function Sidebar() {
   const router = useRouter();
 
   const handleLogout = () => {
-    // Close the modal
-    closeModal();
-
-    // Add your logout logic here (e.g., clearing session, cookies, etc.)
-    console.log("Logged out");
-
-    // Redirect to the home page
-    router.push("/"); // Replace with your logout logic
+    closeModal(); // Close the modal
+    logout(); // Clear AuthContext and cookies
+    router.push("/"); // Redirect to login/home
   };
 
   const menus = [
@@ -48,7 +46,6 @@ export default function Sidebar() {
       href: "/Explore/serviceprovider",
       icon: <Providers />,
     },
-    // { name: "Logout", href: "/", icon: <Logout /> },
   ];
 
   return (

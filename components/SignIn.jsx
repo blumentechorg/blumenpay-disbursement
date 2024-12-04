@@ -3,19 +3,21 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-
-// Define Yup validation schema
-const userSchema = yup.object().shape({
-  username: yup.string().required("Username is required"),
-  password: yup.string().required("Password is required"),
-});
+import axios from "../lib/axiosInstance"; // Replace with your axios instance path
+import Cookies from "js-cookie";
+import { useAuth } from "@/context/AuthContext";
+import { userSchema } from "@/validation/user";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter(); // Initialize Next.js router
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState(""); // To store API error messages
+  const router = useRouter();
+  const { login } = useAuth(); // Retrieve login function from AuthContext
 
   // Initialize React Hook Form with Yup resolver
   const {
@@ -27,10 +29,29 @@ const SignInForm = () => {
   });
 
   // Handle form submission
-  const onSubmit = (data) => {
-    // console.log("Form Submitted", data);
-    // alert("Login successful!");
-    router.push("/Explore/overview"); // Redirect to the dashboard page
+  const onSubmit = async (data) => {
+    setLoading(true); // Set loading state
+    setApiError(""); // Reset error state
+
+    try {
+      const response = await axios.post("/Identity/Login", data); // Replace with your API endpoint
+      const { token, user } = response.data;
+
+      // Save token in cookies for authentication
+      Cookies.set("authToken", token, { secure: true, sameSite: "Strict" });
+
+      // Update AuthContext
+      login(user);
+
+      // Redirect to the dashboard page
+      router.push("/Explore/overview");
+      toast.success("Login successful!");
+    } catch (error) {
+      // Handle API errors
+      toast.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false); // Reset loading state
+    }
   };
 
   return (
@@ -84,14 +105,31 @@ const SignInForm = () => {
               )}
             </div>
 
+            {apiError && (
+              <p className="text-red-500 text-sm text-center">{apiError}</p>
+            )}
+
             <button
               type="submit"
-              className="mt-4 h-10 w-full rounded-md bg-blue-800 text-white hover:bg-blue-950"
+              className="mt-4 h-10 w-full rounded-md bg-blue-800 text-white hover:bg-blue-950 disabled:opacity-50"
+              disabled={loading}
             >
-              LOGIN
+              {loading ? "Logging in..." : "Login"}
             </button>
           </div>
         </form>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </div>
     </div>
   );

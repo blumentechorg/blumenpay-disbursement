@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useTable, usePagination } from "react-table";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -68,11 +68,71 @@ function CustomTable() {
       {
         Header: "Action",
         accessor: "action",
-        Cell: () => (
-          <button className="text-gray-500  hover:text-gray-800">
-            <BsThreeDotsVertical size={15} />
-          </button>
-        ),
+        Cell: ({ row }) => {
+          const [isOpen, setIsOpen] = useState(false);
+          const dropdownRef = React.useRef(null);
+
+          const toggleDropdown = () => {
+            setIsOpen((prev) => !prev);
+          };
+
+          const closeDropdown = () => {
+            setIsOpen(false);
+          };
+
+          // Close the dropdown when clicking outside
+          useEffect(() => {
+            const handleClickOutside = (event) => {
+              if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+              ) {
+                closeDropdown();
+              }
+            };
+
+            document.addEventListener("mousedown", handleClickOutside);
+
+            return () => {
+              document.removeEventListener("mousedown", handleClickOutside);
+            };
+          }, []);
+
+          return (
+            <div ref={dropdownRef} className="">
+              <button
+                className="text-gray-500 hover:text-gray-800"
+                onClick={toggleDropdown}
+              >
+                <BsThreeDotsVertical size={15} />
+              </button>
+              {isOpen && (
+                <div className="fixed right-0 flex-none mt-2 bg-white border border-gray-200 rounded-md shadow-lg">
+                  <ul className="py-1 text-xs text-gray-700">
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b"
+                      onClick={() => {
+                        alert(`View ${row.original.id}`);
+                        closeDropdown();
+                      }}
+                    >
+                      Disburse
+                    </li>
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        alert(`Edit ${row.original.id}`);
+                        closeDropdown();
+                      }}
+                    >
+                      Reschedule Disburse
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          );
+        },
       },
     ],
     [selectedRows]

@@ -1,12 +1,16 @@
-import SignInForm from "@/components/SignIn";
-import Image from "next/image";
+"use client";
+// pages/index.js
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
-  return (
-    <>
-      <div>
-        <SignInForm />
-      </div>
-    </>
-  );
-}
+const HomePage = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("auth/login"); // Redirect to the login page
+  }, [router]);
+
+  return null; // Don't render anything on this page since it redirects
+};
+
+export default HomePage;
