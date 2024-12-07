@@ -1,6 +1,3 @@
-
-
-
 import SignInForm from "@/components/SignIn";
 
 export default function Home() {

@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <div>{children}</div>
+          {children}
           <div>
             <ToastContainer
               position="top-right"
