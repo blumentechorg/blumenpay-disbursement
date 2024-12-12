@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical, FiSearch } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
 
@@ -9,6 +9,7 @@ const FloatingSearchContainer = () => {
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleFilter = () => {
     console.log("Filter clicked with:", {
@@ -25,6 +26,19 @@ const FloatingSearchContainer = () => {
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const isAnySelectionMade = isAllTransactions || searchText.trim() !== "";
 
@@ -110,7 +124,8 @@ const FloatingSearchContainer = () => {
                   className="w-full mb-4 px-4 py-2 border rounded-md"
                   placeholder="Service Provider"
                 >
-                  <option>Service Provider</option>
+                  <option>KAEDC</option>
+                  <option>AEDC</option>
                 </select>
                 <input
                   type="number"
@@ -120,6 +135,11 @@ const FloatingSearchContainer = () => {
                 <input
                   type="date"
                   className="w-full mb-4 px-4 py-2 border rounded-md"
+                  placeholder={new Intl.DateTimeFormat("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  }).format(new Date())} // Current date in words, e.g., "December 11, 2024"
                 />
                 <select
                   className="w-full mb-4 px-4 py-2 border rounded-md"
@@ -127,10 +147,11 @@ const FloatingSearchContainer = () => {
                 >
                   <option className="">Bank Transfer</option>
                 </select>
-                <div className="text-sm text-gray-600 mb-4">
-                  <p>Bank Name: GTBank</p>
-                  <p>Account Number: 0104647462</p>
-                  <p>Account Name: KAEDC</p>
+                <div className="text-sm text-gray-600 mb-8 ">
+                  <div>Account Details</div>
+                  <div>Bank Name: GTBank</div>
+                  <div>Account Number: 0104647462</div>
+                  <div>Account Name: KAEDC</div>
                 </div>
                 <div className="flex  space-x-2 text-[10px] ">
                   <button
@@ -152,7 +173,7 @@ const FloatingSearchContainer = () => {
         )}
 
         {/* Three-Dot Menu */}
-        <div className="flex items-center justify-end ">
+        <div className="flex items-center justify-end " ref={dropdownRef}>
           <button
             onClick={toggleMenu}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"

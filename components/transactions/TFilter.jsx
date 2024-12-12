@@ -41,15 +41,17 @@ const FilterComponent = ({ onFilterChange }) => {
       <h2 className="font-semibold mb-4">Filter</h2>
 
       {/* Payment Type */}
-      <div className="mb-4">
+      <div className="mb-4 ">
         <select
           value={filters.paymentType}
           onChange={(e) => handleFilterChange("paymentType", e.target.value)}
-          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-lg p-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] h-[32px]  border-gray-300 bg-[#DADDE1] text-xs rounded-lg p-1.5 pr- focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
-          <option value="">Transaction Type</option>
+          <option value="" className="">
+            Transaction Type
+          </option>
           {paymentTypes.map((type) => (
-            <option key={type} value={type}>
+            <option key={type} value={type} className="">
               {type}
             </option>
           ))}

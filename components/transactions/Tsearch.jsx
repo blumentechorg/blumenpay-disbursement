@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical, FiSearch } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
 
@@ -9,6 +9,7 @@ const FloatingSearchContainer = () => {
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleFilter = () => {
     console.log("Filter clicked with:", {
@@ -25,6 +26,19 @@ const FloatingSearchContainer = () => {
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const isAnySelectionMade = isAllTransactions || searchText.trim() !== "";
 
@@ -85,7 +99,7 @@ const FloatingSearchContainer = () => {
         )}
 
         {/* Three-Dot Menu */}
-        <div className="flex items-center justify-end ">
+        <div className="flex items-center justify-end " ref={dropdownRef}>
           <button
             onClick={toggleMenu}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
