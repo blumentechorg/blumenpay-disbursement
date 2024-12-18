@@ -147,8 +147,8 @@ const FloatingSearchContainer = () => {
                 >
                   <option className="">Bank Transfer</option>
                 </select>
-                <div className="text-sm text-gray-600 mb-8 ">
-                  <div>Account Details</div>
+                <div className="text-sm justify-items-center text-gray-600 mb-8 ">
+                  <div className="font-bold pb-6">Account Details</div>
                   <div>Bank Name: GTBank</div>
                   <div>Account Number: 0104647462</div>
                   <div>Account Name: KAEDC</div>

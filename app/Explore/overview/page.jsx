@@ -12,7 +12,7 @@ export default function page() {
   return (
     <>
       <div className="space-y-12">
-        <div className="grid grid-cols-3 gap-y-10 gap-x-5 py-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-5 py-5">
           <Totalcollections />
           <Activeproviders />
           <Activeusers />

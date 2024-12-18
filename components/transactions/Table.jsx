@@ -56,8 +56,16 @@ const TransactionTable = () => {
       { Header: "ID", accessor: "id" },
       { Header: "Service Provider", accessor: "provider" },
       { Header: "Amount", accessor: "amount" },
-      { Header: "Payment Method", accessor: "method" },
-      { Header: "Schedule Date", accessor: "schedule" },
+      {
+        Header: "Payment Method",
+        accessor: "method",
+        className: "hidden md:table-cell", // Hide on small screens
+      },
+      {
+        Header: "Schedule Date",
+        accessor: "schedule",
+        className: "hidden lg:table-cell", // Hide on smaller screens
+      },
       {
         Header: "Status",
         accessor: "status",
@@ -114,16 +122,16 @@ const TransactionTable = () => {
   return (
     <div>
       {/* Table */}
-      <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
         <table
           {...getTableProps()}
-          className="w-full text-xs border-collapse border border-gray-300 rounded-lg"
+          className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
         >
           <thead className="bg-gray-100 text-gray-700 font-semibold">
             {headerGroups.map((headerGroup) => {
               const { key, ...rest } = headerGroup.getHeaderGroupProps(); // Separate key
               return (
-                <tr key={key} {...rest}>
+                <tr key={key} {...rest} className="block sm:table-row">
                   {headerGroup.headers.map((column) => {
                     const { key: columnKey, ...columnRest } =
                       column.getHeaderProps(); // Separate key for <th>
@@ -131,7 +139,9 @@ const TransactionTable = () => {
                       <th
                         key={columnKey}
                         {...columnRest}
-                        className="border border-gray-300 px-4 py-2 text-left"
+                        className={`border border-gray-300 px-4 py-2 text-left ${
+                          column.className || ""
+                        }`}
                       >
                         {column.render("Header")}
                       </th>
@@ -149,7 +159,7 @@ const TransactionTable = () => {
                 <tr
                   key={key}
                   {...rowProps}
-                  className="hover:bg-gray-50 hover:font-semibold"
+                  className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
                 >
                   {row.cells.map((cell) => {
                     const { key: cellKey, ...cellProps } = cell.getCellProps(); // Separate key for <td>
@@ -157,7 +167,10 @@ const TransactionTable = () => {
                       <td
                         key={cellKey}
                         {...cellProps}
-                        className="border border-gray-300 px-4 py-2"
+                        className={`border border-gray-300 px-4 py-2 block sm:table-cell ${
+                          cell.column.className || ""
+                        }`}
+                        data-label={cell.column.Header} // For pseudo-labels on small screens
                       >
                         {cell.render("Cell")}
                       </td>
@@ -170,7 +183,7 @@ const TransactionTable = () => {
         </table>
 
         {/* Pagination */}
-        <div className="flex justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300">
+        <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0">
           <div className="flex items-center space-x-2">
             <span className="text-gray-700">Rows per page:</span>
             <select

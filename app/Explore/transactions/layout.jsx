@@ -9,10 +9,10 @@ const OverviewLayout = ({ children }) => {
       <div>
         <div className="flex">
           {/* Sticky Sidebar */}
-          <div className=" border-r min-h-screen top-0  ">
+          <div className=" border-r min-h-screen top-0 hidden lg:block  ">
             <TFilter />
           </div>
-          <div className="flex-1 flex flex-col min-h-screen pl-5 ">
+          <div className="flex-1 flex flex-col min-h-screen lg:pl-5 ">
             {/* Sticky Navbar */}
             <div className=" space-y-2">
               <Breadcrumbs />

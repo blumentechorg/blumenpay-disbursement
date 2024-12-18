@@ -18,7 +18,7 @@ const Breadcrumbs = () => {
     : "";
 
   return (
-    <nav className="flex items-center space-x-2  text-black font-bold text-xl">
+    <nav className="flex items-center space-x-2  text-black font-bold text-lg md:text-xl">
       {lastSegment && (
         <span>{breadcrumbName}</span> // Only render the last path
       )}

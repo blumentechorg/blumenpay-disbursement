@@ -37,13 +37,13 @@ export default function Sidebar() {
       icon: <Transactions />,
     },
     {
-      name: "Disbursement",
-      href: "/Explore/disbursement/",
+      name: "Disbursements",
+      href: "/Explore/disbursements/",
       icon: <Disbursements />,
     },
     {
       name: "Service Providers",
-      href: "/Explore/serviceprovider",
+      href: "/Explore/providers",
       icon: <Providers />,
     },
   ];

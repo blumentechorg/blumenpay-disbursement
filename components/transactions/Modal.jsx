@@ -48,60 +48,73 @@ const TransactionModal = ({ modalContent, onClose }) => {
             </div>
 
             {/* Transaction Details */}
-            <div className="mt-5 px-4">
-              <h3 className="text-gray-700 font-semibold mb-4">
+            <div className="mt-5 px-4 ">
+              <h3 className="text-gray-700 text-sm font-semibold mb-2">
                 Transaction Details
               </h3>
               <div className="p-4 bg-gray-50 rounded-md border">
                 <div className="flex items-center mb-3">
-                  <TbAlertCircleFilled className="text-red-500" size={20} />
-                  <span className="ml-2 text-red-600">
-                    {" "}
-                    {modalContent.status}
-                  </span>
+                  <TbAlertCircleFilled className="text-red-500" size={32} />
+                  <span className="ml-2 text-red-600"> </span>
                 </div>
-                <p className="text-gray-700 text-sm">
-                  <strong>Date:</strong> 11:15 AM, Nov 7
-                </p>
-                <p className="text-gray-700 text-sm">
-                  <strong>Service Provider:</strong> Kaduna Electric
-                </p>
-                <p className="text-gray-700 text-sm">
-                  <strong>Amount:</strong> {modalContent.amount}
-                </p>
-                <p className="text-gray-700 text-sm">
-                  <strong>Unit:</strong> 32.8
-                </p>
-                <p className="text-gray-700 text-sm">
-                  <strong>Payment Method:</strong> Bank Transfer
-                </p>
+
+                <div className="space-y-3 ">
+                  <p className="text-gray-700 text-xs font-semibold ">
+                    <span className="font-light">Date:</span>{" "}
+                    <span className="uppercase">11:15 AM, Nov 7</span>
+                  </p>
+                  <p className="text-gray-700 text-xs  font-semibold">
+                    <span className="font-light ">Service Provider:</span>{" "}
+                    <span className="uppercase">Kaduna Electric</span>
+                  </p>
+                  <p className="text-gray-700 text-xs  font-semibold">
+                    <span className="font-light ">Amount:</span>{" "}
+                    <span className="uppercase">{modalContent.amount}</span>
+                  </p>
+                  <p className="text-gray-700 text-xs  font-semibold">
+                    <span className="font-light ">Unit:</span> 32.8
+                  </p>
+                  <p className="text-gray-700 text-xs  font-semibold">
+                    <span className="font-light ">Payment Method:</span>{" "}
+                    <span className="uppercase">Bank Transfer</span>
+                  </p>
+                  <p className="text-gray-700 text-xs  font-semibold">
+                    <span className="font-light ">Status:</span>{" "}
+                    <span className="text-red-600">{modalContent.status}</span>{" "}
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Customer Details */}
             <div className="mt-5 px-4">
-              <h3 className="text-gray-700 font-semibold mb-4">
+              <h3 className="text-gray-700 text-sm font-semibold mb-2 ">
                 Customer Details
               </h3>
-              <div className="p-4 bg-gray-50 rounded-md border">
-                <p className="text-gray-700 text-sm">
-                  <strong>Name:</strong> John Doe
+              <div className="p-4 bg-gray-50 rounded-md border space-y-3">
+                <p className="text-gray-700 text-xs">
+                  <span className="font-light">Name:</span>{" "}
+                  <span className="font-semibold uppercase">John Doe</span>
                 </p>
-                <p className="text-gray-700 text-sm">
-                  <strong>Email:</strong> johndoe@gmail.com
+                <p className="text-gray-700 text-xs">
+                  <span className="font-light">Email:</span>{" "}
+                  <span className="font-semibold uppercase">
+                    johndoe@gmail.com
+                  </span>
                 </p>
-                <p className="text-gray-700 text-sm">
-                  <strong>Phone:</strong> 09031754067
+                <p className="text-gray-700 text-xs">
+                  <span className="font-light">Phone:</span>{" "}
+                  <span className="font-semibold uppercase">09031754067</span>
                 </p>
               </div>
             </div>
 
             {/* Activity Log */}
             <div className="mt-5 px-4">
-              <h3 className="text-gray-700 font-semibold mb-4">Activity Log</h3>
+              <h3 className="text-gray-700 font-semibold mb-2">Activity Log</h3>
               <div className="p-4 bg-gray-50 rounded-md border space-y-1">
                 <p className="text-gray-700 text-sm flex">
-                  <TbAlertCircleFilled className="text-red-500" size={20} />
+                  <TbAlertCircleFilled className="text-red-600" size={20} />
                   <span className="text-yellow-600 font-bold">Pending:</span> 23
                   August, 2024 9:30 AM
                 </p>
@@ -109,7 +122,7 @@ const TransactionModal = ({ modalContent, onClose }) => {
                   <Dottedline />
                 </span>
                 <p className="text-gray-700 text-sm flex">
-                  <TbAlertCircleFilled className="text-red-500" size={20} />
+                  <TbAlertCircleFilled className="text-red-600" size={20} />
                   <span className="text-red-600 font-bold">Failed:</span> 23
                   August, 2024 9:30 AM
                 </p>

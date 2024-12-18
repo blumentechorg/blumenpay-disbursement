@@ -233,7 +233,7 @@ const ActivityTable = () => {
         </div>
 
         {/* Showing text */}
-        <div className=" text-gray-600">
+        <div className=" text-gray-600  ">
           Showing {pageIndex * page.length + 1}-
           {Math.min((pageIndex + 1) * page.length, rows.length)} of{" "}
           {rows.length}
