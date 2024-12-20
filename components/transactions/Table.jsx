@@ -6,6 +6,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import TransactionModal from "./Modal";
+import FloatingSearchContainer from "./Tsearch";
 
 const TransactionTable = () => {
   const [modalContent, setModalContent] = useState(null);
@@ -24,6 +25,14 @@ const TransactionTable = () => {
       ...prev,
       [id]: !prev[id],
     }));
+  };
+
+  const handleSelectAll = (isSelected) => {
+    const newSelections = {};
+    data.forEach((row) => {
+      newSelections[row.id] = isSelected;
+    });
+    setSelectedRows(newSelections);
   };
 
   const data = React.useMemo(
@@ -120,7 +129,10 @@ const TransactionTable = () => {
   );
 
   return (
-    <div>
+    <div className="space-y-5">
+      <div>
+        <FloatingSearchContainer onSelectAll={handleSelectAll} />
+      </div>
       {/* Table */}
       <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
         <table

@@ -52,8 +52,8 @@ export default function Sidebar() {
     <div className="h-screen w-64 bg-white text-black flex flex-col sticky top-0">
       {/* Logo and Title */}
       <div className="flex items-center justify-between h-20 border-b border-gray-300 px-2  ">
-        <div className="flex space-x-1">
-          <Image src={logo} alt="" width={30} height={30} />
+        <div className="flex space-x-2">
+          <Image src={logo} alt="" width={36} height={30} />
           <Image src={title} alt="" width={100} height={100} />
         </div>
         <div>
@@ -68,9 +68,11 @@ export default function Sidebar() {
             <li key={index}>
               <a
                 href={menu.href}
-                className="flex items-center px-4 py-2 text-sm font-light rounded hover:bg-[#F5F7FA]"
+                className="flex items-center px-4 py-2 text-sm font-light rounded hover:bg-[#F5F7FA] hover:font-bold hover:text-gray-600"
               >
-                <span className="text-lg mr-3">{menu.icon}</span>
+                <span className="text-lg mr-3 hover:text-current">
+                  {menu.icon}
+                </span>
                 {menu.name}
               </a>
             </li>
@@ -79,9 +81,9 @@ export default function Sidebar() {
           <div className="hover:bg-[#F5F7FA] rounded">
             <button
               onClick={openModal}
-              className="flex items-center px-4 py-2 text-sm font-light  "
+              className="flex items-center px-4 py-2 text-sm font-light hover:font-bold hover:text-gray-600"
             >
-              <span className="text-lg mr-3">
+              <span className="text-lg mr-3 hover:text-current">
                 <Logout />
               </span>
               <span>Log Out</span>

@@ -59,26 +59,26 @@ const TransactionModal = ({ modalContent, onClose }) => {
                 </div>
 
                 <div className="space-y-3 ">
-                  <p className="text-gray-700 text-xs font-semibold ">
+                  <p className="text-gray-700 text-xs font-medium ">
                     <span className="font-light">Date:</span>{" "}
                     <span className="uppercase">11:15 AM, Nov 7</span>
                   </p>
-                  <p className="text-gray-700 text-xs  font-semibold">
+                  <p className="text-gray-700 text-xs  font-medium">
                     <span className="font-light ">Service Provider:</span>{" "}
                     <span className="uppercase">Kaduna Electric</span>
                   </p>
-                  <p className="text-gray-700 text-xs  font-semibold">
+                  <p className="text-gray-700 text-xs  font-medium">
                     <span className="font-light ">Amount:</span>{" "}
                     <span className="uppercase">{modalContent.amount}</span>
                   </p>
-                  <p className="text-gray-700 text-xs  font-semibold">
+                  <p className="text-gray-700 text-xs  font-medium">
                     <span className="font-light ">Unit:</span> 32.8
                   </p>
-                  <p className="text-gray-700 text-xs  font-semibold">
+                  <p className="text-gray-700 text-xs  font-medium">
                     <span className="font-light ">Payment Method:</span>{" "}
                     <span className="uppercase">Bank Transfer</span>
                   </p>
-                  <p className="text-gray-700 text-xs  font-semibold">
+                  <p className="text-gray-700 text-xs  font-medium">
                     <span className="font-light ">Status:</span>{" "}
                     <span className="text-red-600">{modalContent.status}</span>{" "}
                   </p>
@@ -94,11 +94,11 @@ const TransactionModal = ({ modalContent, onClose }) => {
               <div className="p-4 bg-gray-50 rounded-md border space-y-3">
                 <p className="text-gray-700 text-xs">
                   <span className="font-light">Name:</span>{" "}
-                  <span className="font-semibold uppercase">John Doe</span>
+                  <span className="font-medium uppercase">John Doe</span>
                 </p>
                 <p className="text-gray-700 text-xs">
                   <span className="font-light">Email:</span>{" "}
-                  <span className="font-semibold uppercase">
+                  <span className="font-medium uppercase">
                     johndoe@gmail.com
                   </span>
                 </p>

@@ -11,6 +11,8 @@ import { useAuth } from "@/context/AuthContext";
 import { userSchema } from "@/validation/user";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Image from "next/image";
+import logo from "@/public/images/logo.png";
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,8 +50,13 @@ const SignInForm = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4 sm:p-6 font-light">
       <div className="flex flex-col items-center w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold text-black">BlumenPay</h2>
-        <h2 className="mb-6 text-lg text-center">Log In</h2>
+        <div className=" pb-12  ">
+          <div className="mb-3 items-center flex flex-col">
+            <Image src={logo} width={40} height={40} alt="logo" />
+          </div>
+          <div className="text-xl font-semibold text-black ">BlumenPay</div>
+        </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <div className="grid gap-y-4">
             <input
@@ -69,7 +76,7 @@ const SignInForm = () => {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 {...register("password")}
-                placeholder="Enter your password"
+                placeholder="Password"
                 className="h-10 w-full rounded-md border border-gray-300 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-gray-600"
               />
               <span
@@ -90,10 +97,10 @@ const SignInForm = () => {
             )}
             <button
               type="submit"
-              className="mt-4 h-10 w-full rounded-md bg-blue-800 text-white hover:bg-blue-950 disabled:opacity-50"
+              className="mt-4 h-10 w-full rounded-sm bg-[#0052CC] text-xs text-white hover:bg-blue-600 disabled:opacity-50"
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Logging in..." : "LOGIN"}
             </button>
           </div>
         </form>

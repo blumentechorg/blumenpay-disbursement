@@ -17,7 +17,7 @@ export default function Navbar() {
           </div>
           <div className="hidden md:block">
             <div className="text-lg font-bold">
-              Welcome Back, {user.name || "User"}!
+              Welcome Back, {user?.name || "User"}!
             </div>
             <div>How Are You Doing Today?</div>
           </div>
