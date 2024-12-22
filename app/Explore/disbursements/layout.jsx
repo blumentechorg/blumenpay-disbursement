@@ -25,7 +25,7 @@ const OverviewLayout = ({ children }) => {
             {/* Scrollable content */}
             <div className="flex-1 overflow-y-auto pt-5 space-y-5 bg-gray-100 ">
               <Label />
-              <Dsearch />
+              {/* <Dsearch /> */}
               {children}
             </div>
           </div>

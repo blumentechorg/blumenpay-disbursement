@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical, FiSearch } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
 
-const FloatingSearchContainer = () => {
+const FloatingSearchContainer = ({ onSelectAll }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -33,6 +33,14 @@ const FloatingSearchContainer = () => {
     }
   };
 
+  const handleAllTransactionsChange = () => {
+    const newState = !isAllTransactions;
+    setIsAllTransactions(newState);
+    if (onSelectAll) {
+      onSelectAll(newState); // Notify the parent component
+    }
+  };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -50,7 +58,7 @@ const FloatingSearchContainer = () => {
           <input
             type="checkbox"
             checked={isAllTransactions}
-            onChange={() => setIsAllTransactions(!isAllTransactions)}
+            onChange={handleAllTransactionsChange}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
           <label className="pl-2 text-xs text-gray-700">
@@ -59,7 +67,7 @@ const FloatingSearchContainer = () => {
         </div>
 
         {/* Search and Filter Container */}
-        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2  ">
+        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-60 ">
           {/* Search Icon */}
           <FiSearch className="text-gray-500 mr-2" />
           {/* Search Input */}
@@ -68,10 +76,10 @@ const FloatingSearchContainer = () => {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="Search..."
-            className="flex-1 text-sm focus:outline-none w-32"
+            className="flex-1 text-sm focus:outline-none"
           />
           {/* Filter Button */}
-          <button
+          {/* <button
             onClick={handleFilter}
             className="flex items-center border-l  font-light space-x-2  px-4  h-8 rounded- text-sm  focus:outline-none  "
           >
@@ -80,7 +88,7 @@ const FloatingSearchContainer = () => {
               {" "}
               <IoFilterOutline className="mr-2" />
             </div>
-          </button>
+          </button> */}
         </div>
       </div>
 

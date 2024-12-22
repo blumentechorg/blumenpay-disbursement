@@ -6,6 +6,7 @@ import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaCheckCircle } from "react-icons/fa";
 import { TbAlertCircleFilled } from "react-icons/tb";
+import FloatingSearchContainer from "./Dsearch";
 
 function CustomTable() {
   const [modalContent, setModalContent] = useState(null);
@@ -25,6 +26,15 @@ function CustomTable() {
       [id]: !prev[id],
     }));
   };
+
+  const handleSelectAll = (isSelected) => {
+    const newSelections = {};
+    data.forEach((row) => {
+      newSelections[row.id] = isSelected;
+    });
+    setSelectedRows(newSelections);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -149,7 +159,7 @@ function CustomTable() {
         status: "Pending",
       },
       {
-        id: "1234567890",
+        id: "1234567891",
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
@@ -157,7 +167,7 @@ function CustomTable() {
         status: "Scheduled",
       },
       {
-        id: "1234567890",
+        id: "1234567892",
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
@@ -165,7 +175,7 @@ function CustomTable() {
         status: "Scheduled",
       },
       {
-        id: "1234567890",
+        id: "1234567893",
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
@@ -173,7 +183,7 @@ function CustomTable() {
         status: "Scheduled",
       },
       {
-        id: "1234567890",
+        id: "1234567894",
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
@@ -181,7 +191,7 @@ function CustomTable() {
         status: "Scheduled",
       },
       {
-        id: "1234567890",
+        id: "1234567895",
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
@@ -189,7 +199,7 @@ function CustomTable() {
         status: "Scheduled",
       },
       {
-        id: "1234567890",
+        id: "1234567896",
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
@@ -197,7 +207,7 @@ function CustomTable() {
         status: "Scheduled",
       },
       {
-        id: "1234567890",
+        id: "1234567897",
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
@@ -233,8 +243,11 @@ function CustomTable() {
   );
 
   return (
-    <div className="text-xs">
-      <div className="overflow-x-auto">
+    <div className="text-xs space-y-5">
+      <div>
+        <FloatingSearchContainer onSelectAll={handleSelectAll} />
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
         <table
           {...getTableProps()}
           className="min-w-full table-auto border-collapse border border-gray-200"

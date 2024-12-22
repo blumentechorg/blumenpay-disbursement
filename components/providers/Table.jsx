@@ -10,6 +10,7 @@ import TransactionModal from "./Modal";
 const TransactionTable = () => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = (row) => {
     setModalContent(row);
@@ -150,6 +151,7 @@ const TransactionTable = () => {
                   key={key}
                   {...rowProps}
                   className="hover:bg-gray-50 hover:font-semibold"
+                  onClick={() => openModal(row.original)}
                 >
                   {row.cells.map((cell) => {
                     const { key: cellKey, ...cellProps } = cell.getCellProps(); // Separate key for <td>

@@ -43,7 +43,7 @@ const FloatingSearchContainer = () => {
         </div>
 
         {/* Search and Filter Container */}
-        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2  ">
+        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2  w-60 ">
           {/* Search Icon */}
           <FiSearch className="text-gray-500 mr-2" />
           {/* Search Input */}
@@ -55,7 +55,7 @@ const FloatingSearchContainer = () => {
             className="flex-1 text-sm focus:outline-none w-32"
           />
           {/* Filter Button */}
-          <button
+          {/* <button
             onClick={handleFilter}
             className="flex items-center border-l  font-light space-x-2  px-4  h-8 rounded- text-sm  focus:outline-none  "
           >
@@ -64,7 +64,7 @@ const FloatingSearchContainer = () => {
               {" "}
               <IoFilterOutline className="mr-2" />
             </div>
-          </button>
+          </button> */}
         </div>
       </div>
 

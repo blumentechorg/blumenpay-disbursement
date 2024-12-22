@@ -11,6 +11,8 @@ import FloatingSearchContainer from "./Tsearch";
 const TransactionTable = () => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
+  const [filters, setFilters] = useState({});
+  const [filteredData, setFilteredData] = useState([]);
 
   const openModal = (row) => {
     setModalContent(row);
@@ -48,6 +50,27 @@ const TransactionTable = () => {
       })),
     []
   );
+
+  // Update filtered data based on filters
+  const applyFilters = (filterValues) => {
+    const filtered = data.filter((item) => {
+      return (
+        (!filterValues.status || item.status === filterValues.status) &&
+        (!filterValues.serviceProvider ||
+          item.provider === filterValues.serviceProvider) &&
+        (!filterValues.paymentMethod ||
+          item.method === filterValues.paymentMethod) &&
+        (!filterValues.date || item.schedule.includes(filterValues.date)) // Adjust for date format
+      );
+    });
+    setFilteredData(filtered);
+  };
+
+  // Handle filter change
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    applyFilters(newFilters);
+  };
 
   const columns = React.useMemo(
     () => [
@@ -122,7 +145,7 @@ const TransactionTable = () => {
   } = useTable(
     {
       columns,
-      data,
+      data: filteredData.length ? filteredData : data, // Use filtered data or full data
       initialState: { pageIndex: 0, pageSize: 10 },
     },
     usePagination

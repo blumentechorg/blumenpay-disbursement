@@ -14,7 +14,7 @@ const FilterComponent = ({ onFilterChange }) => {
 
   // Options for dropdowns
   const statuses = ["Pending", "Completed", "Failed", "Refunded"];
-  const serviceProviders = ["KADC", "AEDC", "Amaltech", "BraveRock"];
+  const serviceProviders = ["KAEDC", "AEDC"];
   const paymentMethods = ["Card", "POS", "Bank Transfer", "Cash"];
 
   // Handle change in filters
@@ -46,7 +46,7 @@ const FilterComponent = ({ onFilterChange }) => {
         <select
           value={filters.paymentMethod}
           onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
-          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-lg p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
           <option value="">Payment Method</option>
           {paymentMethods.map((type) => (
@@ -62,7 +62,7 @@ const FilterComponent = ({ onFilterChange }) => {
         <select
           value={filters.status}
           onChange={(e) => handleFilterChange("status", e.target.value)}
-          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-lg p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
           <option value="">Status</option>
           {statuses.map((status) => (
@@ -80,7 +80,7 @@ const FilterComponent = ({ onFilterChange }) => {
           onChange={(e) =>
             handleFilterChange("serviceProvider", e.target.value)
           }
-          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-lg p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
           <option value="">Service Provider</option>
           {serviceProviders.map((provider) => (
@@ -97,7 +97,7 @@ const FilterComponent = ({ onFilterChange }) => {
           type="date"
           value={filters.date || ""}
           onChange={(e) => handleFilterChange("date", e.target.value)}
-          className="w-[200px] px-2 h-[32px] border-gray-300 rounded-lg bg-[#DADDE1] text-xs p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] px-2 h-[32px] border-gray-300 rounded-sm bg-[#DADDE1] text-xs p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         />
       </div>
 
@@ -105,7 +105,7 @@ const FilterComponent = ({ onFilterChange }) => {
       <div className="mt-4">
         <button
           onClick={clearAllFilters}
-          className="w-[200px] h-[32px] bg-blue-700 text-white text-xs rounded-lg p-1.5 hover:bg-blue-800 focus:outline-none"
+          className="w-[200px] h-[32px] bg-blue-700 text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
         >
           Clear All
         </button>
