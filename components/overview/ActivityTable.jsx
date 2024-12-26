@@ -22,7 +22,7 @@ const ActivityTable = () => {
                   1_200 + index
                 } successfully disbursed to Provider X`,
           timestamp: `11:${30 + (index % 30)} AM, Nov 7`,
-          action: index % 3 === 0 ? "Retry" : "View Details",
+          action: index % 3 === 0 ? "View Details" : "View Details",
         })),
     []
   );
@@ -33,7 +33,7 @@ const ActivityTable = () => {
         Header: "Icon",
         accessor: "icon",
         Cell: ({ value }) => (
-          <div className="flex justify-center items-center">
+          <div className=" ">
             {value === "Successful" ? (
               <FaCheckCircle className="text-green-700" size={16} />
             ) : (
@@ -60,10 +60,7 @@ const ActivityTable = () => {
         Header: "Action",
         accessor: "action",
         Cell: ({ value }) => (
-          <button
-            className=" text-sm underline hover:text-blue-700"
-            title={value === "Retry" ? "Retry the action" : "View the details"}
-          >
+          <button className=" text-sm underline hover:text-blue-700">
             {value}
           </button>
         ),

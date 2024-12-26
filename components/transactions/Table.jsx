@@ -1,18 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTable, usePagination } from "react-table";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import TransactionModal from "./Modal";
 import FloatingSearchContainer from "./Tsearch";
+import tableData from "@/lib/transactionData.json";
 
 const TransactionTable = () => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
   const [filters, setFilters] = useState({});
   const [filteredData, setFilteredData] = useState([]);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Load data from data.json
+    setData(tableData);
+  }, []);
 
   const openModal = (row) => {
     setModalContent(row);
@@ -37,21 +44,6 @@ const TransactionTable = () => {
     setSelectedRows(newSelections);
   };
 
-  const data = React.useMemo(
-    () =>
-      Array.from({ length: 20 }, (_, index) => ({
-        id: `123456789${index + 1}`,
-        provider: index % 2 === 0 ? "KAEDC" : "AEDC",
-        amount: "$20,000",
-        method: "Bank Transfer",
-        schedule: "11:15 AM, Nov 7",
-        status: index % 3 === 0 ? "Failed" : "Successful",
-        action: index % 3 === 0 ? "Retry" : "View Details",
-      })),
-    []
-  );
-
-  // Update filtered data based on filters
   const applyFilters = (filterValues) => {
     const filtered = data.filter((item) => {
       return (
@@ -66,7 +58,6 @@ const TransactionTable = () => {
     setFilteredData(filtered);
   };
 
-  // Handle filter change
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
     applyFilters(newFilters);
@@ -91,12 +82,12 @@ const TransactionTable = () => {
       {
         Header: "Payment Method",
         accessor: "method",
-        className: "hidden md:table-cell", // Hide on small screens
+        className: "hidden md:table-cell",
       },
       {
         Header: "Schedule Date",
         accessor: "schedule",
-        className: "hidden lg:table-cell", // Hide on smaller screens
+        className: "hidden lg:table-cell",
       },
       {
         Header: "Status",
@@ -145,7 +136,7 @@ const TransactionTable = () => {
   } = useTable(
     {
       columns,
-      data: filteredData.length ? filteredData : data, // Use filtered data or full data
+      data: filteredData.length ? filteredData : data,
       initialState: { pageIndex: 0, pageSize: 10 },
     },
     usePagination
