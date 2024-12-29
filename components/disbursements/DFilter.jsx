@@ -9,13 +9,13 @@ const FilterComponent = ({ onFilterChange }) => {
     status: "",
     serviceProvider: "",
     paymentMethod: "",
+    date: "", // Added a new key for date
   });
 
   // Options for dropdowns
-  const paymentTypes = ["Credit Card", "Debit Card", "Bank Transfer", "Cash"];
-  const statuses = ["Pending", "Completed", "Failed", "Refunded"];
-  const serviceProviders = ["PayPal", "Stripe", "Square", "Amazon Pay"];
-  const paymentMethods = ["Online", "Offline"];
+  const statuses = ["Pending", "Scheduled"];
+  const serviceProviders = ["KAEDC", "AEDC"];
+  const paymentMethods = ["POS", "Bank Transfer"];
 
   // Handle change in filters
   const handleFilterChange = (field, value) => {
@@ -31,6 +31,7 @@ const FilterComponent = ({ onFilterChange }) => {
       status: "",
       serviceProvider: "",
       paymentMethod: "",
+      date: "", // Clear the date filter
     };
     setFilters(clearedFilters);
     onFilterChange(clearedFilters); // Notify parent
@@ -40,15 +41,15 @@ const FilterComponent = ({ onFilterChange }) => {
     <div className="p-6 rounded-lg max-w-md mx-auto text-sm">
       <h2 className="font-semibold mb-4">Filter</h2>
 
-      {/* Payment Type */}
+      {/* Payment Method */}
       <div className="mb-4">
         <select
-          value={filters.paymentType}
-          onChange={(e) => handleFilterChange("paymentType", e.target.value)}
-          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          value={filters.paymentMethod}
+          onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
+          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
-          <option value="">Transaction Type</option>
-          {paymentTypes.map((type) => (
+          <option value="">Payment Method</option>
+          {paymentMethods.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>
@@ -56,14 +57,14 @@ const FilterComponent = ({ onFilterChange }) => {
         </select>
       </div>
 
-      {/* Service Provider */}
-      <div className="mb-4 ">
+      {/* Status */}
+      <div className="mb-4">
         <select
           value={filters.status}
           onChange={(e) => handleFilterChange("status", e.target.value)}
-          className="w-[200px] h-[32px] border-gray-300 rounded-sm bg-[#DADDE1] text-xs p-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
-          <option value="">Service Provider</option>
+          <option value="">Status</option>
           {statuses.map((status) => (
             <option key={status} value={status}>
               {status}
@@ -79,9 +80,9 @@ const FilterComponent = ({ onFilterChange }) => {
           onChange={(e) =>
             handleFilterChange("serviceProvider", e.target.value)
           }
-          className="w-[200px] h-[32px] border-gray-300 rounded-sm bg-[#DADDE1] text-xs p-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
-          <option value="">Status</option>
+          <option value="">Service Provider</option>
           {serviceProviders.map((provider) => (
             <option key={provider} value={provider}>
               {provider}
@@ -90,20 +91,14 @@ const FilterComponent = ({ onFilterChange }) => {
         </select>
       </div>
 
-      {/* Payment Method */}
+      {/* Date */}
       <div className="mb-4">
-        <select
-          value={filters.paymentMethod}
-          onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
-          className="w-[200px] px-2 h-[32px] border-gray-300 rounded-sm bg-[#DADDE1] text-xs p-1.5 pr-6 focus:outline-none focus:ring-1 focus:ring-gray-500"
-        >
-          <option value="">Payment Method</option>
-          {paymentMethods.map((method) => (
-            <option key={method} value={method}>
-              {method}
-            </option>
-          ))}
-        </select>
+        <input
+          type="date"
+          value={filters.date || ""}
+          onChange={(e) => handleFilterChange("ScheduleDate", e.target.value)}
+          className="w-[200px] px-2 h-[32px] border-gray-300 rounded-sm bg-[#DADDE1] text-xs p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
+        />
       </div>
 
       {/* Clear All */}

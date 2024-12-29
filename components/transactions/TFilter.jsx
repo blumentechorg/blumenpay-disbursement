@@ -13,9 +13,9 @@ const FilterComponent = ({ onFilterChange }) => {
   });
 
   // Options for dropdowns
-  const statuses = ["Pending", "Completed", "Failed", "Refunded"];
+  const statuses = ["Successful", "Failed"];
   const serviceProviders = ["KAEDC", "AEDC"];
-  const paymentMethods = ["Card", "POS", "Bank Transfer", "Cash"];
+  const paymentMethods = ["POS", "Bank Transfer"];
 
   // Handle change in filters
   const handleFilterChange = (field, value) => {

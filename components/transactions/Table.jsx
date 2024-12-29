@@ -9,10 +9,9 @@ import TransactionModal from "./Modal";
 import FloatingSearchContainer from "./Tsearch";
 import tableData from "@/lib/transactionData.json";
 
-const TransactionTable = () => {
+const TransactionTable = ({ filters }) => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
-  const [filters, setFilters] = useState({});
   const [filteredData, setFilteredData] = useState([]);
   const [data, setData] = useState([]);
 
@@ -44,6 +43,12 @@ const TransactionTable = () => {
     setSelectedRows(newSelections);
   };
 
+  useEffect(() => {
+    if (filters) {
+      applyFilters(filters);
+    }
+  }, [filters]);
+
   const applyFilters = (filterValues) => {
     const filtered = data.filter((item) => {
       return (
@@ -52,15 +57,10 @@ const TransactionTable = () => {
           item.provider === filterValues.serviceProvider) &&
         (!filterValues.paymentMethod ||
           item.method === filterValues.paymentMethod) &&
-        (!filterValues.date || item.schedule.includes(filterValues.date)) // Adjust for date format
+        (!filterValues.date || item.schedule.includes(filterValues.date))
       );
     });
     setFilteredData(filtered);
-  };
-
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    applyFilters(newFilters);
   };
 
   const columns = React.useMemo(

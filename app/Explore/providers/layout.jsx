@@ -4,7 +4,7 @@ import Dsearch from "@/components/disbursements/Dsearch";
 import PFilter from "@/components/providers/PFilter";
 import Label from "@/components/disbursements/Label";
 
-const OverviewLayout = ({ children }) => {
+const ProviderLayout = ({ children }) => {
   return (
     <>
       <div>
@@ -31,4 +31,4 @@ const OverviewLayout = ({ children }) => {
   );
 };
 
-export default OverviewLayout;
+export default ProviderLayout;

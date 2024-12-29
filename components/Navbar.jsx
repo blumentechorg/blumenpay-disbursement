@@ -10,7 +10,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="flex px-6 justify-between py-3.5 border-b bg-white">
+      <div className="flex px-6 justify-between py-3.5 border-b bg-white z-10">
         <div className="flex space-x-10">
           <div className="lg:hidden">
             <Mobilenav />

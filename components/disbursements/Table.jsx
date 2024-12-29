@@ -8,7 +8,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import FloatingSearchContainer from "./Dsearch";
 
-function CustomTable() {
+function DisbursementTable({ filters }) {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
 
@@ -154,7 +154,7 @@ function CustomTable() {
         id: "1234567890",
         serviceProvider: "KAEDC",
         amount: "$20,000",
-        paymentMethod: "Bank Transfer",
+        paymentMethod: "POS",
         scheduleDate: "11:43 AM, Nov 7",
         status: "Pending",
       },
@@ -179,7 +179,7 @@ function CustomTable() {
         serviceProvider: "AEDC",
         amount: "$20,000",
         paymentMethod: "Bank Transfer",
-        scheduleDate: "11:15 AM, Nov 7",
+        scheduleDate: "11/07/2024",
         status: "Scheduled",
       },
       {
@@ -202,7 +202,7 @@ function CustomTable() {
         id: "1234567896",
         serviceProvider: "AEDC",
         amount: "$20,000",
-        paymentMethod: "Bank Transfer",
+        paymentMethod: "POS",
         scheduleDate: "11:15 AM, Nov 7",
         status: "Scheduled",
       },
@@ -210,7 +210,7 @@ function CustomTable() {
         id: "1234567897",
         serviceProvider: "AEDC",
         amount: "$20,000",
-        paymentMethod: "Bank Transfer",
+        paymentMethod: "POS",
         scheduleDate: "11:15 AM, Nov 7",
         status: "Scheduled",
       },
@@ -218,6 +218,19 @@ function CustomTable() {
     ],
     []
   );
+
+  const filteredData = useMemo(() => {
+    return data.filter((row) => {
+      return (
+        (!filters.paymentMethod ||
+          row.paymentMethod === filters.paymentMethod) &&
+        (!filters.status || row.status === filters.status) &&
+        (!filters.serviceProvider ||
+          row.serviceProvider === filters.serviceProvider) &&
+        (!filters.date || row.scheduleDate.includes(filters.date)) // Match date substring
+      );
+    });
+  }, [data, filters]);
 
   const {
     getTableProps,
@@ -236,7 +249,7 @@ function CustomTable() {
   } = useTable(
     {
       columns,
-      data,
+      data: filteredData,
       initialState: { pageIndex: 0, pageSize: 7 },
     },
     usePagination
@@ -371,4 +384,4 @@ function CustomTable() {
   );
 }
 
-export default CustomTable;
+export default DisbursementTable;
