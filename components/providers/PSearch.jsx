@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical, FiSearch } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
 
-const FloatingSearchContainer = () => {
+const FloatingSearchContainer = ({ onSelectAll }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleFilter = () => {
     console.log("Filter clicked with:", {
@@ -26,6 +27,27 @@ const FloatingSearchContainer = () => {
     setIsMenuOpen((prev) => !prev);
   };
 
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  const handleAllTransactionsChange = () => {
+    const newState = !isAllTransactions;
+    setIsAllTransactions(newState);
+    if (onSelectAll) {
+      onSelectAll(newState); // Notify the parent component
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const isAnySelectionMade = isAllTransactions || searchText.trim() !== "";
 
   return (
@@ -36,14 +58,16 @@ const FloatingSearchContainer = () => {
           <input
             type="checkbox"
             checked={isAllTransactions}
-            onChange={() => setIsAllTransactions(!isAllTransactions)}
+            onChange={handleAllTransactionsChange}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <label className="pl-2 text-xs text-gray-700">All Providers</label>
+          <label className="pl-2 text-xs text-gray-700">
+            All Disbursements
+          </label>
         </div>
 
         {/* Search and Filter Container */}
-        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2  w-60 ">
+        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-60 ">
           {/* Search Icon */}
           <FiSearch className="text-gray-500 mr-2" />
           {/* Search Input */}
@@ -52,7 +76,7 @@ const FloatingSearchContainer = () => {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="Search..."
-            className="flex-1 text-sm focus:outline-none w-32"
+            className="flex-1 text-sm focus:outline-none"
           />
           {/* Filter Button */}
           {/* <button
@@ -85,7 +109,7 @@ const FloatingSearchContainer = () => {
         )}
 
         <button
-          className="w-[150px] h-[32px] bg-blue-700 text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none "
+          className="w-[150px] h-[32px] bg-blue-700 text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
           onClick={() => setIsModalOpen(true)}
         >
           Manual Disbursement
@@ -108,7 +132,8 @@ const FloatingSearchContainer = () => {
                   className="w-full mb-4 px-4 py-2 border rounded-md"
                   placeholder="Service Provider"
                 >
-                  <option>Service Provider</option>
+                  <option>KAEDC</option>
+                  <option>AEDC</option>
                 </select>
                 <input
                   type="number"
@@ -118,12 +143,17 @@ const FloatingSearchContainer = () => {
                 <input
                   type="date"
                   className="w-full mb-4 px-4 py-2 border rounded-md"
+                  placeholder={new Intl.DateTimeFormat("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  }).format(new Date())} // Current date in words, e.g., "December 11, 2024"
                 />
                 <select
                   className="w-full mb-4 px-4 py-2 border rounded-md"
                   placeholder="Payment Method"
                 >
-                  <option>Bank Transfer</option>
+                  <option className="">Bank Transfer</option>
                 </select>
                 <div className="text-sm justify-items-center text-gray-600 mb-8 ">
                   <div className="font-bold pb-6">Account Details</div>
@@ -131,7 +161,7 @@ const FloatingSearchContainer = () => {
                   <div>Account Number: 0104647462</div>
                   <div>Account Name: KAEDC</div>
                 </div>
-                <div className="flex space-x-2 text-[10px]">
+                <div className="flex  space-x-2 text-[10px] ">
                   <button
                     className="bg-[#0052CC] text-white px-6 py-2 rounded-sm w-full"
                     type="button"
@@ -139,7 +169,7 @@ const FloatingSearchContainer = () => {
                     DISBURSE NOW
                   </button>
                   <button
-                    className="bg-gray-200 text-gray-600 px-4 py-2 rounded-sm w-full"
+                    className="bg-gray-200 text-gray-600 px-6 py-2 rounded-sm w-full"
                     type="button"
                   >
                     SAVE
@@ -151,7 +181,7 @@ const FloatingSearchContainer = () => {
         )}
 
         {/* Three-Dot Menu */}
-        <div className="flex items-center d ">
+        <div className="flex items-center justify-end " ref={dropdownRef}>
           <button
             onClick={toggleMenu}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -162,11 +192,17 @@ const FloatingSearchContainer = () => {
 
         {/* Menu Dropdown */}
         {isMenuOpen && (
-          <div className=" fixed right-0 flex-none mt-2 bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
+          <div className=" fixed right-2 flex-none mt-12 bg-gray-50 border border-gray-200 rounded-md shadow-lg">
             <ul className="text-sm text-gray-700">
-              <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 1</li>
-              <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 2</li>
-              <li className="p-2 hover:bg-gray-100 cursor-pointer">Option 3</li>
+              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b">
+                Disburse All Selected
+              </li>
+              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b">
+                Reschedule Disbursements
+              </li>
+              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer ">
+                Export Selected
+              </li>
             </ul>
           </div>
         )}

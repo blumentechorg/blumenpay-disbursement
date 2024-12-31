@@ -1,23 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useTable, usePagination } from "react-table";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import TransactionModal from "./Modal";
 import FloatingSearchContainer from "./Tsearch";
-import tableData from "@/lib/transactionData.json";
+import transactionData from "@/lib/transactionData.json";
 
 const TransactionTable = ({ filters }) => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
-  const [filteredData, setFilteredData] = useState([]);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     // Load data from data.json
-    setData(tableData);
+    setData(transactionData);
   }, []);
 
   const openModal = (row) => {
@@ -43,25 +42,53 @@ const TransactionTable = ({ filters }) => {
     setSelectedRows(newSelections);
   };
 
-  useEffect(() => {
-    if (filters) {
-      applyFilters(filters);
-    }
-  }, [filters]);
+  // const filterData = useCallback(() => {
+  //   if (!data.length) return [];
 
-  const applyFilters = (filterValues) => {
-    const filtered = data.filter((item) => {
+  //   let filteredResults = [...data];
+
+  //   if (filters) {
+  //     if (filters.status) {
+  //       filteredResults = filteredResults.filter(
+  //         (item) => item.status === filters.status
+  //       );
+  //     }
+  //     if (filters.serviceProvider) {
+  //       filteredResults = filteredResults.filter(
+  //         (item) => item.provider === filters.serviceProvider
+  //       );
+  //     }
+  //     if (filters.paymentMethod) {
+  //       filteredResults = filteredResults.filter(
+  //         (item) => item.method === filters.paymentMethod
+  //       );
+  //     }
+  //     if (filters.date) {
+  //       filteredResults = filteredResults.filter((item) =>
+  //         item.schedule.includes(filters.date)
+  //       );
+  //     }
+  //   }
+
+  //   return filteredResults;
+  // }, [data, filters]);
+
+  // useEffect(() => {
+  //   const filtered = filterData();
+  //   setFilteredData(filtered);
+  // }, [filterData, filters]);
+
+  const filteredData = useMemo(() => {
+    return data.filter((row) => {
       return (
-        (!filterValues.status || item.status === filterValues.status) &&
-        (!filterValues.serviceProvider ||
-          item.provider === filterValues.serviceProvider) &&
-        (!filterValues.paymentMethod ||
-          item.method === filterValues.paymentMethod) &&
-        (!filterValues.date || item.schedule.includes(filterValues.date))
+        (!filters.status || row.status === filters.status) &&
+        (!filters.serviceProvider ||
+          row.provider === filters.serviceProvider) &&
+        (!filters.paymentMethod || row.method === filters.paymentMethod) &&
+        (!filters.date || row.schedule.includes(filters.date))
       );
     });
-    setFilteredData(filtered);
-  };
+  }, [data, filters]);
 
   const columns = React.useMemo(
     () => [
@@ -136,7 +163,7 @@ const TransactionTable = ({ filters }) => {
   } = useTable(
     {
       columns,
-      data: filteredData.length ? filteredData : data,
+      data: filteredData,
       initialState: { pageIndex: 0, pageSize: 10 },
     },
     usePagination

@@ -1,16 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useTable, usePagination } from "react-table";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
-import TransactionModal from "./Modal";
+import ProvidersModal from "./Modal";
+import FloatingSearchContainer from "./PSearch";
+import providersData from "@/lib/providersData.json";
 
-const TransactionTable = () => {
+const TransactionTable = ({ filters }) => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Load data from data.json
+    setData(providersData);
+  }, []);
 
   const openModal = (row) => {
     setModalContent(row);
@@ -27,19 +34,62 @@ const TransactionTable = () => {
     }));
   };
 
-  const data = React.useMemo(
-    () =>
-      Array.from({ length: 20 }, (_, index) => ({
-        id: `123456789${index + 1}`,
-        provider: index % 2 === 0 ? "KAEDC" : "AEDC",
-        amount: "$20,000",
-        method: "Bank Transfer",
-        schedule: "11:15 AM, Nov 7",
-        status: index % 3 === 0 ? "Failed" : "Successful",
-        action: index % 3 === 0 ? "Retry" : "View Details",
-      })),
-    []
-  );
+  const handleSelectAll = (isSelected) => {
+    const newSelections = {};
+    data.forEach((row) => {
+      newSelections[row.id] = isSelected;
+    });
+    setSelectedRows(newSelections);
+  };
+
+  // const filterData = useCallback(() => {
+  //   if (!data.length) return [];
+
+  //   let filteredResults = [...data];
+
+  //   if (filters) {
+  //     if (filters.status) {
+  //       filteredResults = filteredResults.filter(
+  //         (item) => item.status === filters.status
+  //       );
+  //     }
+  //     if (filters.serviceProvider) {
+  //       filteredResults = filteredResults.filter(
+  //         (item) => item.provider === filters.serviceProvider
+  //       );
+  //     }
+  //     if (filters.paymentMethod) {
+  //       filteredResults = filteredResults.filter(
+  //         (item) => item.method === filters.paymentMethod
+  //       );
+  //     }
+  //     if (filters.date) {
+  //       filteredResults = filteredResults.filter((item) =>
+  //         item.schedule.includes(filters.date)
+  //       );
+  //     }
+  //   }
+
+  //   return filteredResults;
+  // }, [data, filters]);
+
+  // useEffect(() => {
+  //   const filtered = filterData();
+  //   setFilteredData(filtered);
+  // }, [filterData, filters]);
+
+  const filteredData = React.useMemo(() => {
+    if (!filters) return data; // If filters are undefined, return the unfiltered data.
+
+    return data.filter((row) => {
+      return (
+        (!filters.status || row.status === filters.status) &&
+        (!filters.serviceProvider ||
+          row.provider === filters.serviceProvider) &&
+        (!filters.paymentMethod || row.method === filters.paymentMethod)
+      );
+    });
+  }, [data, filters]);
 
   const columns = React.useMemo(
     () => [
@@ -57,8 +107,16 @@ const TransactionTable = () => {
       { Header: "ID", accessor: "id" },
       { Header: "Service Provider", accessor: "provider" },
       { Header: "Amount", accessor: "amount" },
-      { Header: "Payment Method", accessor: "method" },
-      { Header: "Schedule Date", accessor: "schedule" },
+      {
+        Header: "Payment Method",
+        accessor: "method",
+        className: "hidden md:table-cell",
+      },
+      {
+        Header: "Schedule Date",
+        accessor: "schedule",
+        className: "hidden lg:table-cell",
+      },
       {
         Header: "Status",
         accessor: "status",
@@ -106,25 +164,28 @@ const TransactionTable = () => {
   } = useTable(
     {
       columns,
-      data,
+      data: filteredData,
       initialState: { pageIndex: 0, pageSize: 10 },
     },
     usePagination
   );
 
   return (
-    <div>
+    <div className="space-y-5">
+      <div>
+        <FloatingSearchContainer onSelectAll={handleSelectAll} />
+      </div>
       {/* Table */}
-      <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
         <table
           {...getTableProps()}
-          className="w-full text-xs border-collapse border border-gray-300 rounded-lg"
+          className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
         >
           <thead className="bg-gray-100 text-gray-700 font-semibold">
             {headerGroups.map((headerGroup) => {
               const { key, ...rest } = headerGroup.getHeaderGroupProps(); // Separate key
               return (
-                <tr key={key} {...rest}>
+                <tr key={key} {...rest} className="block sm:table-row">
                   {headerGroup.headers.map((column) => {
                     const { key: columnKey, ...columnRest } =
                       column.getHeaderProps(); // Separate key for <th>
@@ -132,7 +193,9 @@ const TransactionTable = () => {
                       <th
                         key={columnKey}
                         {...columnRest}
-                        className="border border-gray-300 px-4 py-2 text-left"
+                        className={`border border-gray-300 px-4 py-2 text-left ${
+                          column.className || ""
+                        }`}
                       >
                         {column.render("Header")}
                       </th>
@@ -150,8 +213,7 @@ const TransactionTable = () => {
                 <tr
                   key={key}
                   {...rowProps}
-                  className="hover:bg-gray-50 hover:font-semibold"
-                  onClick={() => openModal(row.original)}
+                  className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
                 >
                   {row.cells.map((cell) => {
                     const { key: cellKey, ...cellProps } = cell.getCellProps(); // Separate key for <td>
@@ -159,7 +221,10 @@ const TransactionTable = () => {
                       <td
                         key={cellKey}
                         {...cellProps}
-                        className="border border-gray-300 px-4 py-2"
+                        className={`border border-gray-300 px-4 py-2 block sm:table-cell ${
+                          cell.column.className || ""
+                        }`}
+                        data-label={cell.column.Header} // For pseudo-labels on small screens
                       >
                         {cell.render("Cell")}
                       </td>
@@ -172,7 +237,7 @@ const TransactionTable = () => {
         </table>
 
         {/* Pagination */}
-        <div className="flex justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300">
+        <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0">
           <div className="flex items-center space-x-2">
             <span className="text-gray-700">Rows per page:</span>
             <select
@@ -232,7 +297,7 @@ const TransactionTable = () => {
       </div>
 
       {/* Modal */}
-      <TransactionModal modalContent={modalContent} onClose={closeModal} />
+      <ProvidersModal modalContent={modalContent} onClose={closeModal} />
     </div>
   );
 };

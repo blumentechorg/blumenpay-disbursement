@@ -192,7 +192,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
 
         {/* Menu Dropdown */}
         {isMenuOpen && (
-          <div className=" fixed right-2 flex-none mt-12 bg-gray-50 border border-gray-200 rounded-md shadow-lg">
+          <div className=" fixed right-2 flex-none  bg-gray-50 border border-gray-200 rounded-md shadow-lg">
             <ul className="text-sm text-gray-700">
               <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b">
                 Disburse All Selected
