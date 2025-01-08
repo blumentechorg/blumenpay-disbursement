@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
-import { FaHome, FaCog, FaUser, FaSignOutAlt } from "react-icons/fa";
 import logo from "@/public/images/logo.png";
 import title from "@/public/images/title.png";
 import Caretupdown from "@/public/icons/sidebar/caretupdown";
 import Overview from "@/public/icons/sidebar/overview";
 import Transactions from "@/public/icons/sidebar/transactions";
 import Disbursements from "@/public/icons/sidebar/disbursements";
+import Tickets from "@/public/icons/sidebar/tickets";
 import Providers from "@/public/icons/sidebar/providers";
 import Logout from "@/public/icons/sidebar/logout";
 import LogoutModal from "./LogoutModal";
@@ -46,6 +46,11 @@ export default function Sidebar() {
       href: "/Explore/providers",
       icon: <Providers />,
     },
+    {
+      name: "Admin",
+      href: "/Explore/admin/",
+      icon: <Tickets />,
+    },
   ];
 
   return (
@@ -63,14 +68,17 @@ export default function Sidebar() {
 
       {/* Menu Items */}
       <nav className="flex-1 mt-6">
-        <ul className="space-y-2 px-4">
+        <ul className="space-y-1 px-4">
           {menus.map((menu, index) => (
             <li key={index}>
               <a
                 href={menu.href}
-                className="flex items-center px-4 py-2 text-sm font-light rounded hover:bg-[#F5F7FA] hover:font-bold hover:text-gray-600"
+                className="flex items-center px-4 py-2 text-sm rounded 
+             hover:bg-[#F5F7FA] hover:font-bold hover:text-gray-900 
+             focus:outline-none 
+             "
               >
-                <span className="text-lg mr-3 hover:text-current">
+                <span className="text-lg mr-1.5 hover:text-current">
                   {menu.icon}
                 </span>
                 {menu.name}
@@ -81,7 +89,7 @@ export default function Sidebar() {
           <div className="hover:bg-[#F5F7FA] rounded">
             <button
               onClick={openModal}
-              className="flex items-center px-4 py-2 text-sm font-light hover:font-bold hover:text-gray-600"
+              className="flex items-center px-4 py-2 text-sm font-light hover:font-bold hover:text-gray-900"
             >
               <span className="text-lg mr-3 hover:text-current">
                 <Logout />
