@@ -7,6 +7,7 @@ import Overview from "@/public/icons/sidebar/overview";
 import Transactions from "@/public/icons/sidebar/transactions";
 import Disbursements from "@/public/icons/sidebar/disbursements";
 import Tickets from "@/public/icons/sidebar/tickets";
+import Admin from "@/public/icons/sidebar/admin";
 import Providers from "@/public/icons/sidebar/providers";
 import Logout from "@/public/icons/sidebar/logout";
 import LogoutModal from "./LogoutModal";
@@ -47,9 +48,14 @@ export default function Sidebar() {
       icon: <Providers />,
     },
     {
+      name: "Complain Tickets",
+      href: "/Explore/tickets/",
+      icon: <Tickets />,
+    },
+    {
       name: "Admin",
       href: "/Explore/admin/",
-      icon: <Tickets />,
+      icon: <Admin />,
     },
   ];
 

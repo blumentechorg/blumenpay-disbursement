@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function transactions() {
+export default function tickets() {
   return (
     <div>
       <svg
