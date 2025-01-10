@@ -100,19 +100,19 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
               onClick={handleCancelAll}
               className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 rounded-lg px-4 py-2 space-x-2"
             >
-              <div> Cancel All Selection</div>
-              <div>
+              <span> Cancel All Selection</span>
+              <span>
                 <IoFilterOutline className="mt-0.5" />
-              </div>
+              </span>
             </button>
           </div>
         )}
 
         <button
-          className="w-[150px] h-[32px] bg-blue-700 text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
+          className="w-full h-[32px] bg-blue-700 uppercase text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
           onClick={() => setIsModalOpen(true)}
         >
-          Manual Disbursement
+          Add new service provider
         </button>
 
         {isModalOpen && (

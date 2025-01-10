@@ -30,7 +30,7 @@ export default function DisbursementPage() {
 
           {/* Scrollable content */}
           <div className="flex-1 space-y-4 overflow-y-auto pt-5 bg-gray-100 ">
-            <Label />
+            {/* <Label /> */}
             <DisbursementTable filters={filters} />
           </div>
         </div>
