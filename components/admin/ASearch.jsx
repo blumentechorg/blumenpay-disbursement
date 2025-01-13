@@ -117,7 +117,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
               <header className="flex justify-between items-center">
-                <h3 className="text-lg font-bold">Manual Disbursement</h3>
+                <h3 className="text-lg font-bold">User Management</h3>
                 <button
                   className="text-gray-600"
                   onClick={() => setIsModalOpen(false)}
@@ -126,51 +126,97 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
                 </button>
               </header>
               <form className="mt-4">
-                <select
-                  className="w-full mb-4 px-4 py-2 border rounded-md"
-                  placeholder="Service Provider"
-                >
-                  <option>KAEDC</option>
-                  <option>AEDC</option>
-                </select>
+                {/* Full Name Input */}
                 <input
-                  type="number"
-                  placeholder="Amount"
+                  type="text"
+                  placeholder="Full Name"
                   className="w-full mb-4 px-4 py-2 border rounded-md"
                 />
+
+                {/* Email Input */}
                 <input
-                  type="date"
+                  type="email"
+                  placeholder="Email"
                   className="w-full mb-4 px-4 py-2 border rounded-md"
-                  placeholder={new Intl.DateTimeFormat("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  }).format(new Date())} // Current date in words, e.g., "December 11, 2024"
                 />
-                <select
-                  className="w-full mb-4 px-4 py-2 border rounded-md"
-                  placeholder="Payment Method"
-                >
-                  <option className="">Bank Transfer</option>
+
+                {/* Role Selection Dropdown */}
+                <select className="w-full mb-4 px-4 py-2 border rounded-md">
+                  <option value="super_admin">Super Admin</option>
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
                 </select>
-                <div className="text-sm justify-items-center text-gray-600 mb-8 ">
-                  <div className="font-bold pb-6">Account Details</div>
-                  <div>Bank Name: GTBank</div>
-                  <div>Account Number: 0104647462</div>
-                  <div>Account Name: KAEDC</div>
+
+                {/* Pages to Access Checkboxes */}
+                <div className="mb-4">
+                  <div className="font-bold mb-2">Pages to Access</div>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="access-dashboard"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="access-dashboard"
+                      className="ml-2 text-gray-700"
+                    >
+                      Dashboard
+                    </label>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="access-reports"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="access-reports"
+                      className="ml-2 text-gray-700"
+                    >
+                      Reports
+                    </label>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="access-analytics"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="access-analytics"
+                      className="ml-2 text-gray-700"
+                    >
+                      Analytics
+                    </label>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="access-settings"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="access-settings"
+                      className="ml-2 text-gray-700"
+                    >
+                      Settings
+                    </label>
+                  </div>
                 </div>
-                <div className="flex  space-x-2 text-[10px] ">
+
+                {/* Buttons */}
+                <div className="flex space-x-2 text-sm">
                   <button
                     className="bg-[#0052CC] text-white px-6 py-2 rounded-sm w-full"
                     type="button"
                   >
-                    DISBURSE NOW
+                    SAVE
                   </button>
                   <button
                     className="bg-gray-200 text-gray-600 px-6 py-2 rounded-sm w-full"
                     type="button"
                   >
-                    SAVE
+                    CANCEL
                   </button>
                 </div>
               </form>
