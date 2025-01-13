@@ -61,9 +61,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
             onChange={handleAllTransactionsChange}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <label className="pl-2 text-xs text-gray-700">
-            All Disbursements
-          </label>
+          <label className="pl-2 text-xs text-gray-700">All Admins</label>
         </div>
 
         {/* Search and Filter Container */}
