@@ -11,6 +11,11 @@ import FloatingSearchContainer from "./ASearch";
 function DisbursementTable({ filters }) {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+  const closeDropdown = () => setIsOpen(false);
 
   const openModal = (row) => {
     setModalContent(row);
@@ -68,7 +73,7 @@ function DisbursementTable({ filters }) {
         accessor: "status",
         Cell: ({ value }) => (
           <div className="flex items-center text-xs space-x-2 ">
-            {value === "Successful" ? (
+            {value === "Active" ? (
               <FaCheckCircle className="text-green-700" size={13} />
             ) : (
               <TbAlertCircleFilled className="text-red-600 " size={16} />
@@ -125,11 +130,11 @@ function DisbursementTable({ filters }) {
                     <li
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b"
                       onClick={() => {
-                        alert(`View ${row.original.id}`);
-                        closeDropdown();
+                        setIsModalOpen(true); // Show modal
+                        closeDropdown(); // Close dropdown
                       }}
                     >
-                      Disburse
+                      Edit Admin
                     </li>
                     <li
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -138,9 +143,98 @@ function DisbursementTable({ filters }) {
                         closeDropdown();
                       }}
                     >
-                      Reschedule Disburse
+                      Deactivate
                     </li>
                   </ul>
+                </div>
+              )}
+
+              {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+                    <header className="flex justify-between items-center">
+                      <h3 className="text-lg font-bold">Edit Admin</h3>
+                      <button
+                        className="text-gray-600"
+                        onClick={() => setIsModalOpen(false)}
+                      >
+                        ✕
+                      </button>
+                    </header>
+                    <form className="mt-4">
+                      {/* Full Name Input */}
+                      <input
+                        type="text"
+                        placeholder="Full Name"
+                        className="w-full mb-4 px-4 py-2 border rounded-md bg-gray-200"
+                      />
+
+                      {/* Email Input */}
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full mb-4 px-4 py-2 border rounded-md bg-gray-200"
+                      />
+
+                      {/* Role Selection Dropdown */}
+                      <select className="w-full mb-4 px-5 py-2 border rounded-md bg-gray-200">
+                        <option value="" disabled selected>
+                          Role
+                        </option>
+                        <option value="super_admin">Super Admin</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                      </select>
+
+                      {/* Pages to Access Checkboxes */}
+                      <div className="mb-4 bg-gray-200 rounded-md p-3">
+                        <div className="font-bold mb-2">Pages to Access</div>
+                        {[
+                          "Overview",
+                          "Transactions",
+                          "Disbursements",
+                          "Service Providers",
+                          "Support Tickets",
+                          "Admin Management",
+                        ].map((page) => (
+                          <div className="flex items-center mb-2" key={page}>
+                            <input
+                              type="checkbox"
+                              id={`access-${page
+                                .toLowerCase()
+                                .replace(/\s+/g, "-")}`}
+                              className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                            />
+                            <label
+                              htmlFor={`access-${page
+                                .toLowerCase()
+                                .replace(/\s+/g, "-")}`}
+                              className="ml-2 text-gray-700"
+                            >
+                              {page}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="flex space-x-2 text-sm">
+                        <button
+                          className="bg-gray-200 text-gray-600 px-6 py-2 rounded-sm w-full text-[10px]"
+                          type="button"
+                          onClick={() => setIsModalOpen(false)}
+                        >
+                          CANCEL
+                        </button>
+                        <button
+                          className="bg-[#0052CC] text-white px-6 py-2 rounded-sm w-full text-[10px]"
+                          type="button"
+                        >
+                          SUBMIT
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               )}
             </div>
@@ -159,7 +253,7 @@ function DisbursementTable({ filters }) {
         email: "johndoe@example.com",
         role: "Super Admin",
         access: "All Pages",
-        status: "Successful",
+        status: "Active",
         login: "12:00 AM, Feb 29",
       },
       {
@@ -168,7 +262,7 @@ function DisbursementTable({ filters }) {
         email: "janesmith@example.com",
         role: "Admin",
         access: "Dashboard, Reports",
-        status: "Failed",
+        status: "Inactive",
         login: "12:00 AM, Feb 29",
       },
       {
@@ -177,7 +271,7 @@ function DisbursementTable({ filters }) {
         email: "michaelbrown@example.com",
         role: "User",
         access: "Profile, Settings",
-        status: "Successful",
+        status: "Active",
         login: "12:00 AM, Mar 15",
       },
       {
@@ -186,7 +280,7 @@ function DisbursementTable({ filters }) {
         email: "emilyjohnson@example.com",
         role: "Admin",
         access: "Dashboard, Analytics",
-        status: "Pending",
+        status: "Inactive",
         login: "12:00 AM, Mar 01",
       },
       {
@@ -195,7 +289,7 @@ function DisbursementTable({ filters }) {
         email: "chrislee@example.com",
         role: "Super Admin",
         access: "All Pages",
-        status: "Successful",
+        status: "Active",
         login: "12:00 AM, Feb 29",
       },
       {
@@ -204,7 +298,7 @@ function DisbursementTable({ filters }) {
         email: "sophiadavis@example.com",
         role: "User",
         access: "Profile, Support",
-        status: "Successful",
+        status: "Active",
         login: "2:30 PM, Mar 10",
       },
       {
@@ -213,7 +307,7 @@ function DisbursementTable({ filters }) {
         email: "ethanwilson@example.com",
         role: "Admin",
         access: "Dashboard, Reports",
-        status: "Failed",
+        status: "Active",
         login: "3:15 PM, Mar 05",
       },
       {
@@ -222,7 +316,7 @@ function DisbursementTable({ filters }) {
         email: "oliviamartinez@example.com",
         role: "Super Admin",
         access: "All Pages",
-        status: "Pending",
+        status: "Inactive",
         login: "9:45 AM, Mar 20",
       },
       {
@@ -231,7 +325,7 @@ function DisbursementTable({ filters }) {
         email: "jamestaylor@example.com",
         role: "User",
         access: "Profile, Settings",
-        status: "Successful",
+        status: "Active",
         login: "4:00 PM, Feb 28",
       },
       {
@@ -240,7 +334,7 @@ function DisbursementTable({ filters }) {
         email: "avaanderson@example.com",
         role: "Admin",
         access: "Dashboard, Analytics",
-        status: "Failed",
+        status: "Inactive",
         login: "11:15 AM, Mar 01",
       },
       {
@@ -249,7 +343,7 @@ function DisbursementTable({ filters }) {
         email: "williamthomas@example.com",
         role: "Super Admin",
         access: "All Pages",
-        status: "Successful",
+        status: "Active",
         login: "6:30 PM, Mar 15",
       },
       {
@@ -258,7 +352,7 @@ function DisbursementTable({ filters }) {
         email: "miajackson@example.com",
         role: "User",
         access: "Profile, Support",
-        status: "Pending",
+        status: "Active",
         login: "10:20 AM, Mar 12",
       },
       {
@@ -267,7 +361,7 @@ function DisbursementTable({ filters }) {
         email: "alexanderwhite@example.com",
         role: "Admin",
         access: "Dashboard, Reports",
-        status: "Successful",
+        status: "Active",
         login: "7:00 PM, Mar 02",
       },
       {
@@ -276,7 +370,7 @@ function DisbursementTable({ filters }) {
         email: "isabellaharris@example.com",
         role: "User",
         access: "Profile, Settings",
-        status: "Successful",
+        status: "Inactive",
         login: "1:45 PM, Mar 05",
       },
       {
@@ -285,7 +379,7 @@ function DisbursementTable({ filters }) {
         email: "benjaminclark@example.com",
         role: "Super Admin",
         access: "All Pages",
-        status: "Failed",
+        status: "Inactive",
         login: "5:30 AM, Feb 28",
       },
     ],

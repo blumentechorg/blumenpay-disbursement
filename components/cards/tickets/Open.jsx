@@ -1,22 +1,22 @@
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
-import Providers from "@/public/icons/cards/providers";
+import { IoTicketSharp } from "react-icons/io5";
 
-export default function Card() {
+export default function OpenCard() {
   return (
     <div className="bg-white shadow-lg rounded-lg font-light ">
       {/* Title and Logo */}
       <div className="flex items-center  border-b min-w-full py-4 px-5 space-x-2 ">
-        <div className="text-gray-700 text-sm ">Active Providers </div>
+        <div className="text-gray-700 text-sm ">Open Tickets </div>
         <div className="text-blue-500 text-xl ">
-          <Providers />
+          <IoTicketSharp />
         </div>
       </div>
 
       {/* Amount and Arrow */}
       <div className="py-4 space-y-8">
         <div className=" flex items-center px-5 space-x-2">
-          <div className="text-2xl font-bold text-gray-800">05</div>
-          <FaArrowTrendUp className=" text-xl" />
+          <div className="text-2xl font-bold text-gray-800">26</div>
+          <FaArrowTrendUp className=" text-xl text-blue-700" />
         </div>
 
         {/* Alert with Percentage */}

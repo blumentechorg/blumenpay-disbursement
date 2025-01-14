@@ -117,7 +117,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
               <header className="flex justify-between items-center">
-                <h3 className="text-lg font-bold">User Management</h3>
+                <h3 className="text-lg font-bold">Add New Admin </h3>
                 <button
                   className="text-gray-600"
                   onClick={() => setIsModalOpen(false)}
@@ -130,25 +130,28 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
                 <input
                   type="text"
                   placeholder="Full Name"
-                  className="w-full mb-4 px-4 py-2 border rounded-md"
+                  className="w-full mb-4 px-4 py-2 border rounded-md bg-gray-200"
                 />
 
                 {/* Email Input */}
                 <input
                   type="email"
                   placeholder="Email"
-                  className="w-full mb-4 px-4 py-2 border rounded-md"
+                  className="w-full mb-4 px-4 py-2 border rounded-md bg-gray-200"
                 />
 
                 {/* Role Selection Dropdown */}
-                <select className="w-full mb-4 px-4 py-2 border rounded-md">
+                <select className="w-full  mb-4 px-5 py-2 border rounded-md bg-gray-200">
+                  <option value="" disabled selected>
+                    Role
+                  </option>
                   <option value="super_admin">Super Admin</option>
                   <option value="admin">Admin</option>
                   <option value="user">User</option>
                 </select>
 
                 {/* Pages to Access Checkboxes */}
-                <div className="mb-4">
+                <div className="mb-4 bg-gray-200 rounded-md p-3 ">
                   <div className="font-bold mb-2">Pages to Access</div>
                   <div className="flex items-center mb-2">
                     <input
@@ -160,7 +163,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
                       htmlFor="access-dashboard"
                       className="ml-2 text-gray-700"
                     >
-                      Dashboard
+                      Overview
                     </label>
                   </div>
                   <div className="flex items-center mb-2">
@@ -173,7 +176,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
                       htmlFor="access-reports"
                       className="ml-2 text-gray-700"
                     >
-                      Reports
+                      Transactions
                     </label>
                   </div>
                   <div className="flex items-center mb-2">
@@ -186,7 +189,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
                       htmlFor="access-analytics"
                       className="ml-2 text-gray-700"
                     >
-                      Analytics
+                      Disbursements
                     </label>
                   </div>
                   <div className="flex items-center mb-2">
@@ -199,7 +202,33 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
                       htmlFor="access-settings"
                       className="ml-2 text-gray-700"
                     >
-                      Settings
+                      Service Providers
+                    </label>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="access-settings"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="access-settings"
+                      className="ml-2 text-gray-700"
+                    >
+                      Support Tickets
+                    </label>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="access-settings"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="access-settings"
+                      className="ml-2 text-gray-700"
+                    >
+                      Admin Management
                     </label>
                   </div>
                 </div>
@@ -207,24 +236,24 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
                 {/* Buttons */}
                 <div className="flex space-x-2 text-sm">
                   <button
-                    className="bg-[#0052CC] text-white px-6 py-2 rounded-sm w-full"
-                    type="button"
-                  >
-                    SAVE
-                  </button>
-                  <button
-                    className="bg-gray-200 text-gray-600 px-6 py-2 rounded-sm w-full"
+                    className="bg-gray-200 text-gray-600 px-6 py-2 rounded-sm w-full text-[10px]"
                     type="button"
                   >
                     CANCEL
+                  </button>
+                  <button
+                    className="bg-[#0052CC] text-white px-6 py-2 rounded-sm w-full text-[10px] "
+                    type="button"
+                  >
+                    SUBMIT
                   </button>
                 </div>
               </form>
             </div>
           </div>
         )}
-
-        {/* Three-Dot Menu */}
+        {/* 
+        Three-Dot Menu
         <div className="flex items-center justify-end " ref={dropdownRef}>
           <button
             onClick={toggleMenu}
@@ -232,10 +261,10 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
           >
             <FiMoreVertical size={20} />
           </button>
-        </div>
+        </div> */}
 
         {/* Menu Dropdown */}
-        {isMenuOpen && (
+        {/* {isMenuOpen && (
           <div className=" fixed right-2 flex-none mt-12 bg-gray-50 border border-gray-200 rounded-md shadow-lg">
             <ul className="text-sm text-gray-700">
               <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b">
@@ -249,7 +278,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
               </li>
             </ul>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

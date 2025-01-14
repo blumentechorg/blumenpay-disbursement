@@ -1,7 +1,9 @@
 "use client";
 import OpenTickets from "@/components/cards/tickets/Open";
-import Activeproviders from "@/components/cards/Activeproviders";
-import Activeusers from "@/components/cards/Activeusers";
+import Label from "@/components/tickets/Label";
+import ResolvedTickets from "@/components/cards/tickets/Resolved";
+import OverdueTickets from "@/components/cards/tickets/Overdue";
+import ProgressTickets from "@/components/cards/tickets/Progress";
 import PSearch from "@/components/providers/PSearch";
 import React, { useState } from "react";
 import TicketsTable from "@/components/tickets/Table";
@@ -33,12 +35,14 @@ export default function TicketsPage() {
             {/* Scrollable content */}
             <div className="flex-1 overflow-y-auto pt-5 space-y-4 bg-gray-100 ">
               <div className="space-y-5">
-                <div className="grid grid-cols-3  gap-x-5  ">
+                <div className="grid grid-cols-4 gap-x-5">
                   <OpenTickets />
-                  <Activeproviders />
-                  <Activeusers />
+                  <ProgressTickets />
+                  <ResolvedTickets />
+                  <OverdueTickets />
                 </div>
                 <div className="space-y-5 pb-7">
+                  <Label />
                   <TicketsTable filters={filters} />
                 </div>
               </div>
