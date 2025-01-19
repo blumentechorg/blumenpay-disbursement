@@ -60,7 +60,7 @@ const TransactionModal = ({ modalContent, onClose }) => {
                 <div className="space-y-3 ">
                   <p className="text-gray-700 text-xs font-medium ">
                     <span className="font-light">Date:</span>{" "}
-                    <span className="uppercase">11:15 AM, Nov 7</span>
+                    <span className="uppercase">{modalContent.date}</span>
                   </p>
                   <p className="text-gray-700 text-xs  font-medium">
                     <span className="font-light ">Service Provider:</span>{" "}

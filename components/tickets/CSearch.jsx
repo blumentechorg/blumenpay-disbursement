@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical, FiSearch } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
+import { PiArrowSquareOutBold } from "react-icons/pi";
 
 const FloatingSearchContainer = ({ onSelectAll }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -109,10 +110,13 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
         )}
 
         <button
-          className="w-full h-[32px] bg-blue-700 uppercase text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
+          className="w-full  bg-gray-200 uppercase flex text-xs rounded-sm p-2 hover:bg-gray-300 space-x-1 focus:outline-none"
           onClick={() => setIsModalOpen(true)}
         >
-          Add new service provider
+          <span>Export</span>
+          <span>
+            <PiArrowSquareOutBold />
+          </span>
         </button>
 
         {isModalOpen && (

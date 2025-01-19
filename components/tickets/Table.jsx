@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useTable, usePagination } from "react-table";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
-import ProvidersModal from "./Modal";
+import TicketModal from "./Modal";
 import FloatingSearchContainer from "./CSearch";
-import providersData from "@/lib/providersData.json";
+import ticketsData from "@/lib/ticketsData.json";
 
 const TransactionTable = ({ filters }) => {
   const [modalContent, setModalContent] = useState(null);
@@ -16,7 +16,7 @@ const TransactionTable = ({ filters }) => {
 
   useEffect(() => {
     // Load data from data.json
-    setData(providersData);
+    setData(ticketsData);
   }, []);
 
   const openModal = (row) => {
@@ -104,32 +104,64 @@ const TransactionTable = ({ filters }) => {
           />
         ),
       },
-      { Header: "ID", accessor: "id" },
-      { Header: "Service Provider", accessor: "provider" },
-      { Header: "Amount", accessor: "amount" },
       {
-        Header: "Payment Method",
-        accessor: "method",
-        className: "hidden md:table-cell",
+        Header: "Ticket ID",
+        accessor: "ticketId",
       },
       {
-        Header: "Schedule Date",
-        accessor: "schedule",
-        className: "hidden lg:table-cell",
+        Header: "Provider Name",
+        accessor: "providerName",
+      },
+      {
+        Header: "Subject",
+        accessor: "subject",
+      },
+      {
+        Header: "Priority",
+        accessor: "priority",
+        Cell: ({ value }) => (
+          <div className="flex items-center space-x-2">
+            {value === "High" && (
+              <FaExclamationCircle className="text-yellow-500" />
+            )}
+            {value === "Medium" && (
+              <FaExclamationCircle className="text-blue-500" />
+            )}
+            {value === "Critical" && (
+              <FaExclamationCircle className="text-red-500" />
+            )}
+            {value === "Low" && (
+              <FaExclamationCircle className="text-green-500" />
+            )}
+            <span>{value}</span>
+          </div>
+        ),
+      },
+      {
+        Header: "Date",
+        accessor: "date",
       },
       {
         Header: "Status",
         accessor: "status",
         Cell: ({ value }) => (
           <div className="flex items-center space-x-2">
-            {value === "Successful" ? (
-              <FaCheckCircle className="text-green-500" size={14} />
-            ) : (
-              <TbAlertCircleFilled className="text-red-500" size={16} />
+            {value === "Resolved" && (
+              <FaCheckCircle className="text-green-500" />
+            )}
+            {value === "Opened" && (
+              <TbAlertCircleFilled className="text-red-500" />
+            )}
+            {value === "InProgress" && (
+              <TbAlertCircleFilled className="text-yellow-500" />
             )}
             <span>{value}</span>
           </div>
         ),
+      },
+      {
+        Header: "Admin",
+        accessor: "admin",
       },
       {
         Header: "Action",
@@ -297,7 +329,7 @@ const TransactionTable = ({ filters }) => {
       </div>
 
       {/* Modal */}
-      <ProvidersModal modalContent={modalContent} onClose={closeModal} />
+      <TicketModal modalContent={modalContent} onClose={closeModal} />
     </div>
   );
 };

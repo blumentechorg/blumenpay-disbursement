@@ -5,16 +5,16 @@ export default function Label() {
     <>
       <div className="">
         <div className="flex text-sm font-semibold">
-          <button className="border py-3 px-5 rounded-l-md focus:bg-white active:bg-white hover:bg-white">
+          <button className="border py-2 px-5 rounded-l-md focus:bg-white active:bg-white hover:bg-white">
             All Tickets
           </button>
-          <button className="border py-3 px-5  focus:bg-white active:bg-white hover:bg-white">
+          <button className="border py-2 px-5  focus:bg-white active:bg-white hover:bg-white">
             Open Tickets
           </button>
-          <button className="border py-3 px-5  focus:bg-white active:bg-white hover:bg-white">
+          <button className="border py-2 px-5  focus:bg-white active:bg-white hover:bg-white">
             Inprogress
           </button>
-          <button className="border py-3 px-5 rounded-r-md focus:bg-white active:bg-white hover:bg-white">
+          <button className="border py-2 px-5 rounded-r-md focus:bg-white active:bg-white hover:bg-white">
             Resolved
           </button>
         </div>
