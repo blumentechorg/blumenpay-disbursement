@@ -1,0 +1,154 @@
+
+[
+    {
+      "id": "DISB-20241224-001234",
+      "serviceProvider": "KAEDC",
+      "percentage": "2.5%",
+      "amount": "$20,000",
+      "account": "KADC Bank Acct.",
+      "frequency": "Monthly",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Feb 29" },
+    {
+      "id": "DISB-20241224-001234",
+      "serviceProvider": "KAEDC",
+      "percentage": "2.5%",
+      "amount": "$20,000",
+      "account": "KADC Bank Acct.",
+      "frequency": "Monthly",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    },
+    {
+      "id": "DISB-20241224-001234",
+      "serviceProvider": "Gro Solar",
+      "percentage": "1.0%",
+      "amount": "$20,000",
+      "account": "KADC Bank Acct.",
+      "frequency": "Monthly",
+      "status": "Failed",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    },
+    {
+      "id": "DISB-20241224-001236",
+      "serviceProvider": "Gro Solar",
+      "percentage": "1.0%",
+      "amount": "$25,000",
+      "account": "Solar Bank Acct.",
+      "frequency": "Monthly",
+      "status": "Failed",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    },
+    {
+      "id": "DISB-20241224-001237",
+      "serviceProvider": "NEPA",
+      "percentage": "3.0%",
+      "amount": "$15,000",
+      "account": "Electricity Acct.",
+      "frequency": "Bi-Annual",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Jul 01"
+    },
+
+    {
+      "id": "DISB-20241224-001239",
+      "serviceProvider": "KAEDC",
+      "percentage": "2.5%",
+      "amount": "$20,000",
+      "account": "KADC Bank Acct.",
+      "frequency": "Monthly",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    },
+    {
+      "id": "DISB-20241224-001240",
+      "serviceProvider": "Gro Solar",
+      "percentage": "1.0%",
+      "amount": "$20,000",
+      "account": "KADC Bank Acct.",
+      "frequency": "Monthly",
+      "status": "Failed",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    },
+    {
+      "id": "DISB-20241224-001241",
+      "serviceProvider": "SolarEdge",
+      "percentage": "3.2%",
+      "amount": "$50,000",
+      "account": "SolarEdge Acct.",
+      "frequency": "Quarterly",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Mar 31"
+    },
+    {
+      "id": "DISB-20241224-001242",
+      "serviceProvider": "KAEDC",
+      "percentage": "2.8%",
+      "amount": "$22,000",
+      "account": "KAEDC Savings Acct.",
+      "frequency": "Monthly",
+      "status": "Pending",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    },
+    {
+      "id": "DISB-20241224-001243",
+      "serviceProvider": "NEPA",
+      "percentage": "5.0%",
+      "amount": "$12,000",
+      "account": "Electricity Savings",
+      "frequency": "Annual",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Dec 31"
+    },
+    {
+      "id": "DISB-20241224-001244",
+      "serviceProvider": "PowerGrid",
+      "percentage": "4.0%",
+      "amount": "$40,000",
+      "account": "PowerGrid Acct.",
+      "frequency": "Bi-Monthly",
+      "status": "Failed",
+      "nextDisbursement": "12:00 AM, Apr 01"
+    },
+    {
+      "id": "DISB-20241224-001245",
+      "serviceProvider": "Gro Solar",
+      "percentage": "2.0%",
+      "amount": "$45,000",
+      "account": "Gro Solar Bank Acct.",
+      "frequency": "Bi-Annual",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Aug 01"
+    },
+    {
+      "id": "DISB-20241224-001246",
+      "serviceProvider": "KAEDC",
+      "percentage": "3.0%",
+      "amount": "$19,500",
+      "account": "KADC Bank Acct.",
+      "frequency": "Monthly",
+      "status": "Pending",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    },
+    {
+      "id": "DISB-20241224-001247",
+      "serviceProvider": "SolarEdge",
+      "percentage": "3.5%",
+      "amount": "$60,000",
+      "account": "SolarEdge Business Acct.",
+      "frequency": "Quarterly",
+      "status": "Successful",
+      "nextDisbursement": "12:00 AM, Mar 31"
+    },
+    {
+      "id": "DISB-20241224-001248",
+      "serviceProvider": "PowerGrid",
+      "percentage": "4.2%",
+      "amount": "$33,000",
+      "account": "Grid Savings Acct.",
+      "frequency": "Monthly",
+      "status": "Failed",
+      "nextDisbursement": "12:00 AM, Feb 29"
+    }
+  
+  ]

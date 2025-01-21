@@ -7,11 +7,10 @@ import axios from "@/lib/axiosInstance";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Stores user info
+  const [user, setUser] = useState(null); // Stores user info, including role and permissions
   const [loading, setLoading] = useState(true); // Handles loading state
 
   useEffect(() => {
-    // Load user info from local storage
     const storedUser = localStorage.getItem("user");
     const token = Cookies.get("authToken");
 
@@ -30,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get("/verify", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const userData = response.data.user;
+      const userData = response.data.user; // Include `role` and `permissions` from the backend
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
@@ -55,8 +54,15 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const hasPermission = (page) => {
+    if (user?.role === "super-admin") return true; // Full access for Super Admin
+    return user?.permissions?.[page] || false; // Check permissions for Admin
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, loading, hasPermission }}
+    >
       {children}
     </AuthContext.Provider>
   );

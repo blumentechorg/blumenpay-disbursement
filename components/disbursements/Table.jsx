@@ -7,10 +7,18 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaCheckCircle } from "react-icons/fa";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import FloatingSearchContainer from "./Dsearch";
+import disbursementData from "@/lib/disbursementData.json";
+import DisbursementModal from "./Modal";
 
 function DisbursementTable({ filters }) {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Load data from data.json
+    setData(disbursementData);
+  }, []);
 
   const openModal = (row) => {
     setModalContent(row);
@@ -35,7 +43,7 @@ function DisbursementTable({ filters }) {
     setSelectedRows(newSelections);
   };
 
-  const columns = useMemo(
+  const columns = React.useMemo(
     () => [
       {
         Header: "",
@@ -68,7 +76,7 @@ function DisbursementTable({ filters }) {
         Header: "Status Last Disb.",
         accessor: "status",
         Cell: ({ value }) => (
-          <div className="flex items-center text-sm space-x-2 ">
+          <div className="flex items-center text-xs space-x-2 ">
             {value === "Successful" ? (
               <FaCheckCircle className="text-green-700" size={13} />
             ) : (
@@ -125,17 +133,23 @@ function DisbursementTable({ filters }) {
                   <ul className="py-1 text-xs text-gray-700">
                     <li
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b"
+                      onClick={() => openModal(row.original)}
+                    >
+                      View Details
+                    </li>
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b"
                       onClick={() => {
-                        alert(`View ${row.original.id}`);
+                        alert(`Edit ${row.original.id}`);
                         closeDropdown();
                       }}
                     >
-                      Disburse
+                      Edit Disburse
                     </li>
                     <li
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => {
-                        alert(`Edit ${row.original.id}`);
+                        alert(`Reschedule ${row.original.id}`);
                         closeDropdown();
                       }}
                     >
@@ -152,163 +166,163 @@ function DisbursementTable({ filters }) {
     [selectedRows]
   );
 
-  const data = useMemo(
-    () => [
-      {
-        id: "DISB-20241224-001234",
-        serviceProvider: "KAEDC",
-        percentage: "2.5%",
-        amount: "$20,000",
-        account: "KADC Bank Acct.",
-        frequency: "Monthly",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001234",
-        serviceProvider: "KAEDC",
-        percentage: "2.5%",
-        amount: "$20,000",
-        account: "KADC Bank Acct.",
-        frequency: "Monthly",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001234",
-        serviceProvider: "Gro Solar",
-        percentage: "1.0%",
-        amount: "$20,000",
-        account: "KADC Bank Acct.",
-        frequency: "Monthly",
-        status: "Failed",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001236",
-        serviceProvider: "Gro Solar",
-        percentage: "1.0%",
-        amount: "$25,000",
-        account: "Solar Bank Acct.",
-        frequency: "Monthly",
-        status: "Failed",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001237",
-        serviceProvider: "NEPA",
-        percentage: "3.0%",
-        amount: "$15,000",
-        account: "Electricity Acct.",
-        frequency: "Bi-Annual",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Jul 01",
-      },
+  // const data = useMemo(
+  //   () => [
+  //     {
+  //       id: "DISB-20241224-001234",
+  //       serviceProvider: "KAEDC",
+  //       percentage: "2.5%",
+  //       amount: "$20,000",
+  //       account: "KADC Bank Acct.",
+  //       frequency: "Monthly",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001234",
+  //       serviceProvider: "KAEDC",
+  //       percentage: "2.5%",
+  //       amount: "$20,000",
+  //       account: "KADC Bank Acct.",
+  //       frequency: "Monthly",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001234",
+  //       serviceProvider: "Gro Solar",
+  //       percentage: "1.0%",
+  //       amount: "$20,000",
+  //       account: "KADC Bank Acct.",
+  //       frequency: "Monthly",
+  //       status: "Failed",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001236",
+  //       serviceProvider: "Gro Solar",
+  //       percentage: "1.0%",
+  //       amount: "$25,000",
+  //       account: "Solar Bank Acct.",
+  //       frequency: "Monthly",
+  //       status: "Failed",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001237",
+  //       serviceProvider: "NEPA",
+  //       percentage: "3.0%",
+  //       amount: "$15,000",
+  //       account: "Electricity Acct.",
+  //       frequency: "Bi-Annual",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Jul 01",
+  //     },
 
-      {
-        id: "DISB-20241224-001239",
-        serviceProvider: "KAEDC",
-        percentage: "2.5%",
-        amount: "$20,000",
-        account: "KADC Bank Acct.",
-        frequency: "Monthly",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001240",
-        serviceProvider: "Gro Solar",
-        percentage: "1.0%",
-        amount: "$20,000",
-        account: "KADC Bank Acct.",
-        frequency: "Monthly",
-        status: "Failed",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001241",
-        serviceProvider: "SolarEdge",
-        percentage: "3.2%",
-        amount: "$50,000",
-        account: "SolarEdge Acct.",
-        frequency: "Quarterly",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Mar 31",
-      },
-      {
-        id: "DISB-20241224-001242",
-        serviceProvider: "KAEDC",
-        percentage: "2.8%",
-        amount: "$22,000",
-        account: "KAEDC Savings Acct.",
-        frequency: "Monthly",
-        status: "Pending",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001243",
-        serviceProvider: "NEPA",
-        percentage: "5.0%",
-        amount: "$12,000",
-        account: "Electricity Savings",
-        frequency: "Annual",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Dec 31",
-      },
-      {
-        id: "DISB-20241224-001244",
-        serviceProvider: "PowerGrid",
-        percentage: "4.0%",
-        amount: "$40,000",
-        account: "PowerGrid Acct.",
-        frequency: "Bi-Monthly",
-        status: "Failed",
-        nextDisbursement: "12:00 AM, Apr 01",
-      },
-      {
-        id: "DISB-20241224-001245",
-        serviceProvider: "Gro Solar",
-        percentage: "2.0%",
-        amount: "$45,000",
-        account: "Gro Solar Bank Acct.",
-        frequency: "Bi-Annual",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Aug 01",
-      },
-      {
-        id: "DISB-20241224-001246",
-        serviceProvider: "KAEDC",
-        percentage: "3.0%",
-        amount: "$19,500",
-        account: "KADC Bank Acct.",
-        frequency: "Monthly",
-        status: "Pending",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      {
-        id: "DISB-20241224-001247",
-        serviceProvider: "SolarEdge",
-        percentage: "3.5%",
-        amount: "$60,000",
-        account: "SolarEdge Business Acct.",
-        frequency: "Quarterly",
-        status: "Successful",
-        nextDisbursement: "12:00 AM, Mar 31",
-      },
-      {
-        id: "DISB-20241224-001248",
-        serviceProvider: "PowerGrid",
-        percentage: "4.2%",
-        amount: "$33,000",
-        account: "Grid Savings Acct.",
-        frequency: "Monthly",
-        status: "Failed",
-        nextDisbursement: "12:00 AM, Feb 29",
-      },
-      // Add more rows as needed
-    ],
-    []
-  );
+  //     {
+  //       id: "DISB-20241224-001239",
+  //       serviceProvider: "KAEDC",
+  //       percentage: "2.5%",
+  //       amount: "$20,000",
+  //       account: "KADC Bank Acct.",
+  //       frequency: "Monthly",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001240",
+  //       serviceProvider: "Gro Solar",
+  //       percentage: "1.0%",
+  //       amount: "$20,000",
+  //       account: "KADC Bank Acct.",
+  //       frequency: "Monthly",
+  //       status: "Failed",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001241",
+  //       serviceProvider: "SolarEdge",
+  //       percentage: "3.2%",
+  //       amount: "$50,000",
+  //       account: "SolarEdge Acct.",
+  //       frequency: "Quarterly",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Mar 31",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001242",
+  //       serviceProvider: "KAEDC",
+  //       percentage: "2.8%",
+  //       amount: "$22,000",
+  //       account: "KAEDC Savings Acct.",
+  //       frequency: "Monthly",
+  //       status: "Pending",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001243",
+  //       serviceProvider: "NEPA",
+  //       percentage: "5.0%",
+  //       amount: "$12,000",
+  //       account: "Electricity Savings",
+  //       frequency: "Annual",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Dec 31",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001244",
+  //       serviceProvider: "PowerGrid",
+  //       percentage: "4.0%",
+  //       amount: "$40,000",
+  //       account: "PowerGrid Acct.",
+  //       frequency: "Bi-Monthly",
+  //       status: "Failed",
+  //       nextDisbursement: "12:00 AM, Apr 01",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001245",
+  //       serviceProvider: "Gro Solar",
+  //       percentage: "2.0%",
+  //       amount: "$45,000",
+  //       account: "Gro Solar Bank Acct.",
+  //       frequency: "Bi-Annual",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Aug 01",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001246",
+  //       serviceProvider: "KAEDC",
+  //       percentage: "3.0%",
+  //       amount: "$19,500",
+  //       account: "KADC Bank Acct.",
+  //       frequency: "Monthly",
+  //       status: "Pending",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001247",
+  //       serviceProvider: "SolarEdge",
+  //       percentage: "3.5%",
+  //       amount: "$60,000",
+  //       account: "SolarEdge Business Acct.",
+  //       frequency: "Quarterly",
+  //       status: "Successful",
+  //       nextDisbursement: "12:00 AM, Mar 31",
+  //     },
+  //     {
+  //       id: "DISB-20241224-001248",
+  //       serviceProvider: "PowerGrid",
+  //       percentage: "4.2%",
+  //       amount: "$33,000",
+  //       account: "Grid Savings Acct.",
+  //       frequency: "Monthly",
+  //       status: "Failed",
+  //       nextDisbursement: "12:00 AM, Feb 29",
+  //     },
+  //     // Add more rows as needed
+  //   ],
+  //   []
+  // );
 
   const filteredData = useMemo(() => {
     return data.filter((row) => {
@@ -356,7 +370,7 @@ function DisbursementTable({ filters }) {
           {...getTableProps()}
           className="min-w-full table-auto border-collapse border border-gray-200"
         >
-          <thead className="bg-gray-100 text-gray-700 font-semibold">
+          <thead className="bg-gray-100 text-gray-700 font-semibold text-xs">
             {headerGroups.map((headerGroup) => {
               const { key, ...rest } = headerGroup.getHeaderGroupProps(); // Separate key
               return (
@@ -368,7 +382,7 @@ function DisbursementTable({ filters }) {
                       <th
                         key={columnKey}
                         {...columnRest}
-                        className="border border-gray-300 px-2 py-2 text-left"
+                        className="border border-gray-300 px-2 py-2 text-left text-xs"
                       >
                         {column.render("Header")}
                       </th>
@@ -387,7 +401,7 @@ function DisbursementTable({ filters }) {
                 <tr
                   key={key}
                   {...rowProps}
-                  className="hover:bg-gray-50 hover:font-semibold"
+                  className="hover:bg-gray-50 hover:font-semibold text-xs"
                 >
                   {row.cells.map((cell) => {
                     const { key: cellKey, ...cellProps } = cell.getCellProps(); // Separate key for <td>
@@ -471,6 +485,8 @@ function DisbursementTable({ filters }) {
           {Math.min((pageIndex + 1) * pageSize, data.length)} of {data.length}
         </div>
       </div>
+
+      <DisbursementModal modalContent={modalContent} onClose={closeModal} />
     </div>
   );
 }

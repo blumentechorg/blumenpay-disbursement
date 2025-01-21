@@ -1,7 +1,7 @@
 [
     {
         "ticketId": "TCKT-1037",
-        "providerName": "Provider C",
+        "providerName": " KAEDC ",
         "subject": "Account Access",
         "priority": "Medium",
         "date": "2024-12-25",
@@ -10,7 +10,7 @@
     },
     {
         "ticketId": "TCKT-2122",
-        "providerName": "Provider A",
+        "providerName": " Gro Solar ",
         "subject": "Feature Request",
         "priority": "High",
         "date": "2024-12-24",
@@ -19,7 +19,7 @@
     },
     {
         "ticketId": "TCKT-6892",
-        "providerName": "Provider A",
+        "providerName": " Amaltech ",
         "subject": "Billing Issue",
         "priority": "High",
         "date": "2025-01-18",
@@ -28,7 +28,7 @@
     },
     {
         "ticketId": "TCKT-1110",
-        "providerName": "Provider D",
+        "providerName": " AEDC ",
         "subject": "Billing Issue",
         "priority": "Critical",
         "date": "2025-01-12",
@@ -37,7 +37,7 @@
     },
     {
         "ticketId": "TCKT-7123",
-        "providerName": "Provider D",
+        "providerName": " Amaltech ",
         "subject": "Feature Request",
         "priority": "Low",
         "date": "2025-01-08",
@@ -46,7 +46,7 @@
     },
     {
         "ticketId": "TCKT-3900",
-        "providerName": "Provider B",
+        "providerName": " Amaltech ",
         "subject": "Account Access",
         "priority": "Low",
         "date": "2025-01-05",
@@ -55,7 +55,7 @@
     },
     {
         "ticketId": "TCKT-4480",
-        "providerName": "Provider A",
+        "providerName": " Gro Solar ",
         "subject": "Feature Request",
         "priority": "Low",
         "date": "2025-01-10",
@@ -64,7 +64,7 @@
     },
     {
         "ticketId": "TCKT-1329",
-        "providerName": "Provider D",
+        "providerName": " KAEDC ",
         "subject": "Billing Issue",
         "priority": "Low",
         "date": "2024-12-25",
@@ -73,7 +73,7 @@
     },
     {
         "ticketId": "TCKT-3706",
-        "providerName": "Provider A",
+        "providerName": " Amaltech ",
         "subject": "Account Access",
         "priority": "Low",
         "date": "2025-01-04",
@@ -82,7 +82,7 @@
     },
     {
         "ticketId": "TCKT-1814",
-        "providerName": "Provider C",
+        "providerName": " AEDC ",
         "subject": "Technical Support",
         "priority": "Low",
         "date": "2024-12-23",
@@ -91,7 +91,7 @@
     },
     {
         "ticketId": "TCKT-7389",
-        "providerName": "Provider C",
+        "providerName": " Amaltech ",
         "subject": "Account Access",
         "priority": "Critical",
         "date": "2025-01-18",
@@ -100,7 +100,7 @@
     },
     {
         "ticketId": "TCKT-5891",
-        "providerName": "Provider A",
+        "providerName": " AEDC ",
         "subject": "Feature Request",
         "priority": "Low",
         "date": "2025-01-06",
@@ -109,7 +109,7 @@
     },
     {
         "ticketId": "TCKT-3431",
-        "providerName": "Provider D",
+        "providerName": " KAEDC ",
         "subject": "Account Access",
         "priority": "High",
         "date": "2025-01-08",
@@ -118,7 +118,7 @@
     },
     {
         "ticketId": "TCKT-2507",
-        "providerName": "Provider A",
+        "providerName": " KAEDC ",
         "subject": "Account Access",
         "priority": "High",
         "date": "2025-01-17",
@@ -127,7 +127,7 @@
     },
     {
         "ticketId": "TCKT-2000",
-        "providerName": "Provider A",
+        "providerName": " KAEDC ",
         "subject": "Billing Issue",
         "priority": "Medium",
         "date": "2024-12-27",

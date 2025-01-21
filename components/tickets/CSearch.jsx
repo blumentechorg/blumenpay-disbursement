@@ -94,12 +94,12 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
       </div>
 
       {/* Cancel All Selection Button (Conditionally Rendered) */}
-      <div className="flex">
+      <div className="flex space-x-5">
         {isAnySelectionMade && (
           <div className="">
             <button
               onClick={handleCancelAll}
-              className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 rounded-lg px-4 py-2 space-x-2"
+              className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 w-[180px] rounded-lg px-4 py-2 space-x-2"
             >
               <span> Cancel All Selection</span>
               <span>

@@ -92,6 +92,23 @@ export default function Sidebar() {
             </li>
           ))}
 
+          {/* 
+{menus
+            .filter((menu) => user?.role === "super-admin" || user?.permissions?.[menu.key])
+            .map((menu, index) => (
+              <li key={index}>
+                <a
+                  href={menu.href}
+                  className="flex items-center px-4 py-2 text-sm rounded 
+                    hover:bg-[#F5F7FA] hover:font-bold hover:text-gray-900 
+                    focus:outline-none"
+                >
+                  <span className="text-lg mr-1.5 hover:text-current">{menu.icon}</span>
+                  {menu.name}
+                </a>
+              </li>
+            ))} */}
+
           <div className="hover:bg-[#F5F7FA] rounded">
             <button
               onClick={openModal}

@@ -1,12 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useTable, usePagination } from "react-table";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
+import OverviewModal from "./Modal";
 
 const ActivityTable = () => {
+  const [modalContent, setModalContent] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (row) => {
+    setModalContent(row.original); // Set the row data as modal content
+    setIsModalOpen(true); // Open the modal
+  };
+
   const data = React.useMemo(
     () =>
       Array(10)
@@ -59,9 +68,12 @@ const ActivityTable = () => {
       {
         Header: "Action",
         accessor: "action",
-        Cell: ({ value }) => (
-          <button className=" text-sm underline hover:text-blue-700">
-            {value}
+        Cell: ({ row }) => (
+          <button
+            // onClick={() => handleViewDetails(row)}
+            className="text-sm underline hover:text-blue-700"
+          >
+            View Details
           </button>
         ),
       },
@@ -236,6 +248,13 @@ const ActivityTable = () => {
           {rows.length}
         </div>
       </div>
+      {/* Modal */}
+      {/* {isModalOpen && (
+        <OverviewModal
+          modalContent={modalContent}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )} */}
     </div>
   );
 };

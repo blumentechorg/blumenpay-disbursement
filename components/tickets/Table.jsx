@@ -246,6 +246,7 @@ const TransactionTable = ({ filters }) => {
                   key={key}
                   {...rowProps}
                   className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
+                  onClick={() => setSelectedRow(row.original)}
                 >
                   {row.cells.map((cell) => {
                     const { key: cellKey, ...cellProps } = cell.getCellProps(); // Separate key for <td>

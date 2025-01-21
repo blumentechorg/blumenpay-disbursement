@@ -5,7 +5,7 @@ import React, { useState } from "react";
 const FilterComponent = ({ onFilterChange }) => {
   // State for each filter
   const [filters, setFilters] = useState({
-    paymentType: "",
+    providers: "",
     status: "",
     serviceProvider: "",
     paymentMethod: "",
@@ -15,7 +15,7 @@ const FilterComponent = ({ onFilterChange }) => {
   // Options for dropdowns
   const statuses = ["Pending", "Scheduled"];
   const serviceProviders = ["KAEDC", "AEDC"];
-  const paymentMethods = ["POS", "Bank Transfer"];
+  const providers = ["Gro Solar", "KAEDC", "NEPA", "PowerGrid", "SolarEdge"];
 
   // Handle change in filters
   const handleFilterChange = (field, value) => {
@@ -27,7 +27,7 @@ const FilterComponent = ({ onFilterChange }) => {
   // Clear all filters
   const clearAllFilters = () => {
     const clearedFilters = {
-      paymentType: "",
+      providers: "",
       status: "",
       serviceProvider: "",
       paymentMethod: "",
@@ -41,15 +41,15 @@ const FilterComponent = ({ onFilterChange }) => {
     <div className="p-6 rounded-lg max-w-md mx-auto text-sm">
       <h2 className="font-semibold mb-4">Filter</h2>
 
-      {/* Payment Method */}
+      {/* Providers */}
       <div className="mb-4">
         <select
-          value={filters.paymentMethod}
+          value={filters.provider}
           onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
           className="w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500"
         >
-          <option value="">Payment Method</option>
-          {paymentMethods.map((type) => (
+          <option value="">Providers</option>
+          {providers.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>
