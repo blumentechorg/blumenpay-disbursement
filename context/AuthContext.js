@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const userData = response.data.user; // Include `role` and `permissions` from the backend
-      setUser(userData);
+      setUser({ ...userData, managementRoles: userData.managementRoles || [] });
       localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
       console.error("Verification failed:", error.message);
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const hasPermission = (page) => {
-    if (user?.role === "super-admin") return true; // Full access for Super Admin
+    if (user?.role === "SuperAdmin") return true; // Full access for Super Admin
     return user?.permissions?.[page] || false; // Check permissions for Admin
   };
 
@@ -69,3 +69,39 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+// src/context/AuthContext.js
+
+// "use client";
+
+// import { createContext, useContext, useState, useEffect } from "react";
+
+// const AuthContext = createContext();
+
+// export const useAuth = () => useContext(AuthContext);
+
+// export const AuthProvider = ({ children }) => {
+//   const [user, setUser] = useState(null);
+
+//   // Example: Simulate fetching user data from storage
+//   useEffect(() => {
+//     const storedUser = JSON.parse(localStorage.getItem("user"));
+//     if (storedUser) setUser(storedUser);
+//   }, []);
+
+//   const login = (userData) => {
+//     setUser(userData);
+//     localStorage.setItem("user", JSON.stringify(userData));
+//   };
+
+//   const logout = () => {
+//     setUser(null);
+//     localStorage.removeItem("user");
+//   };
+
+//   return (
+//     <AuthContext.Provider value={{ user, login, logout }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };

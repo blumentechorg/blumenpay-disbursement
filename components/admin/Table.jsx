@@ -8,7 +8,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import FloatingSearchContainer from "./ASearch";
 
-function DisbursementTable({ filters }) {
+function AdminTable({ filters }) {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -551,4 +551,4 @@ function DisbursementTable({ filters }) {
   );
 }
 
-export default DisbursementTable;
+export default AdminTable;

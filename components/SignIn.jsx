@@ -35,9 +35,17 @@ const SignInForm = () => {
       const response = await axios.post("/Identity/Login", data);
       const { token, user } = response.data;
 
+      // Save user and token to cookies/localStorage
       Cookies.set("authToken", token, { secure: true, sameSite: "Strict" });
       localStorage.setItem("user", JSON.stringify(user));
+
+      console.log("User fetched from API:", user); // Debug user object
+      console.log("User role:", user.role); // Debug role specifically
+
+      // Save user and token in AuthContext
       login(user, token);
+
+      // Redirect to the dashboard
       router.push("/Explore/overview");
       toast.success("Login successful!");
     } catch (error) {
@@ -50,11 +58,11 @@ const SignInForm = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4 sm:p-6 font-light">
       <div className="flex flex-col items-center w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <div className=" pb-12  ">
+        <div className="pb-12">
           <div className="mb-3 items-center flex flex-col">
             <Image src={logo} width={40} height={40} alt="logo" />
           </div>
-          <div className="text-xl font-semibold text-black ">BlumenPay</div>
+          <div className="text-xl font-semibold text-black">BlumenPay</div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
