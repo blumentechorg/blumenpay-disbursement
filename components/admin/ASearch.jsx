@@ -53,21 +53,26 @@ const FloatingSearchContainer = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/Team/BlumenMember", {
-        fullName: data.fullName,
-        email: data.email,
-        userTitle: data.userTitle,
-        managementRoles: selectedManagementRoles,
-      });
+      const response = await axios.post("/Team/BlumenMember", data);
+      const { token, user } = response.data;
 
-      toast.success("User created successfully!");
-      setIsModalOpen(false); // Close the modal after success
-      reset(); // Reset the form fields
+      // Save user and token to cookies/localStorage
+      Cookies.set("authToken", token, { secure: true, sameSite: "Strict" });
+      localStorage.setItem("user", JSON.stringify(user));
+
+      console.log("User fetched from API:", user); // Debug user object
+      console.log("User role:", user.role); // Debug role specifically
+
+      // Save user and token in AuthContext
+      login(user, token);
+
+      // Redirect to the dashboard
+      // router.push("/Explore/overview");
+      toast.success("User Created!");
     } catch (error) {
-      console.error("Error creating user:", error);
-      toast.error("Failed to create user. Please try again.");
+      toast.error("Create Account failed. Please try again.");
     } finally {
-      setLoading(false); // Stop the loading indicator
+      setLoading(false);
     }
   };
 
