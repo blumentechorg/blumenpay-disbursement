@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const token = Cookies.get("authToken");
+    const token = Cookies.get("accessToken");
 
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(userData));
     } catch (error) {
       console.error("Verification failed:", error.message);
-      Cookies.remove("authToken");
+      Cookies.remove("accessToken");
       localStorage.removeItem("user");
       setUser(null);
     } finally {
@@ -43,13 +43,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (userData, token) => {
-    Cookies.set("authToken", token, { expires: 7 });
+    Cookies.set("accessToken", token, { expires: 7 });
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
   };
 
   const logout = () => {
-    Cookies.remove("authToken");
+    Cookies.remove("accessToken");
     localStorage.removeItem("user");
     setUser(null);
   };

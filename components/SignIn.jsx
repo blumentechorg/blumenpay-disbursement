@@ -33,19 +33,28 @@ const SignInForm = () => {
 
     try {
       const response = await axios.post("/Identity/Login", data);
-      const { token, user } = response.data;
+      const { tokens, user } = response.data;
 
-      // Save user and token to cookies/localStorage
-      Cookies.set("authToken", token, { secure: true, sameSite: "Strict" });
+      // Save tokens and user to localStorage
+      localStorage.setItem("accessToken", tokens.accessToken);
+      localStorage.setItem("refreshToken", tokens.refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
 
-      console.log("User fetched from API:", user); // Debug user object
-      console.log("User role:", user.role); // Debug role specifically
+      // Save accessToken in cookies for secure access
+      Cookies.set("accessToken", tokens.accessToken, {
+        secure: true,
+        sameSite: "Strict",
+      });
+
+      console.log("User fetched from API:", user); // Debugging user object
+      console.log("User role:", user.role);
+      console.log("token:", tokens.accessToken);
+      console.log("token:", tokens.refreshToken); // Debugging role
 
       // Save user and token in AuthContext
-      login(user, token);
+      login(user, tokens.accessToken);
 
-      // Redirect to the dashboard
+      // Redirect to dashboard
       router.push("/Explore/overview");
       toast.success("Login successful!");
     } catch (error) {

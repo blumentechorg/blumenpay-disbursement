@@ -10,7 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "@/lib/axiosInstance";
 
-const FloatingSearchContainer = () => {
+const FloatingSearchContainer = ({ workplaces }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -54,21 +54,33 @@ const FloatingSearchContainer = () => {
 
     try {
       const response = await axios.post("/Team/BlumenMember", data);
-      const { token, user } = response.data;
+      const { tokens, user } = response.data; // Extract tokens and user object
 
-      // Save user and token to cookies/localStorage
-      Cookies.set("authToken", token, { secure: true, sameSite: "Strict" });
+      // Store tokens & user in localStorage
+      localStorage.setItem("accessToken", tokens.accessToken);
+      localStorage.setItem("refreshToken", tokens.refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
 
-      console.log("User fetched from API:", user); // Debug user object
-      console.log("User role:", user.role); // Debug role specifically
+      // Store accessToken in cookies for security
+      Cookies.set("accessToken", tokens.accessToken, {
+        secure: true,
+        sameSite: "Strict",
+      });
 
-      // Save user and token in AuthContext
-      login(user, token);
+      console.log("User Created:", user);
 
-      // Redirect to the dashboard
-      // router.push("/Explore/overview");
-      toast.success("User Created!");
+      // Retrieve tokens from localStorage after sign-in
+      const storedAccessToken = localStorage.getItem("accessToken");
+      const storedRefreshToken = localStorage.getItem("refreshToken");
+
+      console.log("Retrieved Access Token:", storedAccessToken);
+      console.log("Retrieved Refresh Token:", storedRefreshToken);
+
+      // Save user and retrieved token in AuthContext
+      login(user, storedAccessToken);
+
+      // Redirect to dashboard or show success message
+      toast.success("User Created Successfully!");
     } catch (error) {
       toast.error("Create Account failed. Please try again.");
     } finally {
@@ -200,7 +212,7 @@ const FloatingSearchContainer = () => {
                   </p>
                 )}
 
-                {/* Roles Management Selection */}
+                {/* Workplaces  */}
                 <div className="mb-4 bg-gray-200 rounded-md p-3">
                   <div className="font-bold mb-2">Assign Management Roles</div>
                   {managementRoles.map((role) => (
