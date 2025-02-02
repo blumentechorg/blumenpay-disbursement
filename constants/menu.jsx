@@ -6,43 +6,42 @@ import Disbursements from "@/public/icons/sidebar/disbursements";
 import Tickets from "@/public/icons/sidebar/tickets";
 import Admin from "@/public/icons/sidebar/admin";
 import Providers from "@/public/icons/sidebar/providers";
-import Logout from "@/public/icons/sidebar/logout";
 
 export const MENU_ITEMS = [
   {
+    name: "Admin",
+    href: "/admin",
+    icon: <Admin />,
+    roles: ["Admin", "teamMgt"], // add the roles that should have access
+  },
+  {
     name: "Overview",
-    href: "/Explore/overview/",
-    roles: ["SuperAdmin", "transaction management"],
+    href: "/overview",
     icon: <Overview />,
+    roles: ["transactionMgt"], // add the roles that should have access
   },
   {
-    name: "Transactions",
-    href: "/Explore/transactions/",
-    roles: ["SuperAdmin", "transaction management"],
+    name: "Transaction",
+    href: "/transaction",
     icon: <Transactions />,
+    roles: ["transactionMgt"],
   },
   {
-    name: "Disbursements",
-    href: "/Explore/disbursements/",
-    roles: ["SuperAdmin", "settlement management"],
+    name: "Disbursement",
+    href: "/disbursement",
     icon: <Disbursements />,
+    roles: ["settlementMgt"],
   },
   {
     name: "Business",
-    href: "/Explore/providers",
-    roles: ["SuperAdmin", "app management"],
+    href: "/business",
     icon: <Providers />,
+    roles: ["appMgt"],
   },
   {
-    name: "Complain Tickets",
-    href: "/Explore/tickets/",
-    roles: ["SuperAdmin", "customer management"],
+    name: "Complain Ticket",
+    href: "/complaints",
     icon: <Tickets />,
-  },
-  {
-    name: "Admin",
-    href: "/Explore/admin/",
-    roles: ["SuperAdmin", "team management"],
-    icon: <Admin />,
+    roles: ["customerMgt"],
   },
 ];
