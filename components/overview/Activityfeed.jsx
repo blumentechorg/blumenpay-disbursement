@@ -25,7 +25,7 @@ export default function Activityfeed() {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="">
       <div className="flex text-sm items-center border bg-white border-gray-300 rounded-lg h-8 px-2 w-[350px]">
         <div className="font-bold">Realtime Activity Feed</div>
         <div className="flex-1" />

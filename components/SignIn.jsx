@@ -48,8 +48,8 @@ const SignInForm = () => {
 
       console.log("User fetched from API:", user); // Debugging user object
       console.log("User role:", user.role);
-      console.log("token:", tokens.accessToken);
-      console.log("token:", tokens.refreshToken); // Debugging role
+      console.log("accesstoken:", tokens.accessToken);
+      console.log("refreshtoken:", tokens.refreshToken); // Debugging role
 
       // Save user and token in AuthContext
       login(user, tokens.accessToken);
