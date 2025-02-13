@@ -31,9 +31,9 @@ function AdminTable({ filters = {} }) {
           fullName: item.user?.fullName || "N/A",
           role: item.title || "N/A",
           status: item.active ? "Active" : "Inactive",
-          accessPages: [
+          workplaces: [
             item.teamMgt && "Admin",
-            item.transactionMgt && "Overview, Transactions",
+            item.transactionMgt && "Overview | Transactions",
             item.settlementnMgt && "Disbursements",
             item.appMgt && "Service Providers",
             item.customerMgt && "Complain Tickets",
@@ -87,20 +87,11 @@ function AdminTable({ filters = {} }) {
         // Use the computed fullName (derived from user.fullName)
         accessor: "fullName",
       },
-      { Header: "Email", accessor: "email" },
+      // { Header: "Email", accessor: "email" },
       { Header: "Role", accessor: "role" },
       {
         Header: "Access (pages)",
-        accessor: (row) => {
-          // Build a string listing the pages the user can access.
-          const pages = [];
-          if (row.teamMgt) pages.push("Admin");
-          if (row.transactionMgt) pages.push("Overview, Transactions");
-          if (row.settlementnMgt) pages.push("Disbursements");
-          if (row.appMgt) pages.push("Service Providers");
-          if (row.customerMgt) pages.push("Complain Tickets");
-          return pages.join(" | ");
-        },
+        accessor: "workplaces",
       },
       {
         Header: "Status",
@@ -116,7 +107,7 @@ function AdminTable({ filters = {} }) {
           </div>
         ),
       },
-      { Header: "Last Login", accessor: "login" },
+      // { Header: "Last Login", accessor: "login" },
       {
         Header: "Action",
         accessor: "action",
