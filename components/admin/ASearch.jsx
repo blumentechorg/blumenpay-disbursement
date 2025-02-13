@@ -25,6 +25,36 @@ const FloatingSearchContainer = ({ workplaces }) => {
 
   const dropdownRef = useRef(null);
 
+  const handleCancelAll = () => {
+    setIsAllTransactions(false);
+    setSearchText("");
+    onSelectAll(false); // Deselect all rows
+  };
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  const handleAllTransactionsChange = () => {
+    const newState = !isAllTransactions;
+    setIsAllTransactions(newState);
+    onSelectAll(newState); // Notify the parent component
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const isAnySelectionMade = isAllTransactions || searchText.trim() !== "";
+
   const registrationSchema = Yup.object().shape({
     fullName: Yup.string().required("Full Name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -78,7 +108,7 @@ const FloatingSearchContainer = ({ workplaces }) => {
           <input
             type="checkbox"
             checked={isAllTransactions}
-            onChange={() => setIsAllTransactions(!isAllTransactions)}
+            onChange={handleAllTransactionsChange}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
           <label className="pl-2 text-xs text-gray-700">All Admins</label>
@@ -95,6 +125,21 @@ const FloatingSearchContainer = ({ workplaces }) => {
             className="flex-1 text-sm focus:outline-none"
           />
         </div>
+      </div>
+      <div>
+        {isAnySelectionMade && (
+          <div>
+            <button
+              onClick={handleCancelAll}
+              className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 rounded-lg px-4 py-2 space-x-2"
+            >
+              <div>Cancel All Selection</div>
+              <div>
+                <IoFilterOutline className="mt-0.5" />
+              </div>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Add New Admin Button */}

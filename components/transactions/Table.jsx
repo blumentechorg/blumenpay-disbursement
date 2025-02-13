@@ -98,6 +98,7 @@ const TransactionTable = ({ filters }) => {
         Cell: ({ row }) => (
           <input
             type="checkbox"
+            onClick={(e) => e.stopPropagation()}
             checked={selectedRows[row.original.id] || false}
             onChange={() => toggleRowSelection(row.original.id)}
           />
