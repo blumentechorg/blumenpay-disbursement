@@ -170,7 +170,7 @@ function AdminTable({ filters = {} }) {
       <div>
         <FloatingSearchContainer onSelectAll={handleSelectAll} />
       </div>
-      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto max-h-[calc(100vh-200px)] md:max-h-[calc(100vh-300px)]">
+      <div className="bg-white rounded-lg cursor-pointer shadow-md p-4 overflow-x-auto max-h-[calc(100vh-200px)] md:max-h-[calc(100vh-300px)]">
         <table
           {...getTableProps()}
           className="min-w-full table-auto border-collapse border border-gray-200"

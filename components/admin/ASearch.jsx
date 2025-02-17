@@ -10,7 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "@/lib/axiosInstance";
 
-const FloatingSearchContainer = ({ workplaces }) => {
+const FloatingSearchContainer = ({ onSelectAll }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
@@ -115,7 +115,7 @@ const FloatingSearchContainer = ({ workplaces }) => {
         </div>
 
         {/* Search and Filter Container */}
-        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-60">
+        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-18">
           <FiSearch className="text-gray-500 mr-2" />
           <input
             type="text"
@@ -126,12 +126,12 @@ const FloatingSearchContainer = ({ workplaces }) => {
           />
         </div>
       </div>
-      <div>
+      <div className="flex space-x-2">
         {isAnySelectionMade && (
           <div>
             <button
               onClick={handleCancelAll}
-              className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 rounded-lg px-4 py-2 space-x-2"
+              className="flex text-xs hover:underline justify-end focus:outline-none bg-[#DADDE1] h-8 rounded-lg px-4 py-2 space-x-2"
             >
               <div>Cancel All Selection</div>
               <div>
@@ -140,16 +140,15 @@ const FloatingSearchContainer = ({ workplaces }) => {
             </button>
           </div>
         )}
+
+        {/* Add New Admin Button */}
+        <button
+          className="w- h-[32px] bg-blue-700 uppercase text-white text-xs rounded-sm p-1.5 hover:bg-blue-800"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Add new admin
+        </button>
       </div>
-
-      {/* Add New Admin Button */}
-      <button
-        className="w- h-[32px] bg-blue-700 uppercase text-white text-xs rounded-sm p-1.5 hover:bg-blue-800"
-        onClick={() => setIsModalOpen(true)}
-      >
-        Add new admin
-      </button>
-
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 w-96 shadow-lg">

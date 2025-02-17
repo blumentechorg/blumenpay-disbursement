@@ -176,7 +176,7 @@ const TransactionTable = ({ filters }) => {
         <FloatingSearchContainer onSelectAll={handleSelectAll} />
       </div>
       {/* Table */}
-      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
+      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto cursor-pointer">
         <table
           {...getTableProps()}
           className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
