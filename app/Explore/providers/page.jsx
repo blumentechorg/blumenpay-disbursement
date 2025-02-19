@@ -1,7 +1,7 @@
 "use client";
-import Totalcollections from "@/components/cards/Totalcollections";
-import Activeproviders from "@/components/cards/Activeproviders";
-import Activeusers from "@/components/cards/Activeusers";
+import Totalcollections from "@/components/cards/TotalToday";
+import Activeproviders from "@/components/cards/TotalYesterday";
+import Activeusers from "@/components/cards/TotalThisWeek";
 import PSearch from "@/components/providers/PSearch";
 import React, { useState } from "react";
 import ServiceProviderTable from "@/components/providers/Table";
