@@ -42,42 +42,6 @@
 //     setSelectedRows(newSelections);
 //   };
 
-//   // const filterData = useCallback(() => {
-//   //   if (!data.length) return [];
-
-//   //   let filteredResults = [...data];
-
-//   //   if (filters) {
-//   //     if (filters.status) {
-//   //       filteredResults = filteredResults.filter(
-//   //         (item) => item.status === filters.status
-//   //       );
-//   //     }
-//   //     if (filters.serviceProvider) {
-//   //       filteredResults = filteredResults.filter(
-//   //         (item) => item.provider === filters.serviceProvider
-//   //       );
-//   //     }
-//   //     if (filters.paymentMethod) {
-//   //       filteredResults = filteredResults.filter(
-//   //         (item) => item.method === filters.paymentMethod
-//   //       );
-//   //     }
-//   //     if (filters.date) {
-//   //       filteredResults = filteredResults.filter((item) =>
-//   //         item.schedule.includes(filters.date)
-//   //       );
-//   //     }
-//   //   }
-
-//   //   return filteredResults;
-//   // }, [data, filters]);
-
-//   // useEffect(() => {
-//   //   const filtered = filterData();
-//   //   setFilteredData(filtered);
-//   // }, [filterData, filters]);
-
 //   const filteredData = useMemo(() => {
 //     return data.filter((row) => {
 //       return (
@@ -397,17 +361,32 @@ const TransactionTable = ({ filters }) => {
       {
         Header: "Status",
         accessor: "status",
-        Cell: ({ value }) => (
-          <div className="flex items-center space-x-2">
-            {value.label === "Success" ? (
-              <FaCheckCircle className="text-green-500" size={14} />
-            ) : (
-              <TbAlertCircleFilled className="text-red-500" size={16} />
-            )}
-            <span>{value.label}</span>
-          </div>
-        ),
+        Cell: ({ value }) => {
+          let icon;
+          switch (value.label) {
+            case "Success":
+              icon = <FaCheckCircle className="text-green-500" size={14} />;
+              break;
+            case "Pending":
+              icon = (
+                <TbAlertCircleFilled className="text-yellow-600" size={14} />
+              );
+              break;
+            case "Failed":
+              icon = <TbAlertCircleFilled className="text-red-500" size={14} />;
+              break;
+            default:
+              icon = null;
+          }
+          return (
+            <div className="flex items-center space-x-2">
+              {icon}
+              <span>{value.label}</span>
+            </div>
+          );
+        },
       },
+
       { Header: "Created At", accessor: "createdAt" },
       {
         Header: "Action",
