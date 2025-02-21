@@ -10,7 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "@/lib/axiosInstance";
 
-const FloatingSearchContainer = ({ onSelectAll }) => {
+const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
@@ -24,6 +24,13 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
   });
 
   const dropdownRef = useRef(null);
+
+  // Notify parent about search changes
+  useEffect(() => {
+    if (onSearchChange) {
+      onSearchChange(searchText);
+    }
+  }, [searchText, onSearchChange]);
 
   const handleCancelAll = () => {
     setIsAllTransactions(false);

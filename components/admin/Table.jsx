@@ -14,6 +14,7 @@ function AdminTable({ filters = {} }) {
   const [selectedRows, setSelectedRows] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   // New states for editing user
   const [currentEditingUser, setCurrentEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -132,14 +133,27 @@ function AdminTable({ filters = {} }) {
   );
 
   // (Optional) Filter data based on incoming filters.
+  // const filteredData = useMemo(() => {
+  //   return data.filter((row) => {
+  //     return (
+  //       (!filters.status || row.status === filters.status) &&
+  //       (!filters.role || row.role === filters.role)
+  //     );
+  //   });
+  // }, [data, filters]);
+
   const filteredData = useMemo(() => {
     return data.filter((row) => {
+      const matchesSearch =
+        row.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.role.toLowerCase().includes(searchQuery.toLowerCase());
       return (
         (!filters.status || row.status === filters.status) &&
-        (!filters.role || row.role === filters.role)
+        (!filters.role || row.role === filters.role) &&
+        matchesSearch
       );
     });
-  }, [data, filters]);
+  }, [data, filters, searchQuery]);
 
   // Setup react-table with pagination.
   const {
@@ -168,7 +182,10 @@ function AdminTable({ filters = {} }) {
   return (
     <div className="text-xs space-y-5">
       <div>
-        <FloatingSearchContainer onSelectAll={handleSelectAll} />
+        <FloatingSearchContainer
+          onSelectAll={handleSelectAll}
+          onSearchChange={setSearchQuery}
+        />
       </div>
       <div className="bg-white rounded-lg cursor-pointer shadow-md p-4 overflow-x-auto max-h-[calc(100vh-200px)] md:max-h-[calc(100vh-300px)]">
         <table
@@ -441,7 +458,7 @@ function AdminTable({ filters = {} }) {
                     setIsModalOpen(false);
                   }}
                 >
-                  DEACTIVATE ACCOUNT
+                  DELETE ACCOUNT
                 </button>
               </div>
             </form>
