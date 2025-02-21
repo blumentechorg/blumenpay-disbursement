@@ -133,14 +133,6 @@ function AdminTable({ filters = {} }) {
   );
 
   // (Optional) Filter data based on incoming filters.
-  // const filteredData = useMemo(() => {
-  //   return data.filter((row) => {
-  //     return (
-  //       (!filters.status || row.status === filters.status) &&
-  //       (!filters.role || row.role === filters.role)
-  //     );
-  //   });
-  // }, [data, filters]);
 
   const filteredData = useMemo(() => {
     return data.filter((row) => {
