@@ -283,6 +283,7 @@ const TransactionTable = ({ filters }) => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
   const [data, setData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch transactions from the API
   useEffect(() => {
@@ -323,15 +324,19 @@ const TransactionTable = ({ filters }) => {
   // Updated filter logic to match the response structure
   const filteredData = useMemo(() => {
     return data.filter((row) => {
+      const matchesSearch = row.referenceNumber
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
       return (
         (!filters.status || row.status.label === filters.status) &&
         (!filters.serviceProvider ||
           row.provider === filters.serviceProvider) &&
         (!filters.paymentMethod || row.type.label === filters.paymentMethod) &&
-        (!filters.date || row.createdAt.includes(filters.date))
+        (!filters.date || row.createdAt.includes(filters.date)) &&
+        matchesSearch
       );
     });
-  }, [data, filters]);
+  }, [data, filters, searchQuery]);
 
   // Updated column definitions to match the API response keys
   const columns = useMemo(
@@ -430,7 +435,10 @@ const TransactionTable = ({ filters }) => {
   return (
     <div className="space-y-5">
       <div>
-        <FloatingSearchContainer onSelectAll={handleSelectAll} />
+        <FloatingSearchContainer
+          onSelectAll={handleSelectAll}
+          onSearchChange={setSearchQuery}
+        />
       </div>
       {/* Table */}
       <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto cursor-pointer">

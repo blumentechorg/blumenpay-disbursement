@@ -4,11 +4,18 @@ import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical, FiSearch } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
 
-const FloatingSearchContainer = ({ onSelectAll }) => {
+const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAllTransactions, setIsAllTransactions] = useState(false);
   const [searchText, setSearchText] = useState("");
   const dropdownRef = useRef(null);
+
+  // Notify parent about search changes
+  useEffect(() => {
+    if (onSearchChange) {
+      onSearchChange(searchText);
+    }
+  }, [searchText, onSearchChange]);
 
   const handleCancelAll = () => {
     setIsAllTransactions(false);
