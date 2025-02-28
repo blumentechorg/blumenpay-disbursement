@@ -2011,7 +2011,7 @@ function AdminTable({ filters = {} }) {
                 <label className="block text-gray-700 text-xs mb-1">
                   Status
                 </label>
-                <select
+                {/* <select
                   value={editFormData.status}
                   onChange={(e) =>
                     setEditFormData({
@@ -2023,7 +2023,7 @@ function AdminTable({ filters = {} }) {
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
-                </select>
+                </select> */}
               </div>
               {/* Buttons */}
               <div className="flex space-x-2 text-sm">
@@ -2046,7 +2046,7 @@ function AdminTable({ filters = {} }) {
               <div className="mt-4">
                 <button
                   type="button"
-                  className="bg-red-600 text-white px-6 py-2 rounded-sm w-full text-[10px]"
+                  className="bg-yellow-600 text-white px-6 py-2 rounded-sm w-full text-[10px]"
                   onClick={handleToggleAccountStatus}
                 >
                   {editFormData.status === "Active"
