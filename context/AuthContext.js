@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyUser = async (token) => {
     try {
-      const response = await axios.get("/verify", {
+      const response = await axios.get("Identity/RefreshToken", {
         headers: { Authorization: `Bearer ${token}` },
       });
       let userData = response.data.user; // Extract the user object
