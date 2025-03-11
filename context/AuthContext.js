@@ -7,8 +7,8 @@
 // const AuthContext = createContext();
 
 // export const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState(null); // Stores user info, including role and permissions
-//   const [loading, setLoading] = useState(true); // Handles loading state
+//   const [user, setUser] = useState(null); // User info with merged permission flags
+//   const [loading, setLoading] = useState(true); // Loading state
 
 //   useEffect(() => {
 //     const storedUser = localStorage.getItem("user");
@@ -26,11 +26,16 @@
 
 //   const verifyUser = async (token) => {
 //     try {
-//       const response = await axios.get("/verify", {
+//       const response = await axios.get("Identity/RefreshToken", {
 //         headers: { Authorization: `Bearer ${token}` },
 //       });
-//       const userData = response.data.user; // Include `role` and `permissions` from the backend
-//       setUser({ ...userData, managementRoles: userData.managementRoles || [] });
+//       let userData = response.data.user; // Extract the user object
+//       // Merge permissions from the first workplace into the user object (if available)
+//       if (userData.workplaces && userData.workplaces.length > 0) {
+//         const workplace = userData.workplaces[0];
+//         userData = { ...userData, ...workplace };
+//       }
+//       setUser(userData);
 //       localStorage.setItem("user", JSON.stringify(userData));
 //     } catch (error) {
 //       console.error("Verification failed:", error.message);
@@ -44,6 +49,11 @@
 
 //   const login = (userData, token) => {
 //     Cookies.set("accessToken", token, { expires: 7 });
+//     // Merge permissions from the first workplace if available
+//     if (userData.workplaces && userData.workplaces.length > 0) {
+//       const workplace = userData.workplaces[0];
+//       userData = { ...userData, ...workplace };
+//     }
 //     localStorage.setItem("user", JSON.stringify(userData));
 //     setUser(userData);
 //   };
@@ -54,9 +64,10 @@
 //     setUser(null);
 //   };
 
-//   const hasPermission = (page) => {
-//     if (user?.role === "SuperAdmin") return true; // Full access for Super Admin
-//     return user?.permissions?.[page] || false; // Check permissions for Admin
+//   // Helper function: returns true if the user has the given permission
+//   const hasPermission = (permissionKey) => {
+//     if (user?.role === "SuperAdmin") return true;
+//     return !!user?.[permissionKey];
 //   };
 
 //   return (
@@ -69,42 +80,6 @@
 // };
 
 // export const useAuth = () => useContext(AuthContext);
-
-// src/context/AuthContext.js
-
-// "use client";
-
-// import { createContext, useContext, useState, useEffect } from "react";
-
-// const AuthContext = createContext();
-
-// export const useAuth = () => useContext(AuthContext);
-
-// export const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-
-//   // Example: Simulate fetching user data from storage
-//   useEffect(() => {
-//     const storedUser = JSON.parse(localStorage.getItem("user"));
-//     if (storedUser) setUser(storedUser);
-//   }, []);
-
-//   const login = (userData) => {
-//     setUser(userData);
-//     localStorage.setItem("user", JSON.stringify(userData));
-//   };
-
-//   const logout = () => {
-//     setUser(null);
-//     localStorage.removeItem("user");
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ user, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
 
 "use client";
 
@@ -150,6 +125,10 @@ export const AuthProvider = ({ children }) => {
       Cookies.remove("accessToken");
       localStorage.removeItem("user");
       setUser(null);
+      // Optional: Redirect to login if verification fails immediately
+      if (typeof window !== "undefined") {
+        window.location.href = "/auth/login";
+      }
     } finally {
       setLoading(false);
     }
@@ -170,6 +149,10 @@ export const AuthProvider = ({ children }) => {
     Cookies.remove("accessToken");
     localStorage.removeItem("user");
     setUser(null);
+    // Redirect to login after logout
+    if (typeof window !== "undefined") {
+      window.location.href = "/auth/login";
+    }
   };
 
   // Helper function: returns true if the user has the given permission
