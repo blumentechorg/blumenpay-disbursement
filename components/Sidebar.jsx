@@ -45,8 +45,8 @@ export default function Sidebar() {
       icon: <Disbursements />,
     },
     {
-      name: "Service Providers",
-      href: "/Explore/providers/",
+      name: "Businesses",
+      href: "/Explore/businesses/",
       icon: <Providers />,
     },
     { name: "Complain Tickets", href: "/Explore/tickets/", icon: <Tickets /> },
@@ -60,7 +60,7 @@ export default function Sidebar() {
     Overview: "transactionMgt",
     Transactions: "transactionMgt",
     Disbursements: "settlementnMgt",
-    "Service Providers": "appMgt",
+    Businesses: "appMgt",
     "Complain Tickets": "customerMgt",
   };
 
