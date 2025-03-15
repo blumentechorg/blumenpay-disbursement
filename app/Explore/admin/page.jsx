@@ -2,12 +2,12 @@
 import Totalcollections from "@/components/cards/TotalToday";
 import Activeproviders from "@/components/cards/TotalYesterday";
 import Activeusers from "@/components/cards/TotalThisWeek";
-import PSearch from "@/components/providers/PSearch";
+import PSearch from "@/components/businesses/PSearch";
 import React, { useState } from "react";
 import AdminTable from "@/components/admin/Table";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Breadcrumb from "@/components/Breadcrumb";
-import PFilter from "@/components/providers/PFilter";
+import PFilter from "@/components/businesses/PFilter";
 
 export default function ProvidersPage() {
   const [filters, setFilters] = useState({});

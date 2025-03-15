@@ -1,15 +1,15 @@
 "use client";
-import Totalcollections from "@/components/cards/TotalToday";
-import Activeproviders from "@/components/cards/TotalYesterday";
-import Activeusers from "@/components/cards/TotalThisWeek";
-import PSearch from "@/components/providers/PSearch";
+import TotalToday from "@/components/cards/TotalToday";
+import TotalThisMonth from "@/components/cards/TotalThisMonth";
+import TotalThisWeek from "@/components/cards/TotalThisWeek";
+import PSearch from "@/components/businesses/PSearch";
 import React, { useState } from "react";
-import ServiceProviderTable from "@/components/providers/Table";
+import ServiceProviderTable from "@/components/businesses/Table";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Breadcrumb from "@/components/Breadcrumb";
-import PFilter from "@/components/providers/PFilter";
+import PFilter from "@/components/businesses/PFilter";
 
-export default function ProvidersPage() {
+export default function BusinessPage() {
   const [filters, setFilters] = useState({});
 
   const handleFilterChange = (newFilters) => {
@@ -34,9 +34,9 @@ export default function ProvidersPage() {
             <div className="flex-1 overflow-y-auto pt-5 space-y-4 bg-gray-100 ">
               <div className="space-y-5">
                 <div className="grid grid-cols-3  gap-x-5  ">
-                  <Totalcollections />
-                  <Activeproviders />
-                  <Activeusers />
+                  <TotalToday />
+                  <TotalThisWeek />
+                  <TotalThisMonth />
                 </div>
                 <div className="space-y-5 pb-7">
                   <ServiceProviderTable filters={filters} />

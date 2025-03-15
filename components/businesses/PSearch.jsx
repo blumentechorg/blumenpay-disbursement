@@ -112,14 +112,14 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
           className="w-full h-[32px] bg-blue-700 uppercase text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
           onClick={() => setIsModalOpen(true)}
         >
-          Add new service provider
+          Add new business
         </button>
 
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
               <header className="flex justify-between items-center">
-                <h3 className="text-lg font-bold">Manual Disbursement</h3>
+                <h3 className="text-lg font-bold">Add New Business</h3>
                 <button
                   className="text-gray-600"
                   onClick={() => setIsModalOpen(false)}

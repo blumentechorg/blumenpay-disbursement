@@ -4,7 +4,7 @@ import Label from "@/components/tickets/Label";
 import ResolvedTickets from "@/components/cards/tickets/Resolved";
 import OverdueTickets from "@/components/cards/tickets/Overdue";
 import ProgressTickets from "@/components/cards/tickets/Progress";
-import PSearch from "@/components/providers/PSearch";
+import PSearch from "@/components/businesses/PSearch";
 import React, { useState } from "react";
 import TicketsTable from "@/components/tickets/Table";
 import Breadcrumbs from "@/components/Breadcrumbs";
