@@ -273,7 +273,6 @@ const KadTransactionTable = ({ filters }) => {
 		state: { pageIndex },
 	} = useTable(
 		{
-			// Define columns inline via useMemo (includes same columns as before)
 			columns: useMemo(
 				() => [
 					{
@@ -420,7 +419,7 @@ const KadTransactionTable = ({ filters }) => {
 		gotoPage(newPageNumber - 1);
 	};
 
-	// Build pagination items (with ellipsis) similar to your TransactionTable example
+	// Build pagination items with ellipsis as needed
 	const getPaginationItems = () => {
 		if (dynamicTotalPages <= 8) {
 			return Array.from({ length: dynamicTotalPages }, (_, i) => i + 1);
