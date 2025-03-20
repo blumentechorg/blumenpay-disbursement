@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical, FiSearch } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
 import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
+import Image from "next/image";
 
 const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,13 +14,9 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
   const dropdownRef = useRef(null);
 
   const handleFilter = () => {
-    console.log("Filter clicked with:", {
-      isAllTransactions,
-      searchText,
-    });
+    console.log("Filter clicked with:", { isAllTransactions, searchText });
   };
 
-  // Notify parent about search changes
   useEffect(() => {
     if (onSearchChange) {
       onSearchChange(searchText);
@@ -81,6 +78,24 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
     },
   });
 
+  // ----- State for Providers Dropdown -----
+  const [providers, setProviders] = useState([]);
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const response = await axiosInstance.get("/Apps/Providers");
+        if (response.data.isSuccess) {
+          setProviders(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching providers:", error);
+      }
+    };
+
+    fetchProviders();
+  }, []);
+
   // ----- New state & ref for logo upload -----
   const [logoPreview, setLogoPreview] = useState("");
   const logoInputRef = useRef(null);
@@ -91,13 +106,34 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
     }
   };
 
-  const handleLogoChange = (e) => {
+  // Updated logo change handler: Uploads to Cloudinary via API route
+  const handleLogoChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Create a local preview
       const previewURL = URL.createObjectURL(file);
       setLogoPreview(previewURL);
-      // Optionally update your businessData.logo with previewURL or the file itself
-      setBusinessData({ ...businessData, logo: previewURL });
+
+      // Prepare form data for the file upload
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("/api/upload-logo", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          // Update businessData.logo with the Cloudinary secure URL
+          setBusinessData((prev) => ({ ...prev, logo: data.url }));
+        } else {
+          console.error("Error uploading logo:", data.error);
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+      }
     }
   };
 
@@ -170,9 +206,10 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
 
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white rounded-lg p-6 w-96 shadow-lg overflow-y-auto max-h-[90vh]">
-              <header className="flex justify-between items-center border-b pb-2 mb-4">
-                <h3 className="text-lg font-bold">Add New Business</h3>
+            {/* Increased width of the form container */}
+            <div className="bg-white rounded-lg p-6 w-[800px] shadow-lg overflow-y-auto max-h-[90vh]">
+              <header className="flex justify-between items-center border-b py-8 mb-4">
+                <h3 className="text-2xl font-bold">Add New Business</h3>
                 <button
                   className="text-gray-600 hover:text-gray-800 focus:outline-none"
                   onClick={() => setIsModalOpen(false)}
@@ -211,47 +248,9 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                     required
                   />
                 </div>
-                {/* Advanced Logo Upload Field */}
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
-                    Logo
-                  </label>
-                  <div className="flex flex-col items-center border border-dashed border-gray-300 rounded-md p-4">
-                    <button
-                      type="button"
-                      onClick={handleLogoClick}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none mb-2"
-                    >
-                      Upload Logo
-                    </button>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={logoInputRef}
-                      className="hidden"
-                      onChange={handleLogoChange}
-                    />
-                    {logoPreview && (
-                      <div className="w-full">
-                        <img
-                          src={logoPreview}
-                          alt="Logo Preview"
-                          className="w-full h-auto object-contain border rounded-md"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleRemoveLogo}
-                          className="mt-2 text-xs text-red-600 hover:underline focus:outline-none"
-                        >
-                          Remove Image
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-xs font-semibold text-gray-700">
-                    Callback URL
+                    Website
                   </label>
                   <input
                     type="text"
@@ -283,7 +282,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                 </div>
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
-                    App Email
+                    Email
                   </label>
                   <input
                     type="email"
@@ -301,8 +300,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                   <label className="block text-xs font-semibold text-gray-700">
                     Default Provider
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={businessData.defaultProvider}
                     onChange={(e) =>
                       setBusinessData({
@@ -311,14 +309,22 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                       })
                     }
                     className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
-                  />
+                    required
+                  >
+                    <option value="">Select Provider</option>
+                    {providers.map((provider) => (
+                      <option key={provider} value={provider}>
+                        {provider}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
                     Default VAS Provider
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={businessData.defaultVasProvider}
                     onChange={(e) =>
                       setBusinessData({
@@ -327,11 +333,19 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                       })
                     }
                     className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
-                  />
+                    required
+                  >
+                    <option value="">Select Provider</option>
+                    {providers.map((provider) => (
+                      <option key={provider} value={provider}>
+                        {provider}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
-                    Type For Fundsweep
+                    UnSweep Duration
                   </label>
                   <input
                     type="number"
@@ -367,7 +381,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                   <label className="block text-xs font-semibold text-gray-700">
                     Provider
                   </label>
-                  <input
+                  <select
                     type="text"
                     value={businessData.settlementSetup.provider}
                     onChange={(e) =>
@@ -380,7 +394,14 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                       })
                     }
                     className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
-                  />
+                  >
+                    <option value="">Select Provider</option>
+                    {providers.map((provider) => (
+                      <option key={provider} value={provider}>
+                        {provider}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
@@ -401,7 +422,8 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                     className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
                   />
                 </div>
-                <div className="mb-4">
+
+                {/* <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
                     Bank Code
                   </label>
@@ -419,10 +441,11 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                     }
                     className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
                   />
-                </div>
+                </div> */}
+
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
-                    Bank Name
+                    Bank
                   </label>
                   <input
                     type="text"
@@ -439,25 +462,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                     className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="block text-xs font-semibold text-gray-700">
-                    Account Name
-                  </label>
-                  <input
-                    type="text"
-                    value={businessData.settlementSetup.accountName}
-                    onChange={(e) =>
-                      setBusinessData({
-                        ...businessData,
-                        settlementSetup: {
-                          ...businessData.settlementSetup,
-                          accountName: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
-                  />
-                </div>
+
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
                     Account Number
@@ -477,6 +482,27 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                     className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
                   />
                 </div>
+
+                <div className="mb-4">
+                  <label className="block text-xs font-semibold text-gray-700">
+                    Account Name
+                  </label>
+                  <input
+                    type="text"
+                    value={businessData.settlementSetup.accountName}
+                    onChange={(e) =>
+                      setBusinessData({
+                        ...businessData,
+                        settlementSetup: {
+                          ...businessData.settlementSetup,
+                          accountName: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2 border rounded-md text-xs focus:ring focus:ring-blue-200"
+                  />
+                </div>
+
                 <div className="mb-4 flex items-center">
                   <input
                     type="checkbox"
@@ -533,6 +559,46 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                   <label className="ml-2 text-xs text-gray-700">
                     Can Auto Process
                   </label>
+                </div>
+                {/* Moved Upload Logo Section to the Bottom */}
+                <div className="mb-4">
+                  <label className="block text-xs font-semibold text-gray-700">
+                    Logo
+                  </label>
+                  <div className="flex flex-col items-center border border-dashed border-gray-300 rounded-md p-4">
+                    <button
+                      type="button"
+                      onClick={handleLogoClick}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none mb-2"
+                    >
+                      Upload Logo
+                    </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={logoInputRef}
+                      className="hidden"
+                      onChange={handleLogoChange}
+                    />
+                    {logoPreview && (
+                      <div className="w-full">
+                        <Image
+                          src={logoPreview}
+                          alt="Logo Preview"
+                          className="w-full h-auto object-contain border rounded-md"
+                          width={100}
+                          height={100}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleRemoveLogo}
+                          className="mt-2 text-xs text-red-600 hover:underline focus:outline-none"
+                        >
+                          Remove Image
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex space-x-2 text-[10px]">
                   <button

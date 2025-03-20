@@ -300,7 +300,7 @@ const FilterComponent = ({ onFilterChange }) => {
       <label className="font-bold">App ID</label>
       <div className="mb-4">
         <input
-          type="number"
+          type="text"
           placeholder="App ID"
           value={filters.appId}
           onChange={(e) => handleFilterChange("appId", e.target.value)}

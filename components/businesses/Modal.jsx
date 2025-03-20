@@ -689,7 +689,7 @@ const BusinessModal = ({ modalContent, onClose }) => {
                 </span>
               </p>
               <p className="text-gray-700 text-xs font-medium">
-                <span className="font-light">Business Key:</span>{" "}
+                <span className="font-light">Api Key:</span>{" "}
                 {businessDetails?.apiKeyMask ||
                   modalContent.apiKeyMask ||
                   "N/A"}
