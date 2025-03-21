@@ -205,9 +205,9 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
         </button>
 
         {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
             {/* Increased width of the form container */}
-            <div className="bg-white rounded-lg p-6 w-[800px] shadow-lg overflow-y-auto max-h-[90vh]">
+            <div className="bg-white rounded-lg p-6 w-[800px]  px-10 shadow-lg overflow-y-auto max-h-[90vh]">
               <header className="flex justify-between items-center border-b py-8 mb-4">
                 <h3 className="text-2xl font-bold">Add New Business</h3>
                 <button
@@ -217,7 +217,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
                   ✕
                 </button>
               </header>
-              <form className="mt-2" onSubmit={handleSubmit}>
+              <form className="mt-2 px-10" onSubmit={handleSubmit}>
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-gray-700">
                     Business Name
