@@ -1062,8 +1062,8 @@ const EditModal = ({ modalContent, onClose, onSuccess }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       {/* Updated container with moderate dimensions */}
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 max-h-[80vh] overflow-y-auto">
-        <div className="flex justify-between sticky">
+      <div className="bg-white rounded-lg shadow-lg w-[800px] max-w-full p-10 space-y-5 max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between ">
           <h2 className="text-xl font-bold mb-4 justify-between">Edit App</h2>
           <button
             onClick={onClose}
