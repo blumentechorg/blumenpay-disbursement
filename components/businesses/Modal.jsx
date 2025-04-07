@@ -105,53 +105,6 @@ const BusinessModal = ({ modalContent, onClose }) => {
     }
   };
 
-  // // New handler for generating a receipt-like PDF using jsPDF
-  // const handleDownloadPDF = () => {
-  //   const pdf = new jsPDF("p", "pt", "a4");
-  //   let y = 40;
-
-  //   // Title
-  //   pdf.setFontSize(18);
-  //   pdf.text("Business Receipt", 40, y);
-  //   y += 30;
-
-  //   pdf.setFontSize(12);
-  //   // Business Name
-  //   const businessName = businessDetails?.name || modalContent.name || "N/A";
-  //   pdf.text(`Business Name: ${businessName}`, 40, y);
-  //   y += 20;
-  //   // Description
-  //   const description =
-  //     businessDetails?.description || modalContent.description || "N/A";
-  //   pdf.text(`Description: ${description}`, 40, y);
-  //   y += 20;
-  //   // App ID
-  //   const appId = businessDetails?.appId || modalContent.appId || "N/A";
-  //   pdf.text(`App ID: ${appId}`, 40, y);
-  //   y += 20;
-  //   // Total Balance
-  //   const totalBalance =
-  //     businessDetails?.totalBalance || modalContent.totalBalance || 0;
-  //   pdf.text(`Total Balance: ₦${totalBalance.toLocaleString()}`, 40, y);
-  //   y += 20;
-  //   // Default Provider
-  //   const defaultProvider =
-  //     businessDetails?.defaultProvider || modalContent.defaultProvider || "N/A";
-  //   pdf.text(`Default Provider: ${defaultProvider}`, 40, y);
-  //   y += 20;
-  //   // API Key
-  //   const apiKey = businessDetails?.apiKey || modalContent.apiKeyMask || "N/A";
-  //   pdf.text(`API Key: ${apiKey}`, 40, y);
-  //   y += 20;
-  //   // API Key Created Date
-  //   pdf.text(`API Key Created: ${formattedDate}`, 40, y);
-  //   y += 30;
-
-  //   // Optionally add a footer or other receipt details here
-
-  //   pdf.save("receipt.pdf");
-  // };
-
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center "
