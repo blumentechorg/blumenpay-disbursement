@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import TotalToday from "@/components/cards/TotalToday";
 import TotalYesterday from "@/components/cards/TotalYesterday";
 import TotalThisWeek from "@/components/cards/TotalThisWeek";
@@ -8,7 +10,18 @@ import TotalAllTime from "@/components/cards/TotalAllTime";
 import Activityfeed from "@/components/overview/Activityfeed";
 import ActivityTable from "@/components/overview/ActivityTable";
 
-export default function page() {
+export default function Page() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
+  // Notify parent about search changes
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchQuery(inputValue);
+    }, 300); // 300ms debounce
+    return () => clearTimeout(handler);
+  }, [inputValue]);
+
   return (
     <>
       <div className="space-y-12">
@@ -23,10 +36,10 @@ export default function page() {
 
         <div className="space-y-5 py-7">
           <div>
-            <Activityfeed />
+            <Activityfeed onSearchChange={setInputValue} />
           </div>
           <div>
-            <ActivityTable />
+            <ActivityTable searchQuery={searchQuery} />
           </div>
         </div>
       </div>
