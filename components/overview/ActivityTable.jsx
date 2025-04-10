@@ -18,7 +18,7 @@ const ActivityTable = ({ searchQuery = "" }) => {
 
   // Pagination states (1-indexed)
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(2);
+  const [pageSize, setPageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
@@ -287,7 +287,7 @@ const ActivityTable = ({ searchQuery = "" }) => {
               onChange={(e) => setPageSize(Number(e.target.value))}
               className="px-1 py-1 border rounded-md bg-white text-gray-700"
             >
-              {[2, 3].map((size) => (
+              {[5, 10, 15].map((size) => (
                 <option key={size} value={size}>
                   {size}
                 </option>
