@@ -16,8 +16,8 @@ export default function Activityfeed({ onSearchChange }) {
 
   return (
     <div className="">
-      <div className="flex text-sm items-center border bg-white border-gray-300 rounded-lg h-8  w-[400px]">
-        <div className="font-bold px-2">Realtime Activity Feed</div>
+      <div className="flex text-sm items-center border bg-white border-gray-300 rounded-lg h-8 w-[170px]">
+        <div className="font-bold px-2">Recent Transactions</div>
         {/* <input
           type="text"
           value={searchQuery}

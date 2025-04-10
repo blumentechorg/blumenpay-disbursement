@@ -9,6 +9,12 @@ import TotalPreviousMonth from "@/components/cards/TotalPreviousMonth";
 import TotalAllTime from "@/components/cards/TotalAllTime";
 import Activityfeed from "@/components/overview/Activityfeed";
 import ActivityTable from "@/components/overview/ActivityTable";
+// import Chart from "@/components/overview/Chart";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("@/components/overview/Chart"), {
+  ssr: false,
+});
 
 export default function Page() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,6 +38,10 @@ export default function Page() {
           <TotalThisMonth />
           <TotalPreviousMonth />
           <TotalAllTime />
+        </div>
+
+        <div>
+          <Chart />
         </div>
 
         <div className="space-y-5 py-7">
