@@ -1,151 +1,42 @@
-// // components/TransactionChart.js
 // import React, { useState, useEffect } from "react";
-// import axios from "@/lib/axiosInstance"; // adjust the import path to your axios instance
-// import { Line } from "react-chartjs-2";
+// // Import the custom axios instance
+// import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
+// import { Bar } from "react-chartjs-2";
 // import { Chart, registerables } from "chart.js";
 
-// // Register chart components (for Chart.js v3+)
+// // Register chart components for Chart.js v3+
 // Chart.register(...registerables);
 
-// const TransactionChart = () => {
-//   // State for transaction data
+// const Chartjs = () => {
+//   // Array of transaction objects from the API response
 //   const [transactions, setTransactions] = useState([]);
-//   // State for filters
-//   const [appId, setAppId] = useState("");
-//   const [start, setStart] = useState("");
-//   const [end, setEnd] = useState("");
-//   // Loading and error states
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState("");
-
-//   // Function to fetch data from the endpoint using axios GET method with query parameters
-//   const fetchData = async () => {
-//     setLoading(true);
-//     setError("");
-//     try {
-//       const params = {
-//         appId: appId ? parseInt(appId, 10) : undefined,
-//         start: start || undefined,
-//         end: end || undefined,
-//       };
-
-//       const response = await axios.get("/Transaction/Chart", { params });
-//       // Assuming the response data is an array of transactions
-//       setTransactions(response.data);
-//     } catch (err) {
-//       console.error("Error fetching transaction data:", err);
-//       setError("Error fetching transaction data");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Optionally, fetch data on component mount
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   // Process the data for the chart. This example assumes each transaction has "date" and "value" fields.
-//   const chartData = {
-//     labels: transactions.map((tx) => tx.date),
-//     datasets: [
-//       {
-//         label: "Transactions",
-//         data: transactions.map((tx) => tx.value),
-//         fill: false,
-//         borderColor: "rgba(75,192,192,1)",
-//         tension: 0.1,
-//       },
-//     ],
-//   };
-
-//   return (
-//     <div>
-//       <h2>Transaction Chart</h2>
-//       <div style={{ marginBottom: "20px" }}>
-//         {/* Filter Inputs */}
-//         <label style={{ marginRight: "10px" }}>
-//           App ID:
-//           <input
-//             type="number"
-//             value={appId}
-//             onChange={(e) => setAppId(e.target.value)}
-//             style={{ marginLeft: "5px" }}
-//           />
-//         </label>
-//         <label style={{ marginRight: "10px" }}>
-//           Start Date:
-//           <input
-//             type="datetime-local"
-//             value={start}
-//             onChange={(e) => setStart(e.target.value)}
-//             style={{ marginLeft: "5px" }}
-//           />
-//         </label>
-//         <label style={{ marginRight: "10px" }}>
-//           End Date:
-//           <input
-//             type="datetime-local"
-//             value={end}
-//             onChange={(e) => setEnd(e.target.value)}
-//             style={{ marginLeft: "5px" }}
-//           />
-//         </label>
-//         <button onClick={fetchData}>Filter</button>
-//       </div>
-
-//       {/* Loading/Error handling */}
-//       {loading && <p>Loading...</p>}
-//       {error && <p style={{ color: "red" }}>{error}</p>}
-
-//       {/* Chart Component */}
-//       <div style={{ height: "400px" }}>
-//         <Line data={chartData} />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TransactionChart;
-
-// // components/overview/Chart.jsx
-// import React, { useState, useEffect } from "react";
-// import axios from "@/lib/axiosInstance"; // adjust the import path as needed
-// import { Bar } from "react-chartjs-2"; // you can use Line if you prefer
-// import { Chart, registerables } from "chart.js";
-
-// // Register the chart components (Chart.js v3+)
-// Chart.register(...registerables);
-
-// const TransactionChart = () => {
-//   // This state will hold the summary statistics object
-//   const [chartStats, setChartStats] = useState(null);
-//   // Filter states
-//   const [appId, setAppId] = useState("");
+//   // Date filter states in "YYYY-MM-DD" format
 //   const [start, setStart] = useState("");
 //   const [end, setEnd] = useState("");
 //   // Loading and error state
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState("");
 
-//   // Fetch the data from the API
+//   // Fetch data from the API with date filters
 //   const fetchData = async () => {
 //     setLoading(true);
 //     setError("");
 
 //     try {
 //       const params = {
-//         appId: appId ? parseInt(appId, 10) : undefined,
 //         start: start || undefined,
 //         end: end || undefined,
 //       };
 
-//       const response = await axios.get("/Transaction/Chart", { params });
+//       // Use the custom axios instance and the provided endpoint
+//       const response = await axiosInstance.get("/Transaction/Chart", {
+//         params,
+//       });
 //       console.log("API response:", response.data);
 
 //       if (response.data && response.data.isSuccess) {
-//         // Extract the summary data from the response
-//         setChartStats(response.data.data);
+//         // Set transactions from the response array
+//         setTransactions(response.data.data);
 //       } else {
 //         throw new Error("API returned an unsuccessful response");
 //       }
@@ -157,142 +48,427 @@
 //     }
 //   };
 
-//   // Run once on mount (or call fetchData when appropriate)
+//   // Fetch data on component mount
 //   useEffect(() => {
 //     fetchData();
 //   }, []);
 
-//   // Define labels for the different time periods
-//   const labels = [
-//     "Today",
-//     "Yesterday",
-//     "This Week",
-//     "Last Week",
-//     "This Month",
-//     "Last Month",
-//     "All Time",
-//   ];
-
-//   // Build chart data only if stats are available
-//   const chartData = chartStats
+//   // Build the chart data if transactions are available.
+//   // For x-axis labels, we extract the date part (YYYY-MM-DD) from transactiondate.
+//   const chartData = transactions.length
 //     ? {
-//         labels,
+//         labels: transactions.map((tx) => tx.transactiondate.substring(0, 10)),
 //         datasets: [
 //           {
 //             label: "Total Amount",
-//             data: [
-//               chartStats.totaltoday,
-//               chartStats.totalyesterday,
-//               chartStats.totalthisweek,
-//               chartStats.totalpreviousweek,
-//               chartStats.totalthismonth,
-//               chartStats.totalpreviousmonth,
-//               chartStats.totalalltime,
-//             ],
+//             data: transactions.map((tx) => tx.totalamount),
 //             backgroundColor: "rgba(75, 192, 192, 0.4)",
 //             borderColor: "rgba(75, 192, 192, 1)",
 //             borderWidth: 1,
 //           },
-//           // Optionally, you can add a dataset for transaction counts:
-//           // {
-//           //   label: "Transaction Count",
-//           //   data: [
-//           //     chartStats.counttoday,
-//           //     chartStats.countyesterday,
-//           //     chartStats.countthisweek,
-//           //     // If counts for "Last Week" and "Last Month" are not provided, you may skip or fill with null:
-//           //     null,
-//           //     chartStats.countthismonth,
-//           //     null,
-//           //     chartStats.countalltime,
-//           //   ],
-//           //   backgroundColor: "rgba(153, 102, 255, 0.4)",
-//           //   borderColor: "rgba(153, 102, 255, 1)",
-//           //   borderWidth: 1,
-//           // },
 //         ],
 //       }
 //     : { labels: [], datasets: [] };
 
 //   return (
-//     <div>
-//       <h2>Transaction Chart</h2>
-//       <div style={{ marginBottom: "20px" }}>
-//         {/* Filter inputs */}
-//         <label style={{ marginRight: "10px" }}>
-//           App ID:
-//           <input
-//             type="number"
-//             value={appId}
-//             onChange={(e) => setAppId(e.target.value)}
-//             style={{ marginLeft: "5px" }}
-//           />
-//         </label>
-//         <label style={{ marginRight: "10px" }}>
-//           Start Date:
-//           <input
-//             type="datetime-local"
-//             value={start}
-//             onChange={(e) => setStart(e.target.value)}
-//             style={{ marginLeft: "5px" }}
-//           />
-//         </label>
-//         <label style={{ marginRight: "10px" }}>
-//           End Date:
-//           <input
-//             type="datetime-local"
-//             value={end}
-//             onChange={(e) => setEnd(e.target.value)}
-//             style={{ marginLeft: "5px" }}
-//           />
-//         </label>
-//         <button onClick={fetchData}>Filter</button>
+//     <div className="px-4 py-6">
+//       <h2 className="text-2xl font-bold py-10 text-center">
+//         Transaction Chart
+//       </h2>
+//       {/* Filter Section */}
+//       <div className="bg-white shadow-md rounded-lg p-6 mb-8 max-w-3xl mx-auto">
+//         <h3 className="text-lg font-semibold mb-4">Filter by Date</h3>
+//         <div className="flex flex-col sm:flex-row gap-4 items-center">
+//           <div className="flex flex-col w-full">
+//             <label className="mb-1 text-sm font-medium">Start Date</label>
+//             <input
+//               type="date"
+//               value={start}
+//               onChange={(e) => setStart(e.target.value)}
+//               className="border border-gray-300 rounded p-2 w-full"
+//               placeholder="YYYY-MM-DD"
+//             />
+//           </div>
+//           <div className="flex flex-col w-full">
+//             <label className="mb-1 text-sm font-medium">End Date</label>
+//             <input
+//               type="date"
+//               value={end}
+//               onChange={(e) => setEnd(e.target.value)}
+//               className="border border-gray-300 rounded p-2 w-full"
+//               placeholder="YYYY-MM-DD"
+//             />
+//           </div>
+//           <button
+//             onClick={fetchData}
+//             className="bg-blue-600 text-white font-semibold px-4 py-2 rounded hover:bg-blue-700 transition"
+//           >
+//             Filter
+//           </button>
+//         </div>
 //       </div>
 
-//       {loading && <p>Loading...</p>}
-//       {error && <p style={{ color: "red" }}>{error}</p>}
-
-//       {chartStats ? (
-//         <div style={{ height: "400px" }}>
+//       {loading && <p className="text-center">Loading...</p>}
+//       {error && <p className="text-center text-red-500">{error}</p>}
+//       {transactions.length ? (
+//         <div className="max-w-4xl mx-auto" style={{ height: "400px" }}>
 //           <Bar
 //             data={chartData}
 //             options={{
 //               responsive: true,
 //               maintainAspectRatio: false,
 //               scales: {
-//                 y: {
-//                   beginAtZero: true,
-//                 },
+//                 y: { beginAtZero: true },
 //               },
 //             }}
 //           />
 //         </div>
 //       ) : (
-//         !loading && <p>No data available.</p>
+//         !loading && <p className="text-center">No data available.</p>
 //       )}
 //     </div>
 //   );
 // };
 
-// export default TransactionChart;
+// export default Chartjs;
 
-// components/overview/Chart.jsx
+// import React, { useState, useEffect } from "react";
+// // Import the custom axios instance
+// import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
+// import { Bar } from "react-chartjs-2";
+// import { Chart, registerables } from "chart.js";
+
+// // Register chart components for Chart.js v3+
+// Chart.register(...registerables);
+
+// const Chartjs = () => {
+//   // Array of transaction objects from the API response
+//   const [transactions, setTransactions] = useState([]);
+//   // Date filter states in "YYYY-MM-DD" format
+//   const [start, setStart] = useState("");
+//   const [end, setEnd] = useState("");
+//   // Loading and error state
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+
+//   // Fetch data from the API with date filters
+//   const fetchData = async () => {
+//     setLoading(true);
+//     setError("");
+
+//     try {
+//       const params = {
+//         start: start || undefined,
+//         end: end || undefined,
+//       };
+
+//       // Use the custom axios instance and the provided endpoint
+//       const response = await axiosInstance.get("/Transaction/Chart", {
+//         params,
+//       });
+//       console.log("API response:", response.data);
+
+//       if (response.data && response.data.isSuccess) {
+//         // Set transactions from the response array
+//         setTransactions(response.data.data);
+//       } else {
+//         throw new Error("API returned an unsuccessful response");
+//       }
+//     } catch (err) {
+//       console.error("Error fetching transaction data:", err);
+//       setError("Error fetching transaction data");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Fetch data on component mount
+//   useEffect(() => {
+//     fetchData();
+//   }, []);
+
+//   // Build the chart data if transactions are available.
+//   // For x-axis labels, we extract the date part (YYYY-MM-DD) from transactiondate.
+//   const chartData = transactions.length
+//     ? {
+//         labels: transactions.map((tx) => tx.transactiondate.substring(0, 10)),
+//         datasets: [
+//           {
+//             label: "Total Amount",
+//             data: transactions.map((tx) => tx.totalamount),
+//             backgroundColor: "rgba(75, 192, 192, 0.4)",
+//             borderColor: "rgba(75, 192, 192, 1)",
+//             borderWidth: 1,
+//           },
+//         ],
+//       }
+//     : { labels: [], datasets: [] };
+
+//   return (
+//     <div className="w-full px-6 py-10">
+//       <h2 className="text-3xl font-bold py-6 text-center">Transaction Chart</h2>
+//       {/* Filter Section */}
+//       <div className="bg-white shadow-xl rounded-lg p-8 mb-8 w-full">
+//         <h3 className="text-xl font-semibold mb-6">Filter by Date</h3>
+//         <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
+//           <div className="flex flex-col w-full">
+//             <label className="mb-2 text-sm font-medium text-gray-700">
+//               Start Date
+//             </label>
+//             <input
+//               type="date"
+//               value={start}
+//               onChange={(e) => setStart(e.target.value)}
+//               className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+//               placeholder="YYYY-MM-DD"
+//             />
+//           </div>
+//           <div className="flex flex-col w-full">
+//             <label className="mb-2 text-sm font-medium text-gray-700">
+//               End Date
+//             </label>
+//             <input
+//               type="date"
+//               value={end}
+//               onChange={(e) => setEnd(e.target.value)}
+//               className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+//               placeholder="YYYY-MM-DD"
+//             />
+//           </div>
+//           <button
+//             onClick={fetchData}
+//             className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md"
+//           >
+//             Filter
+//           </button>
+//         </div>
+//       </div>
+
+//       {loading && <p className="text-center text-lg">Loading...</p>}
+//       {error && <p className="text-center text-lg text-red-500">{error}</p>}
+//       {transactions.length ? (
+//         <div className="w-full mx-auto" style={{ height: "400px" }}>
+//           <Bar
+//             data={chartData}
+//             options={{
+//               responsive: true,
+//               maintainAspectRatio: false,
+//               scales: {
+//                 y: { beginAtZero: true },
+//               },
+//             }}
+//           />
+//         </div>
+//       ) : (
+//         !loading && <p className="text-center text-lg">No data available.</p>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Chartjs;
+
+// import React, { useState, useEffect } from "react";
+// // Import the custom axios instance
+// import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
+// import { Bar } from "react-chartjs-2";
+// import { Chart, registerables } from "chart.js";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import { format, parse } from "date-fns";
+
+// // Register chart components for Chart.js v3+
+// Chart.register(...registerables);
+
+// const Chartjs = () => {
+//   // Array of transaction objects from the API response
+//   const [transactions, setTransactions] = useState([]);
+//   // Date filter states in "YYYY-MM-DD" format
+//   const [start, setStart] = useState("");
+//   const [end, setEnd] = useState("");
+//   // Loading and error state
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+
+//   // Fetch data from the API with date filters
+//   const fetchData = async () => {
+//     setLoading(true);
+//     setError("");
+
+//     try {
+//       const params = {
+//         start: start || undefined,
+//         end: end || undefined,
+//       };
+
+//       // Use the custom axios instance and the provided endpoint
+//       const response = await axiosInstance.get("/Transaction/Chart", {
+//         params,
+//       });
+//       console.log("API response:", response.data);
+
+//       if (response.data && response.data.isSuccess) {
+//         // Set transactions from the response array
+//         setTransactions(response.data.data);
+//       } else {
+//         throw new Error("API returned an unsuccessful response");
+//       }
+//     } catch (err) {
+//       console.error("Error fetching transaction data:", err);
+//       setError("Error fetching transaction data");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Fetch data on component mount
+//   useEffect(() => {
+//     fetchData();
+//   }, []);
+
+//   // Helper function to format a date as YYYY-MM-DD
+//   const formatDate = (dateString) => {
+//     const date = new Date(dateString);
+//     return date.toISOString().split("T")[0];
+//   };
+
+//   const CustomDatePicker = ({ value, onChange }) => {
+//     // Convert the string in state to a Date object
+//     const parsedDate = value ? parse(value, "yyyy-MM-dd", new Date()) : null;
+
+//     const handleDateChange = (date) => {
+//       // Format the selected Date object back to yyyy-MM-dd
+//       const formatted = date ? format(date, "yyyy-MM-dd") : "";
+//       onChange(formatted);
+//     };
+//   // Build the chart data if transactions are available.
+//   const chartData = transactions.length
+//     ? {
+//         labels: transactions.map((tx) => formatDate(tx.transactiondate)),
+//         datasets: [
+//           {
+//             label: "Total Amount",
+//             data: transactions.map((tx) => tx.totalamount),
+//             backgroundColor: "rgba(75, 192, 192, 0.4)",
+//             borderColor: "rgba(75, 192, 192, 1)",
+//             borderWidth: 1,
+//           },
+//         ],
+//       }
+//     : { labels: [], datasets: [] };
+
+//   return (
+//     <div className="w-full px-6 py-10">
+//       <h2 className="text-3xl font-bold py-6 text-center">Transaction Chart</h2>
+//       {/* Filter Section */}
+//       <div className="bg-white shadow-xl rounded-lg p-8 mb-8 w-full">
+//         <h3 className="text-xl font-semibold mb-6">Filter by Date</h3>
+//         <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
+//           <div className="flex flex-col w-full">
+//             <label className="mb-2 text-sm font-medium text-gray-700">
+//               Start Date
+//             </label>
+//             <input
+//               type="date"
+//               value={start}
+//               onChange={(e) => setStart(e.target.value)}
+//               className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+//               placeholder="YYYY-MM-DD"
+//             />
+//              <CustomDatePicker value={start} onChange={setStart} />
+//           </div>
+//           <div className="flex flex-col w-full">
+//             <label className="mb-2 text-sm font-medium text-gray-700">
+//               End Date
+//             </label>
+//             <input
+//               type="date"
+//               value={end}
+//               onChange={(e) => setEnd(e.target.value)}
+//               className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+//               placeholder="YYYY-MM-DD"
+//             />
+//           </div>
+//           <button
+//             onClick={fetchData}
+//             className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md"
+//           >
+//             Filter
+//           </button>
+//         </div>
+//       </div>
+
+//       {loading && <p className="text-center text-lg">Loading...</p>}
+//       {error && <p className="text-center text-lg text-red-500">{error}</p>}
+//       {transactions.length ? (
+//         <div className="w-full mx-auto" style={{ height: "400px" }}>
+//           <Bar
+//             data={chartData}
+//             options={{
+//               responsive: true,
+//               maintainAspectRatio: false,
+//               scales: {
+//                 y: { beginAtZero: true },
+//               },
+//             }}
+//           />
+//         </div>
+//       ) : (
+//         !loading && <p className="text-center text-lg">No data available.</p>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Chartjs;
+
 import React, { useState, useEffect } from "react";
-import axios from "@/lib/axiosInstance"; // adjust the path as needed
-import { Bar } from "react-chartjs-2"; // or Line if you prefer
+import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
+import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format, parse } from "date-fns";
 
-// Register all Chart.js components (for Chart.js v3+)
+// Register chart components for Chart.js v3+
 Chart.register(...registerables);
 
-const BusinessChart = () => {
-  // State for storing the summary data from API response
-  const [chartStats, setChartStats] = useState(null);
+// Custom DatePicker component that forces the format YYYY-MM-DD
+const CustomDatePicker = ({ value, onChange, label }) => {
+  // Convert the state value (a string) to a Date object
+  const parsedDate = value ? parse(value, "yyyy-MM-dd", new Date()) : null;
+
+  const handleDateChange = (date) => {
+    // If a date is selected, format it as "YYYY-MM-DD"
+    const formatted = date ? format(date, "yyyy-MM-dd") : "";
+    onChange(formatted);
+  };
+
+  return (
+    <div className="flex flex-col w-full">
+      <label className="mb-2 text-sm font-medium text-gray-700">{label}</label>
+      <DatePicker
+        selected={parsedDate}
+        onChange={handleDateChange}
+        dateFormat="yyyy-MM-dd" // Force the display format
+        placeholderText="YYYY-MM-DD"
+        className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  );
+};
+
+const Chartjs = () => {
+  // Array of transaction objects from the API response
+  const [transactions, setTransactions] = useState([]);
+  // Date filter states stored as strings ("YYYY-MM-DD")
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
   // Loading and error state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Function to fetch all data from the API
+  // Fetch data from the API with date filters
   const fetchData = async () => {
     setLoading(true);
     setError("");
@@ -303,92 +479,97 @@ const BusinessChart = () => {
         end: end || undefined,
       };
 
-      // No query parameters are passed, so it fetches all data
-      const response = await axios.get("/Transaction/Chart", { params });
+      // Use the custom axios instance and the provided endpoint
+      const response = await axiosInstance.get("/Transaction/Chart", {
+        params,
+      });
       console.log("API response:", response.data);
 
       if (response.data && response.data.isSuccess) {
-        setChartStats(response.data.data);
+        // Set transactions from the response data
+        setTransactions(response.data.data);
       } else {
         throw new Error("API returned an unsuccessful response");
       }
     } catch (err) {
       console.error("Error fetching transaction data:", err);
-      if (err.code === "ECONNABORTED") {
-        setError("Request timeout. Please try again later.");
-      } else {
-        setError("Error fetching transaction data");
-      }
+      setError("Error fetching transaction data");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch data when component mounts
+  // Fetch data on component mount
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Define chart labels for different periods
-  const labels = [
-    "Today",
-    "Yesterday",
-    "This Week",
-    "Last Week",
-    "This Month",
-    "Last Month",
-    "All Time",
-  ];
+  // Helper function to format a date string as YYYY-MM-DD
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
 
-  // Prepare chart data if stats are available
-  const chartData = chartStats
-    ? {
-        labels,
-        datasets: [
-          {
-            label: "Total Amount",
-            data: [
-              chartStats.totaltoday,
-              chartStats.totalyesterday,
-              chartStats.totalthisweek,
-              chartStats.totalpreviousweek,
-              chartStats.totalthismonth,
-              chartStats.totalpreviousmonth,
-              chartStats.totalalltime,
-            ],
-            backgroundColor: "rgba(75, 192, 192, 0.4)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-          },
-        ],
-      }
-    : { labels: [], datasets: [] };
+  // Prepare the chart data if transactions are available.
+  const chartData =
+    transactions.length > 0
+      ? {
+          labels: transactions.map((tx) => formatDate(tx.transactiondate)),
+          datasets: [
+            {
+              label: "Total Amount",
+              data: transactions.map((tx) => tx.totalamount),
+              backgroundColor: "rgba(75, 192, 192, 0.4)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        }
+      : { labels: [], datasets: [] };
 
   return (
-    <div>
-      <h2>Transaction Chart</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {chartStats && !loading ? (
-        <div style={{ height: "400px" }}>
+    <div className="w-full px-6 py-10">
+      <h2 className="text-3xl font-bold py-6 text-center">Transaction Chart</h2>
+      {/* Filter Section */}
+      <div className="bg-white shadow-xl rounded-lg p-8 mb-8 w-full">
+        <h3 className="text-xl font-semibold mb-6">Filter by Date</h3>
+        <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
+          <CustomDatePicker
+            label="Start Date"
+            value={start}
+            onChange={setStart}
+          />
+          <CustomDatePicker label="End Date" value={end} onChange={setEnd} />
+          <button
+            onClick={fetchData}
+            className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md"
+          >
+            Filter
+          </button>
+        </div>
+      </div>
+
+      {loading && <p className="text-center text-lg">Loading...</p>}
+      {error && <p className="text-center text-lg text-red-500">{error}</p>}
+      {transactions.length > 0 ? (
+        <div className="w-full mx-auto" style={{ height: "400px" }}>
           <Bar
             data={chartData}
             options={{
               responsive: true,
               maintainAspectRatio: false,
               scales: {
-                y: {
-                  beginAtZero: true,
-                },
+                y: { beginAtZero: true },
               },
             }}
           />
         </div>
       ) : (
-        !loading && <p>No data available.</p>
+        !loading && <p className="text-center text-lg">No data available.</p>
       )}
     </div>
   );
 };
 
-export default BusinessChart;
+export default Chartjs;

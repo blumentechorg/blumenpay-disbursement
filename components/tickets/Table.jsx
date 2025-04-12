@@ -1,338 +1,136 @@
-"use client";
+import React, { useState, useEffect } from "react";
+// Import the custom axios instance
+import axiosInstance from "../path/to/axiosInstance"; // Adjust the path as needed
+import { Bar } from "react-chartjs-2";
+import { Chart, registerables } from "chart.js";
+import { format, parseISO } from "date-fns"; // Importing date-fns for formatting
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useTable, usePagination } from "react-table";
-import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
-import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
-import { TbAlertCircleFilled } from "react-icons/tb";
-import TicketModal from "./Modal";
-import FloatingSearchContainer from "./CSearch";
-import ticketsData from "@/lib/ticketsData.json";
+// Register chart components for Chart.js v3+
+Chart.register(...registerables);
 
-const TransactionTable = ({ filters }) => {
-  const [modalContent, setModalContent] = useState(null);
-  const [selectedRows, setSelectedRows] = useState({});
-  const [data, setData] = useState([]);
+const Chartjs = () => {
+  // Array of transaction objects from the API response
+  const [transactions, setTransactions] = useState([]);
+  // Date filter states in "YYYY-MM-DD" format
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  // Loading and error state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  // Fetch data from the API with date filters
+  const fetchData = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const params = {
+        start: start || undefined,
+        end: end || undefined,
+      };
+
+      // Use the custom axios instance and the provided endpoint
+      const response = await axiosInstance.get("/Transaction/Chart", {
+        params,
+      });
+      console.log("API response:", response.data);
+
+      if (response.data && response.data.isSuccess) {
+        // Set transactions from the response array
+        setTransactions(response.data.data);
+      } else {
+        throw new Error("API returned an unsuccessful response");
+      }
+    } catch (err) {
+      console.error("Error fetching transaction data:", err);
+      setError("Error fetching transaction data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data on component mount
   useEffect(() => {
-    // Load data from data.json
-    setData(ticketsData);
+    fetchData();
   }, []);
 
-  const openModal = (row) => {
-    setModalContent(row);
-  };
-
-  const closeModal = () => {
-    setModalContent(null);
-  };
-
-  const toggleRowSelection = (id) => {
-    setSelectedRows((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const handleSelectAll = (isSelected) => {
-    const newSelections = {};
-    data.forEach((row) => {
-      newSelections[row.id] = isSelected;
-    });
-    setSelectedRows(newSelections);
-  };
-
-  // const filterData = useCallback(() => {
-  //   if (!data.length) return [];
-
-  //   let filteredResults = [...data];
-
-  //   if (filters) {
-  //     if (filters.status) {
-  //       filteredResults = filteredResults.filter(
-  //         (item) => item.status === filters.status
-  //       );
-  //     }
-  //     if (filters.serviceProvider) {
-  //       filteredResults = filteredResults.filter(
-  //         (item) => item.provider === filters.serviceProvider
-  //       );
-  //     }
-  //     if (filters.paymentMethod) {
-  //       filteredResults = filteredResults.filter(
-  //         (item) => item.method === filters.paymentMethod
-  //       );
-  //     }
-  //     if (filters.date) {
-  //       filteredResults = filteredResults.filter((item) =>
-  //         item.schedule.includes(filters.date)
-  //       );
-  //     }
-  //   }
-
-  //   return filteredResults;
-  // }, [data, filters]);
-
-  // useEffect(() => {
-  //   const filtered = filterData();
-  //   setFilteredData(filtered);
-  // }, [filterData, filters]);
-
-  const filteredData = React.useMemo(() => {
-    if (!filters) return data; // If filters are undefined, return the unfiltered data.
-
-    return data.filter((row) => {
-      return (
-        (!filters.status || row.status === filters.status) &&
-        (!filters.serviceProvider ||
-          row.provider === filters.serviceProvider) &&
-        (!filters.paymentMethod || row.method === filters.paymentMethod)
-      );
-    });
-  }, [data, filters]);
-
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "",
-        accessor: "checkbox",
-        Cell: ({ row }) => (
-          <input
-            type="checkbox"
-            checked={selectedRows[row.original.id] || false}
-            onChange={() => toggleRowSelection(row.original.id)}
-          />
+  // Build the chart data if transactions are available.
+  // For x-axis labels, we explicitly format the date to "YYYY-MM-DD"
+  const chartData = transactions.length
+    ? {
+        labels: transactions.map((tx) =>
+          format(parseISO(tx.transactiondate), "yyyy-MM-dd")
         ),
-      },
-      {
-        Header: "Ticket ID",
-        accessor: "ticketId",
-      },
-      {
-        Header: "Provider Name",
-        accessor: "providerName",
-      },
-      {
-        Header: "Subject",
-        accessor: "subject",
-      },
-      {
-        Header: "Priority",
-        accessor: "priority",
-        Cell: ({ value }) => (
-          <div className="flex items-center space-x-2">
-            {value === "High" && (
-              <FaExclamationCircle className="text-yellow-500" />
-            )}
-            {value === "Medium" && (
-              <FaExclamationCircle className="text-blue-500" />
-            )}
-            {value === "Critical" && (
-              <FaExclamationCircle className="text-red-500" />
-            )}
-            {value === "Low" && (
-              <FaExclamationCircle className="text-green-500" />
-            )}
-            <span>{value}</span>
-          </div>
-        ),
-      },
-      {
-        Header: "Date",
-        accessor: "date",
-      },
-      {
-        Header: "Status",
-        accessor: "status",
-        Cell: ({ value }) => (
-          <div className="flex items-center space-x-2">
-            {value === "Resolved" && (
-              <FaCheckCircle className="text-green-500" />
-            )}
-            {value === "Opened" && (
-              <TbAlertCircleFilled className="text-red-500" />
-            )}
-            {value === "InProgress" && (
-              <TbAlertCircleFilled className="text-yellow-500" />
-            )}
-            <span>{value}</span>
-          </div>
-        ),
-      },
-      {
-        Header: "Admin",
-        accessor: "admin",
-      },
-      {
-        Header: "Action",
-        accessor: "action",
-        Cell: ({ row }) => (
-          <button
-            onClick={() => openModal(row.original)}
-            className="text-[#343A40] text-xs underline hover:text-blue-700"
-          >
-            {row.original.action}
-          </button>
-        ),
-      },
-    ],
-    [selectedRows]
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page,
-    prepareRow,
-    canPreviousPage,
-    canNextPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    gotoPage,
-    pageOptions,
-    state: { pageIndex, pageSize },
-  } = useTable(
-    {
-      columns,
-      data: filteredData,
-      initialState: { pageIndex: 0, pageSize: 10 },
-    },
-    usePagination
-  );
+        datasets: [
+          {
+            label: "Total Amount",
+            data: transactions.map((tx) => tx.totalamount),
+            backgroundColor: "rgba(75, 192, 192, 0.4)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      }
+    : { labels: [], datasets: [] };
 
   return (
-    <div className="space-y-5">
-      <div>
-        <FloatingSearchContainer onSelectAll={handleSelectAll} />
-      </div>
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
-        <table
-          {...getTableProps()}
-          className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
-        >
-          <thead className="bg-gray-100 text-gray-700 font-semibold">
-            {headerGroups.map((headerGroup) => {
-              const { key, ...rest } = headerGroup.getHeaderGroupProps(); // Separate key
-              return (
-                <tr key={key} {...rest} className="block sm:table-row">
-                  {headerGroup.headers.map((column) => {
-                    const { key: columnKey, ...columnRest } =
-                      column.getHeaderProps(); // Separate key for <th>
-                    return (
-                      <th
-                        key={columnKey}
-                        {...columnRest}
-                        className={`border border-gray-300 px-4 py-2 text-left ${
-                          column.className || ""
-                        }`}
-                      >
-                        {column.render("Header")}
-                      </th>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              const { key, ...rowProps } = row.getRowProps(); // Separate key for <tr>
-              return (
-                <tr
-                  key={key}
-                  {...rowProps}
-                  className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
-                  onClick={() => setSelectedRow(row.original)}
-                >
-                  {row.cells.map((cell) => {
-                    const { key: cellKey, ...cellProps } = cell.getCellProps(); // Separate key for <td>
-                    return (
-                      <td
-                        key={cellKey}
-                        {...cellProps}
-                        className={`border border-gray-300 px-4 py-2 block sm:table-cell ${
-                          cell.column.className || ""
-                        }`}
-                        data-label={cell.column.Header} // For pseudo-labels on small screens
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        {/* Pagination */}
-        <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0">
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-700">Rows per page:</span>
-            <select
-              value={pageSize}
-              onChange={(e) => setPageSize(Number(e.target.value))}
-              className="px-1 py-1 border rounded-md bg-white text-gray-700"
-            >
-              {[4, 8, 10, 20].map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
+    <div className="px-4 py-6">
+      <h2 className="text-2xl font-bold py-10 text-center">
+        Transaction Chart
+      </h2>
+      {/* Filter Section */}
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8 max-w-3xl mx-auto">
+        <h3 className="text-lg font-semibold mb-4">Filter by Date</h3>
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="flex flex-col w-full">
+            <label className="mb-1 text-sm font-medium">Start Date</label>
+            <input
+              type="date"
+              value={start}
+              onChange={(e) => setStart(e.target.value)}
+              className="border border-gray-300 rounded p-2 w-full"
+              placeholder="YYYY-MM-DD"
+            />
           </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={previousPage}
-              disabled={!canPreviousPage}
-              className={`px-1 py-1 border rounded-md ${
-                !canPreviousPage
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-100"
-              }`}
-            >
-              <IoMdArrowDropleft size={15} />
-            </button>
-            {pageOptions.map((pageNum) => (
-              <button
-                key={pageNum}
-                onClick={() => gotoPage(pageNum)}
-                className={`px-2 py-1 border rounded-md ${
-                  pageIndex === pageNum
-                    ? "bg-black text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                {pageNum + 1}
-              </button>
-            ))}
-            <button
-              onClick={nextPage}
-              disabled={!canNextPage}
-              className={`px-1 py-1 border rounded-md ${
-                !canNextPage
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-100"
-              }`}
-            >
-              <IoMdArrowDropright size={15} />
-            </button>
+          <div className="flex flex-col w-full">
+            <label className="mb-1 text-sm font-medium">End Date</label>
+            <input
+              type="date"
+              value={end}
+              onChange={(e) => setEnd(e.target.value)}
+              className="border border-gray-300 rounded p-2 w-full uppercase"
+              placeholder="YYYY-MM-DD"
+            />
           </div>
-          <div className="text-gray-600">
-            Showing {pageIndex * pageSize + 1}-
-            {Math.min((pageIndex + 1) * pageSize, data.length)} of {data.length}
-          </div>
+          <button
+            onClick={fetchData}
+            className="bg-blue-600 text-white font-semibold px-4 py-2 rounded hover:bg-blue-700 transition"
+          >
+            Filter
+          </button>
         </div>
       </div>
 
-      {/* Modal */}
-      <TicketModal modalContent={modalContent} onClose={closeModal} />
+      {loading && <p className="text-center">Loading...</p>}
+      {error && <p className="text-center text-red-500">{error}</p>}
+      {transactions.length ? (
+        <div className="max-w-4xl mx-auto" style={{ height: "400px" }}>
+          <Bar
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: { beginAtZero: true },
+              },
+            }}
+          />
+        </div>
+      ) : (
+        !loading && <p className="text-center">No data available.</p>
+      )}
     </div>
   );
 };
 
-export default TransactionTable;
+export default Chartjs;

@@ -9,7 +9,8 @@ import { FiCopy } from "react-icons/fi"; // Import copy icon
 import moment from "moment";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify"; // Added toast notification import
-import jsPDF from "jspdf";
+import Chartjs from "@/components/businesses/ChartAppId"; // Adjust import path if needed
+import dynamic from "next/dynamic";
 
 const BusinessModal = ({ modalContent, onClose }) => {
   const [businessDetails, setBusinessDetails] = useState(null);
@@ -254,6 +255,13 @@ const BusinessModal = ({ modalContent, onClose }) => {
                   </div>
                 )}
             </div>
+            <div>
+              {modalContent?.appId && (
+                <div className="mt-6 px-4">
+                  <Chartjs appId={modalContent.appId} />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Actions */}
@@ -266,12 +274,6 @@ const BusinessModal = ({ modalContent, onClose }) => {
               >
                 CLOSE
               </button>
-              {/* <button
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-sm w-full"
-                onClick={handleDownloadPDF}
-              >
-                PRINT
-              </button> */}
             </div>
           </div>
         </div>
