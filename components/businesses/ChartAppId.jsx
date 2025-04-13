@@ -1,22 +1,19 @@
-
 import React, { useState, useEffect } from "react";
-import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
+import axiosInstance from "@/lib/axiosInstance";
 import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parse } from "date-fns";
 
-// Register chart components for Chart.js v3+
+// Register Chart.js components
 Chart.register(...registerables);
 
-// Custom DatePicker component that forces the format YYYY-MM-DD
+// Custom datepicker
 const CustomDatePicker = ({ value, onChange, label }) => {
-  // Convert the state value (a string) to a Date object
   const parsedDate = value ? parse(value, "yyyy-MM-dd", new Date()) : null;
 
   const handleDateChange = (date) => {
-    // If a date is selected, format it as "YYYY-MM-DD"
     const formatted = date ? format(date, "yyyy-MM-dd") : "";
     onChange(formatted);
   };
@@ -27,7 +24,7 @@ const CustomDatePicker = ({ value, onChange, label }) => {
       <DatePicker
         selected={parsedDate}
         onChange={handleDateChange}
-        dateFormat="yyyy-MM-dd" // Force the display format
+        dateFormat="yyyy-MM-dd"
         placeholderText="YYYY-MM-DD"
         className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
@@ -35,17 +32,14 @@ const CustomDatePicker = ({ value, onChange, label }) => {
   );
 };
 
-const Chartjs = () => {
-  // Array of transaction objects from the API response
+// ✅ Updated Chart Component
+const Chartjs = ({ appId }) => {
   const [transactions, setTransactions] = useState([]);
-  // Date filter states stored as strings ("YYYY-MM-DD")
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
-  // Loading and error state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch data from the API with date filters
   const fetchData = async () => {
     setLoading(true);
     setError("");
@@ -54,19 +48,18 @@ const Chartjs = () => {
       const params = {
         start: start || undefined,
         end: end || undefined,
+        appId, // <-- Filter by appId
       };
+      console.log("Fetching chart data with params:", params);
 
-      // Use the custom axios instance and the provided endpoint
       const response = await axiosInstance.get("/Transaction/Chart", {
         params,
       });
-      console.log("API response:", response.data);
 
-      if (response.data && response.data.isSuccess) {
-        // Set transactions from the response data
+      if (response.data?.isSuccess) {
         setTransactions(response.data.data);
       } else {
-        throw new Error("API returned an unsuccessful response");
+        throw new Error("Unsuccessful API response");
       }
     } catch (err) {
       console.error("Error fetching transaction data:", err);
@@ -76,42 +69,33 @@ const Chartjs = () => {
     }
   };
 
-  // Fetch data on component mount
   useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (appId) fetchData();
+  }, [appId]);
 
-  // Helper function to format a date string as YYYY-MM-DD
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   };
 
-  // Prepare the chart data if transactions are available.
-  const chartData =
-    transactions.length > 0
-      ? {
-          labels: transactions.map((tx) => formatDate(tx.transactiondate)),
-          datasets: [
-            {
-              label: "Total Amount",
-              data: transactions.map((tx) => tx.totalamount),
-              backgroundColor: "rgba(75, 192, 192, 0.4)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
-            },
-          ],
-        }
-      : { labels: [], datasets: [] };
+  const chartData = {
+    labels: transactions.map((tx) => formatDate(tx.transactiondate)),
+    datasets: [
+      {
+        label: "Total Amount",
+        data: transactions.map((tx) => tx.totalamount),
+        backgroundColor: "rgba(75, 192, 192, 0.4)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
 
   return (
-    <div className="w-full px-6 py-10">
-      <h2 className="text-3xl font-bold py-6 text-center">Transaction Chart</h2>
-      {/* Filter Section */}
-      <div className="bg-white shadow-xl rounded-lg p-8 mb-8 w-full">
-        <h3 className="text-xl font-semibold mb-6">Filter by Date</h3>
-        <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
+    <div className="w-full px-6 py-6">
+      <h2 className="text-2xl font-bold mb-4 text-center">Transaction Chart</h2>
+      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
           <CustomDatePicker
             label="Start Date"
             value={start}
@@ -120,7 +104,7 @@ const Chartjs = () => {
           <CustomDatePicker label="End Date" value={end} onChange={setEnd} />
           <button
             onClick={fetchData}
-            className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md"
+            className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700"
           >
             Filter
           </button>
@@ -128,9 +112,12 @@ const Chartjs = () => {
       </div>
 
       {loading && <p className="text-center text-lg">Loading...</p>}
-      {error && <p className="text-center text-lg text-red-500">{error}</p>}
-      {transactions.length > 0 ? (
-        <div className="w-full mx-auto" style={{ height: "400px" }}>
+      {error && <p className="text-center text-red-500">{error}</p>}
+      {!loading && transactions.length === 0 && (
+        <p className="text-center text-gray-500">No data available.</p>
+      )}
+      {transactions.length > 0 && (
+        <div className="w-full h-[300px]">
           <Bar
             data={chartData}
             options={{
@@ -142,8 +129,6 @@ const Chartjs = () => {
             }}
           />
         </div>
-      ) : (
-        !loading && <p className="text-center text-lg">No data available.</p>
       )}
     </div>
   );
