@@ -130,40 +130,10 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 		}
 	};
 
-	// Handle Send Error action using the new endpoint.
-	const handleSendError = async () => {
-		try {
-			let kadTransactionId;
-			if (isPrepaid && modalContent.prepaid?.kadTransactionId) {
-				kadTransactionId = modalContent.prepaid.kadTransactionId;
-			} else if (isPostpaid && modalContent.postpaid?.kadTransactionId) {
-				kadTransactionId = modalContent.postpaid.kadTransactionId;
-			}
-			if (!kadTransactionId) {
-				console.error("KadTransactionId is missing.");
-				return;
-			}
-			// Use the provided endpoint to notify error.
-			const response = await axiosInstance.get(
-				`/KadElectric/Errors/Notify/${kadTransactionId}`
-			);
-			if (response.data.isSuccess) {
-				console.log("Error notification sent successfully.");
-			} else {
-				console.error(
-					"Failed to send error notification:",
-					response.data.message
-				);
-			}
-		} catch (error) {
-			console.error("Error sending error notification:", error);
-		}
-	};
-
-	// For Refund action (unchanged)
+	// Other actions remain unchanged
 	const handleRefund = async () => {
 		try {
-			const response = await axiosInstance.post(`/KadElectric/Refund`, {
+			const response = await axiosInstance.post("/KadElectric/Refund", {
 				id: modalContent.id,
 			});
 			if (response.data.isSuccess) {
@@ -171,6 +141,26 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 			}
 		} catch (error) {
 			console.error("Error processing refund:", error);
+		}
+	};
+
+	// Handle Send Error action using the new endpoint and modalContent.id
+	const handleSendError = async () => {
+		try {
+			if (!modalContent.id) {
+				console.error("Transaction id is missing in the payload");
+				return;
+			}
+			const response = await axiosInstance.get(
+				`/KadElectric/Errors/Notify/${modalContent.id}`
+			);
+			if (response.data.isSuccess) {
+				console.log("Error notification sent successfully:", response.data);
+			} else {
+				console.error("Error notification failed:", response.data.message);
+			}
+		} catch (error) {
+			console.error("Error sending error message:", error);
 		}
 	};
 
