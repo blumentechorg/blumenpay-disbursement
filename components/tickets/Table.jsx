@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 // Import the custom axios instance
-import axiosInstance from "../path/to/axiosInstance"; // Adjust the path as needed
+import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
 import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import { format, parseISO } from "date-fns"; // Importing date-fns for formatting
