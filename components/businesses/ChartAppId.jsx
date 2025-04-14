@@ -92,9 +92,9 @@ const Chartjs = ({ appId }) => {
   };
 
   return (
-    <div className="w-full px-6 py-6">
-      <h2 className="text-2xl font-bold mb-4 text-center">Transaction Chart</h2>
-      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+    <div className="w-full px-6 py-3">
+      {/* <h2 className="text-2xl font-bold mb-4 text-center">Transaction Chart</h2> */}
+      <div className="bg-white shadow-md rounded-lg p-3 mb-6">
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
           <CustomDatePicker
             label="Start Date"
@@ -104,7 +104,7 @@ const Chartjs = ({ appId }) => {
           <CustomDatePicker label="End Date" value={end} onChange={setEnd} />
           <button
             onClick={fetchData}
-            className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-blue-600 text-white font-semibold px-6 py-3 mt-7 rounded-lg hover:bg-blue-700"
           >
             Filter
           </button>

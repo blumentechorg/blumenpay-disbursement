@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import axiosInstance from "@/lib/axiosInstance"; // Adjust the path as needed
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2"; // Using Line chart for area chart
 import { Chart, registerables } from "chart.js";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -97,20 +96,90 @@ const Chartjs = () => {
             {
               label: "Total Amount",
               data: transactions.map((tx) => tx.totalamount),
+              fill: true, // Enables the area fill
               backgroundColor: "rgba(75, 192, 192, 0.4)",
               borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
+              borderWidth: 2,
+              tension: 0.3, // Adds subtle curve to the line
             },
           ],
         }
       : { labels: [], datasets: [] };
 
+  // Enhanced chart options with styling details
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: {
+          font: { family: "Arial", size: 14 },
+          color: "#333",
+          padding: 20,
+        },
+      },
+      title: {
+        display: true,
+
+        font: { family: "Arial", size: 20 },
+        color: "#111",
+        padding: {
+          top: 10,
+          bottom: 30,
+        },
+      },
+      tooltip: {
+        backgroundColor: "#fff",
+        titleColor: "#333",
+        bodyColor: "#666",
+        borderColor: "rgba(0, 0, 0, 0.1)",
+        borderWidth: 1,
+        cornerRadius: 4,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          color: "rgba(200,200,200,0.2)",
+        },
+        ticks: {
+          font: { family: "Arial", size: 12 },
+          color: "#333",
+        },
+      },
+      y: {
+        grid: {
+          color: "rgba(200,200,200,0.2)",
+        },
+        ticks: {
+          font: { family: "Arial", size: 12 },
+          color: "#333",
+          // Format ticks as currency
+          callback: (value) => `$${value}`,
+        },
+      },
+    },
+    layout: {
+      padding: {
+        left: 10,
+        right: 10,
+        top: 20,
+        bottom: 20,
+      },
+    },
+    animation: {
+      duration: 1500,
+      easing: "easeOutQuart",
+    },
+  };
+
   return (
-    <div className="w-full px-6 py-10">
-      <h2 className="text-3xl font-bold py-6 text-center">Transaction Chart</h2>
+    <div className="w-full px-6 py-6">
       {/* Filter Section */}
-      <div className="bg-white shadow-xl rounded-lg p-8 mb-8 w-full">
-        <h3 className="text-xl font-semibold mb-6">Filter by Date</h3>
+      <div className="bg-white text-xs shadow-xl rounded-lg p-4 mb-8 w-full">
+        <h3 className="text-sm font-bold mb-4">Filter by Date</h3>
         <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
           <CustomDatePicker
             label="Start Date"
@@ -120,7 +189,7 @@ const Chartjs = () => {
           <CustomDatePicker label="End Date" value={end} onChange={setEnd} />
           <button
             onClick={fetchData}
-            className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md"
+            className="bg-blue-600 text-white font-semibold px-4 py-3 mt-7 rounded-lg hover:bg-blue-700 transition shadow-md"
           >
             Filter
           </button>
@@ -131,16 +200,7 @@ const Chartjs = () => {
       {error && <p className="text-center text-lg text-red-500">{error}</p>}
       {transactions.length > 0 ? (
         <div className="w-full mx-auto" style={{ height: "400px" }}>
-          <Bar
-            data={chartData}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                y: { beginAtZero: true },
-              },
-            }}
-          />
+          <Line data={chartData} options={chartOptions} />
         </div>
       ) : (
         !loading && <p className="text-center text-lg">No data available.</p>
