@@ -18,7 +18,7 @@ const ActivityTable = ({ searchQuery = "" }) => {
 
   // Pagination states (1-indexed)
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(15);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 

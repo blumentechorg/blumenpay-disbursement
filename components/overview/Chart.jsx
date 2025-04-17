@@ -28,7 +28,7 @@ const CustomDatePicker = ({ value, onChange, label }) => {
         onChange={handleDateChange}
         dateFormat="yyyy-MM-dd" // Force the display format
         placeholderText="YYYY-MM-DD"
-        className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
   );
@@ -157,7 +157,7 @@ const Chartjs = () => {
           font: { family: "Arial", size: 12 },
           color: "#333",
           // Format ticks as currency
-          callback: (value) => `$${value}`,
+          callback: (value) => `₦${value}`,
         },
       },
     },
@@ -176,20 +176,29 @@ const Chartjs = () => {
   };
 
   return (
-    <div className="w-full px-6 py-6">
+    <div className="w-full px-6 ">
       {/* Filter Section */}
-      <div className="bg-white text-xs shadow-xl rounded-lg p-4 mb-8 w-full">
-        <h3 className="text-sm font-bold mb-4">Filter by Date</h3>
-        <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
-          <CustomDatePicker
-            label="Start Date"
-            value={start}
-            onChange={setStart}
-          />
-          <CustomDatePicker label="End Date" value={end} onChange={setEnd} />
+      <div className="text-xs rounded-lg ">
+        {/* <h3 className="text-sm font-bold mb">Filter by Date</h3> */}
+        <div className="bg-white h-32 shadow-xl flex flex-col sm:flex-row rounded-lg space-x-2 p-2  items-center w-[400px] ">
+          <div className="w-[150px] text-[10px]">
+            <CustomDatePicker
+              label="Start Date"
+              value={start}
+              onChange={setStart}
+            />
+          </div>
+          <div className="text-[10px] w-[150px]">
+            <CustomDatePicker
+              label="End Date"
+              value={end}
+              onChange={setEnd}
+              className=""
+            />
+          </div>
           <button
             onClick={fetchData}
-            className="bg-blue-600 text-white font-semibold px-4 py-3 mt-7 rounded-lg hover:bg-blue-700 transition shadow-md"
+            className="bg-blue-600 text-white font-semibold px-4 py-2 mt-7 rounded-lg hover:bg-blue-700 transition shadow-md"
           >
             Filter
           </button>
