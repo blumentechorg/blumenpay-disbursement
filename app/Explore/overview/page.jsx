@@ -12,7 +12,7 @@ import ActivityTable from "@/components/overview/ActivityTable";
 // import Chart from "@/components/overview/Chart";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("@/components/overview/Chart"), {
+const Chart = dynamic(() => import("@/components/Chart"), {
   ssr: false,
 });
 

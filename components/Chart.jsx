@@ -22,13 +22,13 @@ const CustomDatePicker = ({ value, onChange, label }) => {
 
   return (
     <div className="flex flex-col w-full">
-      <label className="mb-2 text-sm font-medium text-gray-700">{label}</label>
+      {/* <label className="mb-2 text-sm font-medium text-gray-700">{label}</label> */}
       <DatePicker
         selected={parsedDate}
         onChange={handleDateChange}
         dateFormat="yyyy-MM-dd" // Force the display format
-        placeholderText="YYYY-MM-DD"
-        className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholderText=" date range"
+        className="border border-gray-300 rounded-lg p-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
   );
@@ -176,11 +176,11 @@ const Chartjs = () => {
   };
 
   return (
-    <div className="w-full px-6 ">
+    <div className="w-full ">
       {/* Filter Section */}
       <div className="text-xs rounded-lg ">
         {/* <h3 className="text-sm font-bold mb">Filter by Date</h3> */}
-        <div className="bg-white h-32 shadow-xl flex flex-col sm:flex-row rounded-lg space-x-2 p-2  items-center w-[400px] ">
+        <div className="  flex flex-col sm:flex-row rounded-lg space-x-2 p-  items-center w-[400px] ">
           <div className="w-[150px] text-[10px]">
             <CustomDatePicker
               label="Start Date"
@@ -198,7 +198,7 @@ const Chartjs = () => {
           </div>
           <button
             onClick={fetchData}
-            className="bg-blue-600 text-white font-semibold px-4 py-2 mt-7 rounded-lg hover:bg-blue-700 transition shadow-md"
+            className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
           >
             Filter
           </button>

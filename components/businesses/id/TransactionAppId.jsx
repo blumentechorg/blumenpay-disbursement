@@ -5,50 +5,33 @@ import { useTable, usePagination } from "react-table";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
-import BusinessModal from "./Modal";
-import EditModal from "./EditModal";
-import FloatingSearchContainer from "./PSearch";
+import TransactionModal from "../Modal";
 import axiosInstance from "@/lib/axiosInstance";
 import moment from "moment";
+import Link from "next/link";
 
-const BusinessTable = ({ filters }) => {
+const TransactionAppId = ({ searchQuery = "" }) => {
   const [modalContent, setModalContent] = useState(null);
-  const [editModalContent, setEditModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
   const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Pagination states (1-indexed)
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
+  const [pageSize, setPageSize] = useState(15);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Reset page when filters change
+  // Fetch data without any external filters, but now with search query if provided.
   useEffect(() => {
-    setPageNumber(1);
-  }, [filters]);
-
-  // Function to fetch data from the API
-  const fetchData = () => {
     setIsLoading(true);
-    let query = `/Apps?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-    if (filters.businessName)
-      query += `&name=${encodeURIComponent(filters.businessName)}`;
-    if (filters.appId) query += `&appId=${encodeURIComponent(filters.appId)}`;
-    if (filters.status)
-      query += `&status=${encodeURIComponent(filters.status)}`;
-    if (filters.serviceProvider)
-      query += `&serviceProvider=${encodeURIComponent(
-        filters.serviceProvider
-      )}`;
-    if (filters.date) query += `&date=${encodeURIComponent(filters.date)}`;
-
+    // Append search parameter if searchQuery is not empty.
+    const query = `/Transaction?pageNumber=${pageNumber}&pageSize=${pageSize}${
+      searchQuery ? `&search=${searchQuery}` : ""
+    }`;
     axiosInstance
       .get(query)
       .then((response) => {
-        // Assuming response.data.data is an array of business objects
         setData(response.data.data);
         setTotalCount(response.data.totalCount);
         setTotalPages(
@@ -57,133 +40,83 @@ const BusinessTable = ({ filters }) => {
         );
       })
       .catch((error) => {
-        console.error("Error fetching business data:", error);
+        console.error("Error fetching transactions:", error);
       })
       .finally(() => setIsLoading(false));
-  };
+  }, [pageNumber, pageSize, searchQuery]);
 
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    pageNumber,
-    pageSize,
-    filters.businessName,
-    filters.appId,
-    filters.status,
-    filters.serviceProvider,
-    filters.date,
-  ]);
+  const finalData = data;
+  const dynamicTotalCount = totalCount;
+  const dynamicTotalPages = totalPages;
 
-  // Client‑side filtering based on table header fields
-  const filteredData = useMemo(() => {
-    return data.filter((row) => {
-      const matchesBusinessName = filters.businessName
-        ? row.name.toLowerCase().includes(filters.businessName.toLowerCase())
-        : true;
-      const matchesAppId = filters.appId
-        ? row.appId
-            .toString()
-            .toLowerCase()
-            .includes(filters.appId.toLowerCase())
-        : true;
-      const rowStatus =
-        typeof row.status === "object" ? row.status.label : row.status;
-      const matchesStatus = filters.status
-        ? rowStatus === filters.status
-        : true;
-      const matchesServiceProvider = filters.serviceProvider
-        ? row.defaultProvider === filters.serviceProvider
-        : true;
-      const matchesDate = filters.date
-        ? moment(row.apiKeyCreationDate).format("YYYY-MM-DD") === filters.date
-        : true;
-      const matchesSearch = searchQuery
-        ? row.name.toLowerCase().includes(searchQuery.toLowerCase())
-        : true;
-      return (
-        matchesBusinessName &&
-        matchesAppId &&
-        matchesStatus &&
-        matchesServiceProvider &&
-        matchesDate &&
-        matchesSearch
-      );
-    });
-  }, [data, filters, searchQuery]);
-
-  const finalData = filteredData;
-
-  // ---- Custom Pagination Method ----
-  const getPaginationItems = () => {
-    if (totalPages <= 8) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-    const rightGroup = [totalPages - 2, totalPages - 1, totalPages];
-    let leftGroup = [];
-    if (pageNumber <= 5) {
-      leftGroup = [1, 2, 3, 4, 5];
-    } else if (pageNumber > totalPages - 7) {
-      leftGroup = [];
-      for (let i = totalPages - 7; i <= totalPages - 3; i++) {
-        leftGroup.push(i);
-      }
-    } else {
-      leftGroup = [];
-      for (let i = pageNumber - 4; i <= pageNumber; i++) {
-        leftGroup.push(i);
-      }
-    }
-    if (leftGroup[leftGroup.length - 1] + 1 === rightGroup[0]) {
-      return [...leftGroup, ...rightGroup];
-    } else {
-      return [...leftGroup, "ellipsis", ...rightGroup];
-    }
-  };
-
-  const paginationItems = getPaginationItems();
-  // ---------------------------------------------------------------
-
-  // Column definitions
   const columns = useMemo(
     () => [
-      {
-        Header: "",
-        accessor: "checkbox",
-        Cell: ({ row }) => (
-          <input
-            type="checkbox"
-            onClick={(e) => e.stopPropagation()}
-            checked={selectedRows[row.original.appId] || false}
-            onChange={() =>
-              setSelectedRows((prev) => ({
-                ...prev,
-                [row.original.appId]: !prev[row.original.appId],
-              }))
-            }
-          />
-        ),
-      },
-      {
-        Header: " ID",
-        accessor: "id", // ← change this to your actual business‐ID field name
-        Cell: ({ value }) => value || "N/A",
-      },
+      // {
+      //   Header: "",
+      //   accessor: "checkbox",
+      //   Cell: ({ row }) => (
+      //     <input
+      //       type="checkbox"
+      //       onClick={(e) => e.stopPropagation()}
+      //       checked={selectedRows[row.original.id] || false}
+      //       onChange={() =>
+      //         setSelectedRows((prev) => ({
+      //           ...prev,
+      //           [row.original.id]: !prev[row.original.id],
+      //         }))
+      //       }
+      //     />
+      //   ),
+      // },
       {
         Header: "Business",
-        accessor: "name",
+        accessor: "app.name",
         Cell: ({ value }) => value || "N/A",
       },
-      { Header: "App ID", accessor: "appId" },
+      { Header: "Reference Number", accessor: "referenceNumber" },
+      { Header: "Provider", accessor: "provider" },
       {
-        Header: "Total Balance",
-        accessor: "totalBalance",
+        Header: "Amount",
+        accessor: "amount",
         Cell: ({ value }) => `₦${value.toLocaleString()}`,
       },
-      { Header: "Default Provider", accessor: "defaultProvider" },
+      { Header: "Fee", accessor: "fee" },
+      {
+        Header: "Type",
+        accessor: "type",
+        Cell: ({ value }) => (value ? value.label : ""),
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        Cell: ({ value }) => {
+          let icon;
+          switch (value.label) {
+            case "Success":
+              icon = <FaCheckCircle className="text-green-500" size={14} />;
+              break;
+            case "Pending":
+              icon = (
+                <TbAlertCircleFilled className="text-yellow-600" size={14} />
+              );
+              break;
+            case "Failed":
+              icon = <TbAlertCircleFilled className="text-red-500" size={14} />;
+              break;
+            default:
+              icon = null;
+          }
+          return (
+            <div className="flex items-center space-x-2">
+              {icon}
+              <span>{value.label}</span>
+            </div>
+          );
+        },
+      },
       {
         Header: "Created At",
-        accessor: "apiKeyCreationDate",
+        accessor: "createdAt",
         Cell: ({ value }) => {
           const now = moment();
           const createdAt = moment(value);
@@ -197,40 +130,15 @@ const BusinessTable = ({ filters }) => {
         },
       },
       {
-        Header: "Status",
-        accessor: "status",
-        Cell: ({ value }) => {
-          const statusLabel = typeof value === "object" ? value.label : value;
-          return (
-            <div className="flex items-center space-x-2">
-              {statusLabel === "Active" ? (
-                <FaCheckCircle className="text-green-500" size={14} />
-              ) : (
-                <TbAlertCircleFilled className="text-red-500" size={16} />
-              )}
-              <span>{statusLabel}</span>
-            </div>
-          );
-        },
-      },
-      {
-        Header: "Actions",
+        Header: "Action",
         accessor: "action",
         Cell: ({ row }) => (
-          <div className="space-x-2">
-            <button
-              onClick={() => setModalContent(row.original)}
-              className="text-[#343A40] text-xs underline hover:text-blue-700"
-            >
-              View
-            </button>
-            <button
-              onClick={() => setEditModalContent(row.original)}
-              className="text-[#343A40] text-xs underline hover:text-blue-700"
-            >
-              Edit
-            </button>
-          </div>
+          <button
+            onClick={() => setModalContent(row.original)}
+            className="text-[#343A40] text-xs underline hover:text-blue-700"
+          >
+            View
+          </button>
         ),
       },
     ],
@@ -253,30 +161,52 @@ const BusinessTable = ({ filters }) => {
       data: finalData,
       initialState: { pageIndex: pageNumber - 1, pageSize },
       manualPagination: true,
-      pageCount: totalPages,
+      pageCount: dynamicTotalPages,
     },
     usePagination
   );
 
   const handlePageChange = (newPageNumber) => {
-    if (newPageNumber < 1 || newPageNumber > totalPages) return;
+    if (newPageNumber < 1 || newPageNumber > dynamicTotalPages) return;
     setPageNumber(newPageNumber);
     gotoPage(newPageNumber - 1);
   };
 
+  const getPaginationItems = () => {
+    if (dynamicTotalPages <= 8) {
+      return Array.from({ length: dynamicTotalPages }, (_, i) => i + 1);
+    }
+    const rightGroup = [
+      dynamicTotalPages - 2,
+      dynamicTotalPages - 1,
+      dynamicTotalPages,
+    ];
+    let leftGroup = [];
+    if (pageNumber <= 5) {
+      leftGroup = [1, 2, 3, 4, 5];
+    } else if (pageNumber > dynamicTotalPages - 7) {
+      leftGroup = [];
+      for (let i = dynamicTotalPages - 7; i <= dynamicTotalPages - 3; i++) {
+        leftGroup.push(i);
+      }
+    } else {
+      leftGroup = [];
+      for (let i = pageNumber - 4; i <= pageNumber; i++) {
+        leftGroup.push(i);
+      }
+    }
+    if (leftGroup[leftGroup.length - 1] + 1 === rightGroup[0]) {
+      return [...leftGroup, ...rightGroup];
+    } else {
+      return [...leftGroup, "ellipsis", ...rightGroup];
+    }
+  };
+
+  const paginationItems = getPaginationItems();
+
   return (
     <div className="space-y-5">
-      <div>
-        <FloatingSearchContainer
-          onSelectAll={(isSelected) => {
-            const newSelections = {};
-            data.forEach((row) => (newSelections[row.appId] = isSelected));
-            setSelectedRows(newSelections);
-          }}
-          onSearchChange={setSearchQuery}
-        />
-      </div>
-      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto cursor-pointer">
+      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
         <table
           {...getTableProps()}
           className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
@@ -357,7 +287,7 @@ const BusinessTable = ({ filters }) => {
               onChange={(e) => setPageSize(Number(e.target.value))}
               className="px-1 py-1 border rounded-md bg-white text-gray-700"
             >
-              {[4, 8, 10, 20, 50].map((size) => (
+              {[5, 10, 15].map((size) => (
                 <option key={size} value={size}>
                   {size}
                 </option>
@@ -397,9 +327,9 @@ const BusinessTable = ({ filters }) => {
             )}
             <button
               onClick={() => handlePageChange(pageNumber + 1)}
-              disabled={!canNextPage || pageNumber >= totalPages}
+              disabled={!canNextPage || pageNumber >= dynamicTotalPages}
               className={`px-1 py-1 border rounded-md ${
-                !canNextPage || pageNumber >= totalPages
+                !canNextPage || pageNumber >= dynamicTotalPages
                   ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : "bg-black text-white hover:bg-gray-100"
               }`}
@@ -409,27 +339,18 @@ const BusinessTable = ({ filters }) => {
           </div>
           <div className="text-gray-600">
             Showing {(pageNumber - 1) * pageSize + 1}-
-            {Math.min(pageNumber * pageSize, totalCount)} of {totalCount}
+            {Math.min(pageNumber * pageSize, dynamicTotalCount)} of{" "}
+            {dynamicTotalCount}
           </div>
         </div>
       </div>
-      <BusinessModal
+      <TransactionModal
         modalContent={modalContent}
         onClose={() => setModalContent(null)}
-        appId={modalContent?.id}
+        appId={modalContent?.appId}
       />
-      {editModalContent && (
-        <EditModal
-          modalContent={editModalContent}
-          onClose={() => setEditModalContent(null)}
-          onSuccess={() => {
-            setEditModalContent(null);
-            fetchData();
-          }}
-        />
-      )}
     </div>
   );
 };
 
-export default BusinessTable;
+export default TransactionAppId;

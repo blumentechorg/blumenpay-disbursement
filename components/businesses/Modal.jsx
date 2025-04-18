@@ -9,11 +9,18 @@ import { FiCopy } from "react-icons/fi"; // Import copy icon
 import moment from "moment";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify"; // Added toast notification import
-import Chartjs from "@/components/businesses/ChartAppId"; // Adjust import path if needed
-import dynamic from "next/dynamic";
+import Chartjs from "@/components/businesses/id/ChartId"; // Adjust import path if needed
+import TotalToday from "@/components/cards/TotalToday";
+import TotalYesterday from "@/components/cards/TotalYesterday";
+import TotalThisWeek from "@/components/cards/TotalThisWeek";
+import TotalThisMonth from "@/components/cards/TotalThisMonth";
+import TotalPreviousMonth from "@/components/cards/TotalPreviousMonth";
+import TotalAllTime from "@/components/cards/TotalAllTime";
+import TransactionTable from "@/components/businesses/id/TransactionAppId";
 
-const BusinessModal = ({ modalContent, onClose }) => {
+const BusinessModal = ({ modalContent, appId, onClose }) => {
   const [businessDetails, setBusinessDetails] = useState(null);
+  const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [newApiKey, setNewApiKey] = useState(""); // New state for generated key
@@ -108,7 +115,7 @@ const BusinessModal = ({ modalContent, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center "
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center  "
       onClick={handleBackdropClick}
     >
       <div
@@ -116,7 +123,7 @@ const BusinessModal = ({ modalContent, onClose }) => {
         onClick={handleBackdropClick}
       >
         <div
-          className="bg-gray-100  h-full shadow-lg relative overflow-y-auto"
+          className="bg-gray-100  h-full shadow-lg relative overflow-y-auto w-4/5"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -255,21 +262,38 @@ const BusinessModal = ({ modalContent, onClose }) => {
                   </div>
                 )}
             </div>
+
+            {/* Business cards */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-5 py-5">
+              <TotalToday />
+              <TotalYesterday />
+              <TotalThisWeek />
+              <TotalThisMonth />
+              <TotalPreviousMonth />
+              <TotalAllTime />
+            </div>
+
+            {/* chart  */}
             <div>
               {modalContent?.appId && (
                 <div className="mt-6 px-4">
-                  <Chartjs appId={modalContent.appId} />
+                  <Chartjs appId={appId} />
                 </div>
               )}
+            </div>
+
+            {/* business transaction table  */}
+            <div className="flex-1 space-y-4 overflow-y-auto pt-5 bg-gray-100 ">
+              <TransactionTable filters={filters} appId={modalContent?.appId} />
             </div>
           </div>
 
           {/* Actions */}
           <div className="mt-10 px-4">
             {/* <h3 className="text-gray-700 font-semibold mb-4">Actions</h3> */}
-            <div className="flex space-x-4 text-xs ">
+            <div className="flex space-x-4 text-xs justify-center ">
               <button
-                className="bg-[#0052CC] text-white px-4 py-2 rounded-sm w-full "
+                className="bg-[#0052CC] text-white px-4 py-2 rounded-sm w-4/5  "
                 onClick={onClose}
               >
                 CLOSE
