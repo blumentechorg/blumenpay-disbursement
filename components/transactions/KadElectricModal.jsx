@@ -42,7 +42,9 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 
 	// Initialize retryReference when showing the form
 	const handleShowRetryForm = () => {
-		setRetryReference("");
+		const firstTransactionRef =
+			currentModalContent.transactions?.[0]?.referenceNumber || "";
+		setRetryReference(firstTransactionRef);
 		setShowRetryForm(true);
 		setRetryResponse(null);
 	};
@@ -143,10 +145,27 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 			}
 		} catch (error) {
 			console.error("Error finalizing online transaction:", error);
-			setRetryResponse({
-				isSuccess: false,
-				message: "Error finalizing online transaction.",
-			});
+			// Use the error response from the server if available
+			if (error.response) {
+				setRetryResponse({
+					isSuccess: false,
+					message:
+						error.response.data.message || "Error finalizing transaction",
+					data: error.response.data, // Include the full error response
+				});
+			} else if (error.request) {
+				setRetryResponse({
+					isSuccess: false,
+					message: "No response received from server",
+					data: null,
+				});
+			} else {
+				setRetryResponse({
+					isSuccess: false,
+					message: error.message,
+					data: null,
+				});
+			}
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -612,10 +631,39 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 										</div>
 									)}
 
+									{/* Enhanced error display */}
 									{!retryResponse.isSuccess && retryResponse.data && (
-										<pre className='text-xs bg-white p-2 rounded overflow-x-auto'>
-											{JSON.stringify(retryResponse.data, null, 2)}
-										</pre>
+										<div className='mt-3'>
+											{retryResponse.data.error && (
+												<p className='text-xs text-red-600'>
+													{retryResponse.data.error}
+												</p>
+											)}
+											{retryResponse.data.errorMessage && (
+												<p className='text-xs text-red-600'>
+													{retryResponse.data.errorMessage}
+												</p>
+											)}
+											{retryResponse.data.errors && (
+												<div className='space-y-2'>
+													{Object.entries(retryResponse.data.errors).map(
+														([key, value]) => (
+															<p key={key} className='text-xs text-red-600'>
+																<span className='font-medium'>{key}:</span>{" "}
+																{value}
+															</p>
+														)
+													)}
+												</div>
+											)}
+											{/* {!retryResponse.data.error &&
+												!retryResponse.data.errorMessage &&
+												!retryResponse.data.errors && (
+													<pre className='text-xs bg-white p-2 rounded overflow-x-auto'>
+														{JSON.stringify(retryResponse.data, null, 2)}
+													</pre>
+												)} */}
+										</div>
 									)}
 								</div>
 							</div>
@@ -635,7 +683,7 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 										className='block text-xs text-gray-700 mb-1'
 										htmlFor='retryReference'
 									>
-										Enter Reference Number
+										Reference Number
 									</label>
 									<input
 										id='retryReference'
