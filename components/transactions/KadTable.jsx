@@ -21,251 +21,183 @@ const KadTransactionTable = ({ filters }) => {
 	const [totalCount, setTotalCount] = useState(0);
 	const [totalPages, setTotalPages] = useState(0);
 
-	// Reset page when specific filters change
+	// Reset to first page when filters change
 	useEffect(() => {
 		setPageNumber(1);
-	}, [filters.referenceNumber]);
+	}, [filters, searchQuery]);
 
-	// Only include boolean filters when defined and non-empty
-	const shouldFetchAllPages =
-		filters.business ||
-		filters.startDate ||
-		filters.endDate ||
-		filters.referenceNumber ||
-		(typeof filters.canRetry !== "undefined" && filters.canRetry !== "") ||
-		(typeof filters.canRefund !== "undefined" && filters.canRefund !== "") ||
-		(typeof filters.canSendToken !== "undefined" &&
-			filters.canSendToken !== "") ||
-		(typeof filters.canSendError !== "undefined" &&
-			filters.canSendError !== "");
+	// Fetch data with debouncing
+	useEffect(() => {
+		const debounceTimer = setTimeout(() => {
+			setIsLoading(true);
 
-	// Fetch all pages in parallel when needed
-	const fetchAllPages = useCallback(async () => {
-		setIsLoading(true);
-		try {
 			const queryParams = [];
-			if (filters.referenceNumber)
-				queryParams.push(
-					`referenceNumber=${encodeURIComponent(filters.referenceNumber)}`
-				);
-			if (filters.provider)
-				queryParams.push(`provider=${encodeURIComponent(filters.provider)}`);
-			if (filters.status)
-				queryParams.push(`status=${encodeURIComponent(filters.status)}`);
-			if (filters.type)
-				queryParams.push(`type=${encodeURIComponent(filters.type)}`);
-			if (typeof filters.canRetry !== "undefined" && filters.canRetry !== "")
-				queryParams.push(`canRetry=${encodeURIComponent(filters.canRetry)}`);
-			if (typeof filters.canRefund !== "undefined" && filters.canRefund !== "")
-				queryParams.push(`canRefund=${encodeURIComponent(filters.canRefund)}`);
-			if (
-				typeof filters.canSendToken !== "undefined" &&
-				filters.canSendToken !== ""
-			)
-				queryParams.push(
-					`canSendToken=${encodeURIComponent(filters.canSendToken)}`
-				);
-			if (
-				typeof filters.canSendError !== "undefined" &&
-				filters.canSendError !== ""
-			)
-				queryParams.push(
-					`canSendError=${encodeURIComponent(filters.canSendError)}`
-				);
 
-			const baseQuery = `/KadElectric/Purchase?pageSize=${pageSize}${
+			// Add all filter parameters
+			Object.entries(filters).forEach(([key, value]) => {
+				if (value !== "" && value !== undefined) {
+					// Use meterNumber as the API parameter
+					const apiParam = key === "meterNumber" ? "meterNumber" : key;
+					queryParams.push(`${apiParam}=${encodeURIComponent(value)}`);
+				}
+			});
+
+			// Add search query if exists
+			if (searchQuery) {
+				queryParams.push(`search=${encodeURIComponent(searchQuery)}`);
+			}
+
+			const query = `/KadElectric/Purchase?pageNumber=${pageNumber}&pageSize=${pageSize}${
 				queryParams.length ? `&${queryParams.join("&")}` : ""
 			}`;
 
-			const firstResponse = await axiosInstance.get(
-				`${baseQuery}&pageNumber=1`
-			);
-			const totalPagesAll =
-				firstResponse.data.totalPages ||
-				Math.ceil(firstResponse.data.totalCount / pageSize);
-
-			// Fetch remaining pages in parallel
-			const pagePromises = [];
-			for (let i = 2; i <= totalPagesAll; i++) {
-				pagePromises.push(axiosInstance.get(`${baseQuery}&pageNumber=${i}`));
-			}
-			const responses = await Promise.all(pagePromises);
-			const combinedData = firstResponse.data.data.concat(
-				responses.flatMap((res) => res.data.data)
-			);
-
-			// Client‑side filtering
-			const clientFiltered = combinedData.filter((row) => {
-				let matchesBusiness = true;
-				if (filters.business) {
-					matchesBusiness = row.app?.name
-						?.toLowerCase()
-						.includes(filters.business.toLowerCase());
-				}
-				let matchesDate = true;
-				if (filters.startDate) {
-					matchesDate =
-						matchesDate &&
-						new Date(row.createdAt) >= new Date(filters.startDate);
-				}
-				if (filters.endDate) {
-					matchesDate =
-						matchesDate && new Date(row.createdAt) <= new Date(filters.endDate);
-				}
-				let matchesReferenceNumber = true;
-				if (filters.referenceNumber) {
-					matchesReferenceNumber =
-						row.prepaidRequest?.meterNumber
-							?.toLowerCase()
-							.includes(filters.referenceNumber.toLowerCase()) ||
-						row.postpaidRequest?.customerAccountNo
-							?.toLowerCase()
-							.includes(filters.referenceNumber.toLowerCase());
-				}
-				return matchesBusiness && matchesDate && matchesReferenceNumber;
-			});
-
-			setData(clientFiltered);
-			setTotalCount(clientFiltered.length);
-			setTotalPages(Math.ceil(clientFiltered.length / pageSize));
-			setPageNumber(1);
-		} catch (error) {
-			console.error("Error fetching all pages for filters:", error);
-		} finally {
-			setIsLoading(false);
-		}
-	}, [filters, pageSize]);
-
-	// Fetch data with debouncing when not fetching all pages
-	useEffect(() => {
-		const debounceTimer = setTimeout(() => {
-			if (shouldFetchAllPages) {
-				fetchAllPages();
-			} else {
-				let query = `/KadElectric/Purchase?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-				if (filters.referenceNumber)
-					query += `&referenceNumber=${encodeURIComponent(
-						filters.referenceNumber
-					)}`;
-				if (filters.provider)
-					query += `&provider=${encodeURIComponent(filters.provider)}`;
-				if (filters.status)
-					query += `&status=${encodeURIComponent(filters.status)}`;
-				if (filters.startDate)
-					query += `&startDate=${encodeURIComponent(filters.startDate)}`;
-				if (filters.endDate)
-					query += `&endDate=${encodeURIComponent(filters.endDate)}`;
-				if (filters.type) query += `&type=${encodeURIComponent(filters.type)}`;
-				if (filters.business)
-					query += `&business=${encodeURIComponent(filters.business)}`;
-				if (typeof filters.canRetry !== "undefined" && filters.canRetry !== "")
-					query += `&canRetry=${encodeURIComponent(filters.canRetry)}`;
-				if (
-					typeof filters.canRefund !== "undefined" &&
-					filters.canRefund !== ""
-				)
-					query += `&canRefund=${encodeURIComponent(filters.canRefund)}`;
-				if (
-					typeof filters.canSendToken !== "undefined" &&
-					filters.canSendToken !== ""
-				)
-					query += `&canSendToken=${encodeURIComponent(filters.canSendToken)}`;
-				if (
-					typeof filters.canSendError !== "undefined" &&
-					filters.canSendError !== ""
-				)
-					query += `&canSendError=${encodeURIComponent(filters.canSendError)}`;
-
-				axiosInstance
-					.get(query)
-					.then((response) => {
-						setData(response.data.data);
-						setTotalCount(response.data.totalCount);
-						setTotalPages(
-							response.data.totalPages ||
-								Math.ceil(response.data.totalCount / pageSize)
-						);
-					})
-					.catch((error) => {
-						console.error("Error fetching transactions:", error);
-					})
-					.finally(() => setIsLoading(false));
-			}
+			axiosInstance
+				.get(query)
+				.then((response) => {
+					setData(response.data.data);
+					setTotalCount(response.data.totalCount);
+					setTotalPages(
+						response.data.totalPages ||
+							Math.ceil(response.data.totalCount / pageSize)
+					);
+				})
+				.catch((error) => {
+					console.error("Error fetching transactions:", error);
+				})
+				.finally(() => setIsLoading(false));
 		}, 500);
 
 		return () => clearTimeout(debounceTimer);
-	}, [pageNumber, pageSize, filters, shouldFetchAllPages, fetchAllPages]);
+	}, [pageNumber, pageSize, filters, searchQuery]);
 
-	// Additional client‑side filtering
-	const filteredData = useMemo(() => {
-		return data.filter((row) => {
-			const matchesReferenceNumber = filters.referenceNumber
-				? row.prepaidRequest?.meterNumber
-						?.toLowerCase()
-						.includes(filters.referenceNumber.toLowerCase()) ||
-				  row.postpaidRequest?.customerAccountNo
-						?.toLowerCase()
-						.includes(filters.referenceNumber.toLowerCase())
-				: true;
-			const matchesProvider = filters.provider
-				? row.paymentMethod.label === filters.provider
-				: true;
-			const matchesType = filters.type ? row.type === filters.type : true;
-			const matchesStatus = filters.status
-				? row.status.label === filters.status
-				: true;
-			const matchesSearch = searchQuery
-				? row.prepaidRequest?.meterNumber
-						?.toLowerCase()
-						.includes(searchQuery.toLowerCase())
-				: true;
+	const columns = useMemo(
+		() => [
+			{
+				Header: "",
+				accessor: "checkbox",
+				Cell: ({ row }) => (
+					<input
+						type='checkbox'
+						onClick={(e) => e.stopPropagation()}
+						checked={selectedRows[row.original.id] || false}
+						onChange={() =>
+							setSelectedRows((prev) => ({
+								...prev,
+								[row.original.id]: !prev[row.original.id],
+							}))
+						}
+					/>
+				),
+			},
+			{
+				Header: "Customer Name",
+				accessor: "kadCustomer.customerName",
+				Cell: ({ value }) => value || "N/A",
+			},
+			{
+				Header: "Meter/Account No",
+				accessor: (row) => {
+					if (row.prepaidRequest) return row.prepaidRequest.meterNumber;
+					else if (row.postpaidRequest)
+						return row.postpaidRequest.customerAccountNo;
+					return "N/A";
+				},
+				Cell: ({ value }) => value || "N/A",
+			},
+			{
+				Header: "Payment Method",
+				accessor: "paymentMethod.label",
+				Cell: ({ value }) => value || "N/A",
+			},
+			{
+				Header: "Amount",
+				accessor: (row) => {
+					if (row.prepaidRequest) return row.prepaidRequest.amount;
+					else if (row.postpaidRequest)
+						return row.postpaidRequest.paymentChannelAmount;
+					return null;
+				},
+				Cell: ({ value }) => (value ? `₦${value.toLocaleString()}` : "N/A"),
+			},
+			{
+				Header: "Payment Location",
+				accessor: "prepaidRequest.locationOfPayment",
+				Cell: ({ value }) => value || "N/A",
+			},
+			{
+				Header: "Telephone No",
+				accessor: (row) => {
+					if (row.prepaidRequest) return row.prepaidRequest.telephoneNumber;
+					else if (row.postpaidRequest)
+						return row.postpaidRequest.telephoneNumber;
+					return "N/A";
+				},
+				Cell: ({ value }) => value || "N/A",
+			},
+			{
+				Header: "Status",
+				accessor: "status",
+				Cell: ({ value }) => {
+					let icon;
+					switch (value.label) {
+						case "Success":
+							icon = <FaCheckCircle className='text-green-500' size={14} />;
+							break;
+						case "Pending":
+							icon = (
+								<TbAlertCircleFilled className='text-yellow-600' size={14} />
+							);
+							break;
+						case "Failed":
+							icon = <TbAlertCircleFilled className='text-red-500' size={14} />;
+							break;
+						default:
+							icon = null;
+					}
+					return (
+						<div className='flex items-center space-x-2'>
+							{icon}
+							<span>{value.label}</span>
+						</div>
+					);
+				},
+			},
+			{
+				Header: "Created At",
+				accessor: "createdAt",
+				Cell: ({ value }) => {
+					const now = moment();
+					const createdAt = moment(value);
+					const diffInMinutes = now.diff(createdAt, "minutes");
+					const diffInHours = now.diff(createdAt, "hours");
+					const diffInDays = now.diff(createdAt, "days");
+					if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+					else if (diffInHours < 24) return `${diffInHours} hrs ago`;
+					else if (diffInDays < 7) return `${diffInDays} days ago`;
+					else return createdAt.format("YYYY-MM-DD");
+				},
+			},
+			{
+				Header: "Action",
+				accessor: "action",
+				Cell: ({ row }) => (
+					<button
+						onClick={() => setModalContent(row.original)}
+						className='text-[#343A40] text-xs underline hover:text-blue-700'
+					>
+						View
+					</button>
+				),
+			},
+		],
+		[selectedRows]
+	);
 
-			// Boolean filter checks
-			const matchesCanRetry =
-				typeof filters.canRetry !== "undefined" && filters.canRetry !== ""
-					? row.canRetry === (filters.canRetry === "true")
-					: true;
-			const matchesCanRefund =
-				typeof filters.canRefund !== "undefined" && filters.canRefund !== ""
-					? row.canRefund === (filters.canRefund === "true")
-					: true;
-			const matchesCanSendToken =
-				typeof filters.canSendToken !== "undefined" &&
-				filters.canSendToken !== ""
-					? row.canSendToken === (filters.canSendToken === "true")
-					: true;
-			const matchesCanSendError =
-				typeof filters.canSendError !== "undefined" &&
-				filters.canSendError !== ""
-					? row.canSendError === (filters.canSendError === "true")
-					: true;
-
-			return (
-				matchesReferenceNumber &&
-				matchesProvider &&
-				matchesType &&
-				matchesStatus &&
-				matchesSearch &&
-				matchesCanRetry &&
-				matchesCanRefund &&
-				matchesCanSendToken &&
-				matchesCanSendError
-			);
-		});
-	}, [data, filters, searchQuery]);
-
-	const finalData = filteredData;
-	const dynamicTotalCount = shouldFetchAllPages ? finalData.length : totalCount;
-	const dynamicTotalPages = shouldFetchAllPages
-		? Math.ceil(finalData.length / pageSize)
-		: totalPages;
-
-	// Build react‑table instance using usePagination
 	const {
 		getTableProps,
 		getTableBodyProps,
 		headerGroups,
-		page, // current page rows
+		page,
 		prepareRow,
 		canPreviousPage,
 		canNextPage,
@@ -273,168 +205,34 @@ const KadTransactionTable = ({ filters }) => {
 		state: { pageIndex },
 	} = useTable(
 		{
-			columns: useMemo(
-				() => [
-					{
-						Header: "",
-						accessor: "checkbox",
-						Cell: ({ row }) => (
-							<input
-								type='checkbox'
-								onClick={(e) => e.stopPropagation()}
-								checked={selectedRows[row.original.id] || false}
-								onChange={() =>
-									setSelectedRows((prev) => ({
-										...prev,
-										[row.original.id]: !prev[row.original.id],
-									}))
-								}
-							/>
-						),
-					},
-					{
-						Header: "Customer Name",
-						accessor: "kadCustomer.customerName",
-						Cell: ({ value }) => value || "N/A",
-					},
-					{
-						Header: "Meter/Account No",
-						accessor: (row) => {
-							if (row.prepaidRequest) return row.prepaidRequest.meterNumber;
-							else if (row.postpaidRequest)
-								return row.postpaidRequest.customerAccountNo;
-							return "N/A";
-						},
-						Cell: ({ value }) => value || "N/A",
-					},
-					{
-						Header: "Payment Method",
-						accessor: "paymentMethod.label",
-						Cell: ({ value }) => value || "N/A",
-					},
-					{
-						Header: "Amount",
-						accessor: (row) => {
-							if (row.prepaidRequest) return row.prepaidRequest.amount;
-							else if (row.postpaidRequest)
-								return row.postpaidRequest.paymentChannelAmount;
-							return null;
-						},
-						Cell: ({ value }) => (value ? `₦${value.toLocaleString()}` : "N/A"),
-					},
-					{
-						Header: "Payment Location",
-						accessor: "prepaidRequest.locationOfPayment",
-						Cell: ({ value }) => value || "N/A",
-					},
-					{
-						Header: "Telephone No",
-						accessor: (row) => {
-							if (row.prepaidRequest) return row.prepaidRequest.telephoneNumber;
-							else if (row.postpaidRequest)
-								return row.postpaidRequest.telephoneNumber;
-							return "N/A";
-						},
-						Cell: ({ value }) => value || "N/A",
-					},
-					{
-						Header: "Status",
-						accessor: "status",
-						Cell: ({ value }) => {
-							let icon;
-							switch (value.label) {
-								case "Success":
-									icon = <FaCheckCircle className='text-green-500' size={14} />;
-									break;
-								case "Pending":
-									icon = (
-										<TbAlertCircleFilled
-											className='text-yellow-600'
-											size={14}
-										/>
-									);
-									break;
-								case "Failed":
-									icon = (
-										<TbAlertCircleFilled className='text-red-500' size={14} />
-									);
-									break;
-								default:
-									icon = null;
-							}
-							return (
-								<div className='flex items-center space-x-2'>
-									{icon}
-									<span>{value.label}</span>
-								</div>
-							);
-						},
-					},
-					{
-						Header: "Created At",
-						accessor: "createdAt",
-						Cell: ({ value }) => {
-							const now = moment();
-							const createdAt = moment(value);
-							const diffInMinutes = now.diff(createdAt, "minutes");
-							const diffInHours = now.diff(createdAt, "hours");
-							const diffInDays = now.diff(createdAt, "days");
-							if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
-							else if (diffInHours < 24) return `${diffInHours} hrs ago`;
-							else if (diffInDays < 7) return `${diffInDays} days ago`;
-							else return createdAt.format("YYYY-MM-DD");
-						},
-					},
-					{
-						Header: "Action",
-						accessor: "action",
-						Cell: ({ row }) => (
-							<button
-								onClick={() => setModalContent(row.original)}
-								className='text-[#343A40] text-xs underline hover:text-blue-700'
-							>
-								View
-							</button>
-						),
-					},
-				],
-				[selectedRows]
-			),
-			data: finalData,
+			columns,
+			data,
 			initialState: { pageIndex: pageNumber - 1, pageSize },
 			manualPagination: true,
-			pageCount: dynamicTotalPages,
+			pageCount: totalPages,
 		},
 		usePagination
 	);
 
-	// When filters change, reset pagination
-	useEffect(() => {
-		gotoPage(0);
-	}, [filters, gotoPage]);
-
 	const handlePageChange = (newPageNumber) => {
-		if (newPageNumber < 1 || newPageNumber > dynamicTotalPages) return;
+		if (newPageNumber < 1 || newPageNumber > totalPages) return;
 		setPageNumber(newPageNumber);
 		gotoPage(newPageNumber - 1);
 	};
 
-	// Build pagination items with ellipsis as needed
 	const getPaginationItems = () => {
-		if (dynamicTotalPages <= 8) {
-			return Array.from({ length: dynamicTotalPages }, (_, i) => i + 1);
+		if (totalPages <= 8) {
+			return Array.from({ length: totalPages }, (_, i) => i + 1);
 		}
-		const rightGroup = [
-			dynamicTotalPages - 2,
-			dynamicTotalPages - 1,
-			dynamicTotalPages,
-		];
+
+		const rightGroup = [totalPages - 2, totalPages - 1, totalPages];
+
 		let leftGroup = [];
 		if (pageNumber <= 5) {
 			leftGroup = [1, 2, 3, 4, 5];
-		} else if (pageNumber > dynamicTotalPages - 7) {
+		} else if (pageNumber > totalPages - 7) {
 			leftGroup = [];
-			for (let i = dynamicTotalPages - 7; i <= dynamicTotalPages - 3; i++) {
+			for (let i = totalPages - 7; i <= totalPages - 3; i++) {
 				leftGroup.push(i);
 			}
 		} else {
@@ -443,6 +241,7 @@ const KadTransactionTable = ({ filters }) => {
 				leftGroup.push(i);
 			}
 		}
+
 		if (leftGroup[leftGroup.length - 1] + 1 === rightGroup[0]) {
 			return [...leftGroup, ...rightGroup];
 		} else {
@@ -589,9 +388,9 @@ const KadTransactionTable = ({ filters }) => {
 						)}
 						<button
 							onClick={() => handlePageChange(pageNumber + 1)}
-							disabled={!canNextPage || pageNumber >= dynamicTotalPages}
+							disabled={!canNextPage || pageNumber >= totalPages}
 							className={`px-1 py-1 border rounded-md ${
-								!canNextPage || pageNumber >= dynamicTotalPages
+								!canNextPage || pageNumber >= totalPages
 									? "bg-gray-200 text-gray-400 cursor-not-allowed"
 									: "bg-black text-white hover:bg-gray-100"
 							}`}
@@ -601,8 +400,7 @@ const KadTransactionTable = ({ filters }) => {
 					</div>
 					<div className='text-gray-600'>
 						Showing {(pageNumber - 1) * pageSize + 1}-
-						{Math.min(pageNumber * pageSize, dynamicTotalCount)} of{" "}
-						{dynamicTotalCount}
+						{Math.min(pageNumber * pageSize, totalCount)} of {totalCount}
 					</div>
 				</div>
 			</div>
