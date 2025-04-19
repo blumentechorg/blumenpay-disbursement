@@ -95,7 +95,7 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 		setIsSendingToken(true);
 		try {
 			const response = await axiosInstance.get(
-				`https://blumenpay-1.onrender.com/KadElectric/Sms/Token/${modalContent.prepaid.kadTransactionId}`
+				`https://blumenpay.onrender.com/KadElectric/Sms/Token/${modalContent.prepaid.kadTransactionId}`
 			);
 			if (response.data.isSuccess) {
 				console.log("Token sent successfully:", response.data);
@@ -288,13 +288,23 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									<h4 className='text-gray-700 text-xs font-medium mb-2'>
 										Prepaid
 									</h4>
-									<p className='text-gray-700 text-xs font-medium'>
+									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>Meter Number:</span>{" "}
-										<span>{modalContent.prepaid.meterNumber}</span>
+										<span className='flex items-center gap-1'>
+											{modalContent.prepaid.meterNumber}
+											<CopyReference
+												reference={modalContent.prepaid.meterNumber}
+											/>
+										</span>
 									</p>
-									<p className='text-gray-700 text-xs font-medium'>
+									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>Token:</span>{" "}
-										<span>{modalContent.prepaid.token || "N/A"}</span>
+										<span className='flex items-center gap-1'>
+											{modalContent.prepaid.token || "N/A"}
+											{modalContent.prepaid.token && (
+												<CopyReference reference={modalContent.prepaid.token} />
+											)}
+										</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Amount:</span>{" "}
@@ -314,7 +324,12 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									</p>
 									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>RRN:</span>{" "}
-										<span>{modalContent.rrn || "N/A"}</span>
+										<span className='flex items-center gap-1'>
+											{modalContent.rrn || "N/A"}
+											{modalContent.rrn && (
+												<CopyReference reference={modalContent.rrn} />
+											)}
+										</span>
 									</p>
 								</div>
 							) : isPostpaid ? (
@@ -355,7 +370,12 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									</p>
 									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>RRN:</span>{" "}
-										<span>{modalContent.rrn || "N/A"}</span>
+										<span className='flex items-center gap-1'>
+											{modalContent.rrn || "N/A"}
+											{modalContent.rrn && (
+												<CopyReference reference={modalContent.rrn} />
+											)}
+										</span>
 									</p>
 								</div>
 							) : (
