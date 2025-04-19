@@ -40,9 +40,9 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 	const [currentModalContent, setCurrentModalContent] = useState(modalContent);
 	const [tokenResponse, setTokenResponse] = useState(null);
 
-	// Initialize retryReference with the modal's rrn when showing the form
+	// Initialize retryReference when showing the form
 	const handleShowRetryForm = () => {
-		setRetryReference(currentModalContent.rrn || "");
+		setRetryReference("");
 		setShowRetryForm(true);
 		setRetryResponse(null);
 	};
@@ -640,9 +640,10 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									<input
 										id='retryReference'
 										type='text'
-										value={retryReference || currentModalContent.rrn || ""}
+										value={retryReference}
 										onChange={(e) => setRetryReference(e.target.value)}
 										className='w-full border rounded px-2 py-2 text-xs'
+										placeholder='Enter reference number'
 										required
 									/>
 								</div>
