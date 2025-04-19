@@ -15,7 +15,7 @@ import TotalYesterday from "@/components/cards/TotalYesterday";
 import TotalThisWeek from "@/components/cards/TotalThisWeek";
 import TotalThisMonth from "@/components/cards/TotalThisMonth";
 import TotalPreviousMonth from "@/components/cards/TotalPreviousMonth";
-import TotalAllTime from "@/components/cards/TotalAllTime";
+import TotalAllTimeId from "@/components/businesses/id/TotalAllTimeId";
 import TransactionTable from "@/components/businesses/id/TransactionAppId";
 
 const BusinessModal = ({ modalContent, appId, onClose }) => {
@@ -270,7 +270,7 @@ const BusinessModal = ({ modalContent, appId, onClose }) => {
               <TotalThisWeek />
               <TotalThisMonth />
               <TotalPreviousMonth />
-              <TotalAllTime />
+              <TotalAllTimeId appId={appId} />
             </div>
 
             {/* chart  */}

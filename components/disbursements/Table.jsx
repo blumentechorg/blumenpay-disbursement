@@ -486,7 +486,7 @@ function DisbursementTable({ filters }) {
         </div>
       </div>
 
-      <DisbursementModal modalContent={modalContent} onClose={closeModal} />
+      {/* <DisbursementModal modalContent={modalContent} onClose={closeModal} /> */}
     </div>
   );
 }
