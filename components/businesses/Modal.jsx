@@ -9,14 +9,14 @@ import { FiCopy } from "react-icons/fi"; // Import copy icon
 import moment from "moment";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify"; // Added toast notification import
-import Chartjs from "@/components/businesses/id/ChartId"; // Adjust import path if needed
-import TotalToday from "@/components/cards/TotalToday";
-import TotalYesterday from "@/components/cards/TotalYesterday";
-import TotalThisWeek from "@/components/cards/TotalThisWeek";
-import TotalThisMonth from "@/components/cards/TotalThisMonth";
-import TotalPreviousMonth from "@/components/cards/TotalPreviousMonth";
-import TotalAllTimeId from "@/components/businesses/id/TotalAllTimeId";
-import TransactionTable from "@/components/businesses/id/TransactionAppId";
+import Chartjs from "@/components/businesses/appid/ChartId"; // Adjust import path if needed
+import TotalTodayAppId from "@/components/businesses/appid/TotalTodayAppId";
+import TotalYesterdayAppId from "@/components/businesses/appid/TotalYesterdayAppId";
+import TotalThisWeekAppId from "@/components/businesses/appid/TotalThisWeekAppId";
+import TotalThisMonthAppId from "@/components/businesses/appid/TotalThisMonthAppId";
+import TotalPreviousMonthAppId from "@/components/businesses/appid/TotalPreviousMonthAppId";
+import TotalAllTimeId from "@/components/businesses/appid/TotalAllTimeAppId";
+import TransactionTable from "@/components/businesses/appid/TransactionAppId";
 
 const BusinessModal = ({ modalContent, appId, onClose }) => {
   const [businessDetails, setBusinessDetails] = useState(null);
@@ -265,11 +265,11 @@ const BusinessModal = ({ modalContent, appId, onClose }) => {
 
             {/* Business cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-5 py-5">
-              <TotalToday />
-              <TotalYesterday />
-              <TotalThisWeek />
-              <TotalThisMonth />
-              <TotalPreviousMonth />
+              <TotalTodayAppId appId={appId} />
+              <TotalYesterdayAppId appId={appId} />
+              <TotalThisWeekAppId appId={appId} />
+              <TotalThisMonthAppId appId={appId} />
+              <TotalPreviousMonthAppId appId={appId} />
               <TotalAllTimeId appId={appId} />
             </div>
 
