@@ -284,7 +284,7 @@ const BusinessModal = ({ modalContent, appId, onClose }) => {
 
             {/* business transaction table  */}
             <div className="flex-1 space-y-4 overflow-y-auto pt-5 bg-gray-100 ">
-              <TransactionTable filters={filters} appId={modalContent?.appId} />
+              <TransactionTable filters={filters} appId={appId} />
             </div>
           </div>
 

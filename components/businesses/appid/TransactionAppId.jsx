@@ -8,27 +8,33 @@ import { TbAlertCircleFilled } from "react-icons/tb";
 import TransactionModal from "../Modal";
 import axiosInstance from "@/lib/axiosInstance";
 import moment from "moment";
-import Link from "next/link";
 
-const TransactionAppId = ({ searchQuery = "" }) => {
+const TransactionAppId = ({ searchQuery = "", appId }) => {
   const [modalContent, setModalContent] = useState(null);
   const [selectedRows, setSelectedRows] = useState({});
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Pagination states (1-indexed)
+  // Pagination states (1‑indexed)
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Fetch data without any external filters, but now with search query if provided.
+  // Only fetch once we have an appId
   useEffect(() => {
+    if (!appId) return;
+
     setIsLoading(true);
-    // Append search parameter if searchQuery is not empty.
-    const query = `/Transaction?pageNumber=${pageNumber}&pageSize=${pageSize}${
-      searchQuery ? `&search=${searchQuery}` : ""
-    }`;
+    const query = [
+      `/Transaction?pageNumber=${pageNumber}`,
+      `pageSize=${pageSize}`,
+      `appId=${encodeURIComponent(appId)}`,
+      searchQuery && `search=${encodeURIComponent(searchQuery)}`,
+    ]
+      .filter(Boolean)
+      .join("&");
+
     axiosInstance
       .get(query)
       .then((response) => {
@@ -43,31 +49,10 @@ const TransactionAppId = ({ searchQuery = "" }) => {
         console.error("Error fetching transactions:", error);
       })
       .finally(() => setIsLoading(false));
-  }, [pageNumber, pageSize, searchQuery]);
-
-  const finalData = data;
-  const dynamicTotalCount = totalCount;
-  const dynamicTotalPages = totalPages;
+  }, [pageNumber, pageSize, searchQuery, appId]);
 
   const columns = useMemo(
     () => [
-      // {
-      //   Header: "",
-      //   accessor: "checkbox",
-      //   Cell: ({ row }) => (
-      //     <input
-      //       type="checkbox"
-      //       onClick={(e) => e.stopPropagation()}
-      //       checked={selectedRows[row.original.id] || false}
-      //       onChange={() =>
-      //         setSelectedRows((prev) => ({
-      //           ...prev,
-      //           [row.original.id]: !prev[row.original.id],
-      //         }))
-      //       }
-      //     />
-      //   ),
-      // },
       {
         Header: "Business",
         accessor: "app.name",
@@ -120,13 +105,13 @@ const TransactionAppId = ({ searchQuery = "" }) => {
         Cell: ({ value }) => {
           const now = moment();
           const createdAt = moment(value);
-          const diffInMinutes = now.diff(createdAt, "minutes");
-          const diffInHours = now.diff(createdAt, "hours");
-          const diffInDays = now.diff(createdAt, "days");
-          if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
-          else if (diffInHours < 24) return `${diffInHours} hrs ago`;
-          else if (diffInDays < 7) return `${diffInDays} days ago`;
-          else return createdAt.format("YYYY-MM-DD");
+          const mins = now.diff(createdAt, "minutes");
+          const hrs = now.diff(createdAt, "hours");
+          const days = now.diff(createdAt, "days");
+          if (mins < 60) return `${mins} mins ago`;
+          if (hrs < 24) return `${hrs} hrs ago`;
+          if (days < 7) return `${days} days ago`;
+          return createdAt.format("YYYY-MM-DD");
         },
       },
       {
@@ -154,142 +139,114 @@ const TransactionAppId = ({ searchQuery = "" }) => {
     canPreviousPage,
     canNextPage,
     gotoPage,
-    state: { pageIndex },
   } = useTable(
     {
       columns,
-      data: finalData,
+      data,
       initialState: { pageIndex: pageNumber - 1, pageSize },
       manualPagination: true,
-      pageCount: dynamicTotalPages,
+      pageCount: totalPages,
     },
     usePagination
   );
 
-  const handlePageChange = (newPageNumber) => {
-    if (newPageNumber < 1 || newPageNumber > dynamicTotalPages) return;
-    setPageNumber(newPageNumber);
-    gotoPage(newPageNumber - 1);
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setPageNumber(newPage);
+    gotoPage(newPage - 1);
   };
 
   const getPaginationItems = () => {
-    if (dynamicTotalPages <= 8) {
-      return Array.from({ length: dynamicTotalPages }, (_, i) => i + 1);
-    }
-    const rightGroup = [
-      dynamicTotalPages - 2,
-      dynamicTotalPages - 1,
-      dynamicTotalPages,
-    ];
-    let leftGroup = [];
-    if (pageNumber <= 5) {
-      leftGroup = [1, 2, 3, 4, 5];
-    } else if (pageNumber > dynamicTotalPages - 7) {
-      leftGroup = [];
-      for (let i = dynamicTotalPages - 7; i <= dynamicTotalPages - 3; i++) {
-        leftGroup.push(i);
-      }
+    if (totalPages <= 8)
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const right = [totalPages - 2, totalPages - 1, totalPages];
+    let left = [];
+    if (pageNumber <= 5) left = [1, 2, 3, 4, 5];
+    else if (pageNumber > totalPages - 7) {
+      for (let i = totalPages - 7; i <= totalPages - 3; i++) left.push(i);
     } else {
-      leftGroup = [];
-      for (let i = pageNumber - 4; i <= pageNumber; i++) {
-        leftGroup.push(i);
-      }
+      for (let i = pageNumber - 4; i <= pageNumber; i++) left.push(i);
     }
-    if (leftGroup[leftGroup.length - 1] + 1 === rightGroup[0]) {
-      return [...leftGroup, ...rightGroup];
-    } else {
-      return [...leftGroup, "ellipsis", ...rightGroup];
-    }
+    return left[left.length - 1] + 1 === right[0]
+      ? [...left, ...right]
+      : [...left, "ellipsis", ...right];
   };
 
-  const paginationItems = getPaginationItems();
+  const paginationItems = useMemo(getPaginationItems, [pageNumber, totalPages]);
 
   return (
     <div className="space-y-5">
       <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
         <table
           {...getTableProps()}
-          className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
+          className="min-w-full text-xs border border-gray-300 table-auto"
         >
           <thead className="bg-gray-100 text-gray-700 font-semibold">
-            {headerGroups.map((headerGroup) => {
-              const { key, ...rest } = headerGroup.getHeaderGroupProps();
-              return (
-                <tr key={key} {...rest} className="block sm:table-row">
-                  {headerGroup.headers.map((column) => {
-                    const { key: columnKey, ...columnRest } =
-                      column.getHeaderProps();
-                    return (
-                      <th
-                        key={columnKey}
-                        {...columnRest}
-                        className={`border border-gray-300 px-4 py-2 text-left ${
-                          column.className || ""
-                        }`}
-                      >
-                        {column.render("Header")}
-                      </th>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+            {headerGroups.map((hg) => (
+              <tr
+                {...hg.getHeaderGroupProps()}
+                key={hg.id}
+                className="block sm:table-row"
+              >
+                {hg.headers.map((col) => (
+                  <th
+                    {...col.getHeaderProps()}
+                    key={col.id}
+                    className="border border-gray-300 px-4 py-2 text-left"
+                  >
+                    {col.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            ))}
           </thead>
           <tbody {...getTableBodyProps()}>
             {isLoading
-              ? Array.from({ length: 5 }).map((_, index) => (
-                  <tr key={index} className="animate-pulse">
-                    {headerGroups[0].headers.map((_, colIndex) => (
-                      <td
-                        key={colIndex}
-                        className="border border-gray-300 px-4 py-2"
-                      >
-                        <div className="h-4 bg-gray-300 rounded"></div>
+              ? Array.from({ length: 5 }).map((_, idx) => (
+                  <tr key={idx} className="animate-pulse">
+                    {headerGroups[0].headers.map((_, ci) => (
+                      <td key={ci} className="border border-gray-300 px-4 py-2">
+                        <div className="h-4 bg-gray-300 rounded" />
                       </td>
                     ))}
                   </tr>
                 ))
               : page.map((row) => {
                   prepareRow(row);
-                  const { key, ...rowProps } = row.getRowProps();
                   return (
                     <tr
-                      key={key}
-                      {...rowProps}
+                      {...row.getRowProps()}
+                      key={row.id}
                       className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
                     >
-                      {row.cells.map((cell) => {
-                        const { key: cellKey, ...cellProps } =
-                          cell.getCellProps();
-                        return (
-                          <td
-                            key={cellKey}
-                            {...cellProps}
-                            className={`border border-gray-300 px-4 py-2 block sm:table-cell ${
-                              cell.column.className || ""
-                            }`}
-                            data-label={cell.column.Header}
-                          >
-                            {cell.render("Cell")}
-                          </td>
-                        );
-                      })}
+                      {row.cells.map((cell) => (
+                        <td
+                          {...cell.getCellProps()}
+                          key={cell.column.id}
+                          className="border border-gray-300 px-4 py-2 block sm:table-cell"
+                          data-label={cell.column.Header}
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      ))}
                     </tr>
                   );
                 })}
           </tbody>
         </table>
-        <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0">
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center text-xs p-4 bg-gray-50 border-t border-gray-300">
           <div className="flex items-center space-x-2">
-            <span className="text-gray-700">Rows per page:</span>
+            <span>Rows per page:</span>
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="px-1 py-1 border rounded-md bg-white text-gray-700"
+              className="border rounded px-1 py-1"
             >
-              {[5, 10, 15].map((size) => (
-                <option key={size} value={size}>
-                  {size}
+              {[5, 10, 15].map((n) => (
+                <option key={n} value={n}>
+                  {n}
                 </option>
               ))}
             </select>
@@ -298,27 +255,21 @@ const TransactionAppId = ({ searchQuery = "" }) => {
             <button
               onClick={() => handlePageChange(pageNumber - 1)}
               disabled={!canPreviousPage || pageNumber <= 1}
-              className={`px-1 py-1 border rounded-md ${
-                !canPreviousPage || pageNumber <= 1
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-100"
-              }`}
+              className="px-1 py-1 border rounded"
             >
               <IoMdArrowDropleft size={15} />
             </button>
-            {paginationItems.map((item, index) =>
+            {paginationItems.map((item, i) =>
               item === "ellipsis" ? (
-                <span key={index} className="px-2 py-1">
-                  ...
-                </span>
+                <span key={i}>…</span>
               ) : (
                 <button
-                  key={index}
+                  key={i}
                   onClick={() => handlePageChange(item)}
-                  className={`px-2 py-1 border rounded-md ${
+                  className={`px-2 py-1 border rounded ${
                     pageNumber === item
                       ? "bg-black text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
+                      : "bg-white text-gray-700"
                   }`}
                 >
                   {item}
@@ -327,30 +278,206 @@ const TransactionAppId = ({ searchQuery = "" }) => {
             )}
             <button
               onClick={() => handlePageChange(pageNumber + 1)}
-              disabled={!canNextPage || pageNumber >= dynamicTotalPages}
-              className={`px-1 py-1 border rounded-md ${
-                !canNextPage || pageNumber >= dynamicTotalPages
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-100"
-              }`}
+              disabled={!canNextPage || pageNumber >= totalPages}
+              className="px-1 py-1 border rounded"
             >
               <IoMdArrowDropright size={15} />
             </button>
           </div>
-          <div className="text-gray-600">
-            Showing {(pageNumber - 1) * pageSize + 1}-
-            {Math.min(pageNumber * pageSize, dynamicTotalCount)} of{" "}
-            {dynamicTotalCount}
+          <div>
+            Showing {(pageNumber - 1) * pageSize + 1}–
+            {Math.min(pageNumber * pageSize, totalCount)} of {totalCount}
           </div>
         </div>
       </div>
+
       <TransactionModal
         modalContent={modalContent}
         onClose={() => setModalContent(null)}
-        appId={modalContent?.appId}
+        appId={appId}
       />
     </div>
   );
 };
 
 export default TransactionAppId;
+
+// TransactionAppId.jsx
+// "use client";
+
+// import React, { useState, useEffect, useMemo } from "react";
+// import { useTable, usePagination } from "react-table";
+// import { FaCheckCircle } from "react-icons/fa";
+// import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
+// import { TbAlertCircleFilled } from "react-icons/tb";
+// import axiosInstance from "@/lib/axiosInstance";
+// import moment from "moment";
+
+// export default function TransactionAppId({ appId, searchQuery = "" }) {
+//   const [modalContent, setModalContent] = useState(null);
+//   const [data, setData] = useState([]);
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   // Pagination
+//   const [pageNumber, setPageNumber] = useState(1);
+//   const [pageSize, setPageSize] = useState(15);
+//   const [totalCount, setTotalCount] = useState(0);
+//   const [totalPages, setTotalPages] = useState(0);
+
+//   useEffect(() => {
+//     if (!appId) return;
+//     setIsLoading(true);
+
+//     const q = [
+//       `/Transaction?pageNumber=${pageNumber}`,
+//       `pageSize=${pageSize}`,
+//       `appId=${encodeURIComponent(appId)}`,
+//       searchQuery && `search=${encodeURIComponent(searchQuery)}`
+//     ]
+//       .filter(Boolean)
+//       .join("&");
+
+//     axiosInstance
+//       .get(q)
+//       .then((res) => {
+//         setData(res.data.data);
+//         setTotalCount(res.data.totalCount);
+//         setTotalPages(
+//           res.data.totalPages || Math.ceil(res.data.totalCount / pageSize)
+//         );
+//       })
+//       .catch(console.error)
+//       .finally(() => setIsLoading(false));
+//   }, [appId, pageNumber, pageSize, searchQuery]);
+
+//   const columns = useMemo(() => [
+//     { Header: "Reference", accessor: "referenceNumber" },
+//     { Header: "Provider", accessor: "provider" },
+//     {
+//       Header: "Amount",
+//       accessor: "amount",
+//       Cell: ({ value }) => `₦${value.toLocaleString()}`
+//     },
+//     {
+//       Header: "Status",
+//       accessor: "status",
+//       Cell: ({ value }) => {
+//         let icon = null;
+//         if (value.label === "Success")
+//           icon = <FaCheckCircle className="text-green-500" size={14} />;
+//         else if (value.label === "Pending")
+//           icon = <TbAlertCircleFilled className="text-yellow-600" size={14} />;
+//         else if (value.label === "Failed")
+//           icon = <TbAlertCircleFilled className="text-red-500" size={14} />;
+
+//         return (
+//           <div className="flex items-center space-x-1">
+//             {icon}
+//             <span>{value.label}</span>
+//           </div>
+//         );
+//       },
+//     },
+//     {
+//       Header: "Created",
+//       accessor: "createdAt",
+//       Cell: ({ value }) => {
+//         const now = moment();
+//         const then = moment(value);
+//         const mins = now.diff(then, "minutes");
+//         if (mins < 60) return `${mins} mins ago`;
+//         const hrs = now.diff(then, "hours");
+//         if (hrs < 24) return `${hrs} hrs ago`;
+//         const days = now.diff(then, "days");
+//         if (days < 7) return `${days} days ago`;
+//         return then.format("YYYY‑MM‑DD");
+//       }
+//     }
+//   ], []);
+
+//   const {
+//     getTableProps,
+//     getTableBodyProps,
+//     headerGroups,
+//     page,
+//     prepareRow,
+//     canPreviousPage,
+//     canNextPage,
+//     gotoPage
+//   } = useTable(
+//     {
+//       columns,
+//       data,
+//       initialState: { pageIndex: pageNumber - 1, pageSize },
+//       manualPagination: true,
+//       pageCount: totalPages
+//     },
+//     usePagination
+//   );
+
+//   return (
+//     <div className="space-y-4">
+//       <table {...getTableProps()} className="min-w-full text-sm">
+//         <thead>
+//           {headerGroups.map(hg => (
+//             <tr {...hg.getHeaderGroupProps()} key={hg.id}>
+//               {hg.headers.map(col => (
+//                 <th {...col.getHeaderProps()} key={col.id} className="px-2 py-1 text-left">
+//                   {col.render("Header")}
+//                 </th>
+//               ))}
+//             </tr>
+//           ))}
+//         </thead>
+//         <tbody {...getTableBodyProps()}>
+//           {isLoading
+//             ? Array.from({ length: 5 }).map((_, i) => (
+//                 <tr key={i} className="animate-pulse">
+//                   {headerGroups[0].headers.map((_, j) => (
+//                     <td key={j} className="px-2 py-1">
+//                       <div className="h-3 bg-gray-300 rounded" />
+//                     </td>
+//                   ))}
+//                 </tr>
+//               ))
+//             : page.map((row) => {
+//                 prepareRow(row);
+//                 return (
+//                   <tr {...row.getRowProps()} key={row.id} className="hover:bg-gray-50">
+//                     {row.cells.map(cell => (
+//                       <td {...cell.getCellProps()} key={cell.column.id} className="px-2 py-1">
+//                         {cell.render("Cell")}
+//                       </td>
+//                     ))}
+//                   </tr>
+//                 );
+//               })}
+//         </tbody>
+//       </table>
+
+//       {/* Pagination controls */}
+//       <div className="flex items-center justify-between text-xs">
+//         <div>
+//           <button
+//             onClick={() => { gotoPage(pageNumber - 2); setPageNumber(p => Math.max(p-1,1)); }}
+//             disabled={!canPreviousPage}
+//             className="px-2"
+//           >
+//             <IoMdArrowDropleft />
+//           </button>
+//           <button
+//             onClick={() => { gotoPage(pageNumber); setPageNumber(p => p+1); }}
+//             disabled={!canNextPage}
+//             className="px-2"
+//           >
+//             <IoMdArrowDropright />
+//           </button>
+//         </div>
+//         <div>
+//           Showing {(pageNumber - 1) * pageSize + 1}–
+//           {Math.min(pageNumber * pageSize, totalCount)} of {totalCount}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
