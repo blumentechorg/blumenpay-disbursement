@@ -9,7 +9,7 @@ import { FiCopy } from "react-icons/fi"; // Import copy icon
 import moment from "moment";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify"; // Added toast notification import
-import Chartjs from "@/components/businesses/appid/ChartId"; // Adjust import path if needed
+import ChartId from "@/components/businesses/appid/ChartId"; // Adjust import path if needed
 import TotalTodayAppId from "@/components/businesses/appid/TotalTodayAppId";
 import TotalYesterdayAppId from "@/components/businesses/appid/TotalYesterdayAppId";
 import TotalThisWeekAppId from "@/components/businesses/appid/TotalThisWeekAppId";
@@ -277,7 +277,7 @@ const BusinessModal = ({ modalContent, appId, onClose }) => {
             <div>
               {modalContent?.appId && (
                 <div className="mt-6 px-4">
-                  <Chartjs appId={appId} />
+                  <ChartId appId={appId} />
                 </div>
               )}
             </div>
