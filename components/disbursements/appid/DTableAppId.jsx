@@ -53,7 +53,11 @@ const FundsweepTable = ({ appId }) => {
       {
         Header: "Amount",
         accessor: "amount",
-        Cell: ({ value }) => `₦${value.toLocaleString()}`,
+        Cell: ({ value }) => {
+          // default to 0 if value is null/undefined
+          const num = value ?? 0;
+          return `₦${num.toLocaleString()}`;
+        },
       },
       {
         Header: "Commission",
