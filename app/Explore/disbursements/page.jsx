@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import DisbursementTable from "@/components/disbursements/Table";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Breadcrumb from "@/components/Breadcrumb";
+import DisbursementCards from "@/components/disbursements/cards/DisbursementCards";
 
 export default function DisbursementPage() {
   const [filters, setFilters] = useState({});
@@ -25,6 +26,10 @@ export default function DisbursementPage() {
           <div className=" space-y-2">
             <Breadcrumbs />
             <Breadcrumb />
+          </div>
+
+          <div className=" flex space-y-">
+            <DisbursementCards />
           </div>
 
           {/* Scrollable content */}

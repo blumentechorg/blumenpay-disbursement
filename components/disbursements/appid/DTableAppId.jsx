@@ -5,79 +5,75 @@ import { useTable, usePagination } from "react-table";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { TbAlertCircleFilled } from "react-icons/tb";
-import TransactionModal from "../Modal";
+
 import axiosInstance from "@/lib/axiosInstance";
 import moment from "moment";
 
-const TransactionAppId = ({ searchQuery = "", appId }) => {
+const FundsweepTable = ({ appId }) => {
+  // modal & data state
   const [modalContent, setModalContent] = useState(null);
-  const [selectedRows, setSelectedRows] = useState({});
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Pagination states (1‑indexed)
+  // pagination state
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(15);
+  const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Only fetch once we have an appId
+  // fetch fundsweep data
   useEffect(() => {
     if (!appId) return;
-
     setIsLoading(true);
-    const query = [
-      `/Transaction?pageNumber=${pageNumber}`,
-      `pageSize=${pageSize}`,
-      `appId=${encodeURIComponent(appId)}`,
-      searchQuery && `search=${encodeURIComponent(searchQuery)}`,
-    ]
-      .filter(Boolean)
-      .join("&");
 
     axiosInstance
-      .get(query)
-      .then((response) => {
-        setData(response.data.data);
-        setTotalCount(response.data.totalCount);
-        setTotalPages(
-          response.data.totalPages ||
-            Math.ceil(response.data.totalCount / pageSize)
-        );
+      .get(`/Apps/Fundsweep/${appId}`, {
+        params: { pageNumber, pageSize },
       })
-      .catch((error) => {
-        console.error("Error fetching transactions:", error);
+      .then((resp) => {
+        if (resp.data.isSuccess) {
+          setData(resp.data.data);
+          setTotalCount(resp.data.totalCount);
+          setTotalPages(resp.data.totalPages);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching fundsweep:", err);
       })
       .finally(() => setIsLoading(false));
-  }, [pageNumber, pageSize, searchQuery, appId]);
+  }, [appId, pageNumber, pageSize]);
 
+  // table columns — adjust accessor names to your Fundsweep record shape
   const columns = useMemo(
     () => [
       {
-        Header: "Business",
-        accessor: "app.name",
-        Cell: ({ value }) => value || "N/A",
+        Header: "Sweep ID",
+        accessor: "id",
       },
-      { Header: "Reference Number", accessor: "referenceNumber" },
-      { Header: "Provider", accessor: "provider" },
       {
         Header: "Amount",
         accessor: "amount",
         Cell: ({ value }) => `₦${value.toLocaleString()}`,
       },
-      { Header: "Fee", accessor: "fee" },
       {
-        Header: "Type",
-        accessor: "type",
-        Cell: ({ value }) => (value ? value.label : ""),
+        Header: "Commission",
+        accessor: "blumenpaycommission",
+      },
+      {
+        Header: "Profit",
+        accessor: "blumenpayprofit",
+      },
+      {
+        Header: "Fee Incurred",
+        accessor: "feeincured",
       },
       {
         Header: "Status",
         accessor: "status",
         Cell: ({ value }) => {
           let icon;
-          switch (value.label) {
-            case "Success":
+          switch (value) {
+            case "Completed":
               icon = <FaCheckCircle className="text-green-500" size={14} />;
               break;
             case "Pending":
@@ -85,33 +81,28 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
                 <TbAlertCircleFilled className="text-yellow-600" size={14} />
               );
               break;
-            case "Failed":
-              icon = <TbAlertCircleFilled className="text-red-500" size={14} />;
-              break;
             default:
-              icon = null;
+              icon = <TbAlertCircleFilled className="text-red-500" size={14} />;
           }
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               {icon}
-              <span>{value.label}</span>
+              <span>{value}</span>
             </div>
           );
         },
       },
       {
-        Header: "Created At",
+        Header: "Created",
         accessor: "createdAt",
         Cell: ({ value }) => {
           const now = moment();
-          const createdAt = moment(value);
-          const mins = now.diff(createdAt, "minutes");
-          const hrs = now.diff(createdAt, "hours");
-          const days = now.diff(createdAt, "days");
+          const then = moment(value);
+          const mins = now.diff(then, "minutes");
           if (mins < 60) return `${mins} mins ago`;
+          const hrs = now.diff(then, "hours");
           if (hrs < 24) return `${hrs} hrs ago`;
-          if (days < 7) return `${days} days ago`;
-          return createdAt.format("YYYY-MM-DD");
+          return then.format("YYYY-MM-DD");
         },
       },
       {
@@ -127,14 +118,14 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
         ),
       },
     ],
-    [selectedRows]
+    []
   );
 
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    page,
+    page, // current page rows
     prepareRow,
     canPreviousPage,
     canNextPage,
@@ -156,6 +147,7 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
     gotoPage(newPage - 1);
   };
 
+  // build pagination buttons (same logic you had)
   const getPaginationItems = () => {
     if (totalPages <= 8)
       return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -171,7 +163,6 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
       ? [...left, ...right]
       : [...left, "ellipsis", ...right];
   };
-
   const paginationItems = useMemo(getPaginationItems, [pageNumber, totalPages]);
 
   return (
@@ -183,11 +174,7 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
         >
           <thead className="bg-gray-100 text-gray-700 font-semibold">
             {headerGroups.map((hg) => (
-              <tr
-                {...hg.getHeaderGroupProps()}
-                key={hg.id}
-                className="block sm:table-row"
-              >
+              <tr {...hg.getHeaderGroupProps()} key={hg.id}>
                 {hg.headers.map((col) => (
                   <th
                     {...col.getHeaderProps()}
@@ -202,7 +189,8 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
           </thead>
           <tbody {...getTableBodyProps()}>
             {isLoading
-              ? Array.from({ length: 5 }).map((_, idx) => (
+              ? // skeleton rows
+                Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx} className="animate-pulse">
                     {headerGroups[0].headers.map((_, ci) => (
                       <td key={ci} className="border border-gray-300 px-4 py-2">
@@ -217,14 +205,13 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
                     <tr
                       {...row.getRowProps()}
                       key={row.id}
-                      className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
+                      className="hover:bg-gray-50 hover:font-semibold"
                     >
                       {row.cells.map((cell) => (
                         <td
                           {...cell.getCellProps()}
                           key={cell.column.id}
-                          className="border border-gray-300 px-4 py-2 block sm:table-cell"
-                          data-label={cell.column.Header}
+                          className="border border-gray-300 px-4 py-2"
                         >
                           {cell.render("Cell")}
                         </td>
@@ -235,7 +222,7 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
           </tbody>
         </table>
 
-        {/* Pagination */}
+        {/* Pagination Controls */}
         <div className="flex justify-between items-center text-xs p-4 bg-gray-50 border-t border-gray-300">
           <div className="flex items-center space-x-2">
             <span>Rows per page:</span>
@@ -291,13 +278,9 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
         </div>
       </div>
 
-      <TransactionModal
-        modalContent={modalContent}
-        onClose={() => setModalContent(null)}
-        appId={appId}
-      />
+      {/*  */}
     </div>
   );
 };
 
-export default TransactionAppId;
+export default FundsweepTable;
