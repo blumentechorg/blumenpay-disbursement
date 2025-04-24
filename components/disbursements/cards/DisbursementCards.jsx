@@ -239,7 +239,7 @@ function Card({ title, amount, IconComponent }) {
       </div>
       <div className="flex items-center justify-between py-4 px-5">
         <div className="text-2xl font-bold text-gray-800">
-          &#x20A6;{amount.toLocaleString()}
+          &#x20A6;{(amount ?? 0).toLocaleString()}
         </div>
       </div>
     </div>
