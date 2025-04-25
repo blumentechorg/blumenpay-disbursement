@@ -75,8 +75,12 @@ const FundsweepTable = ({ appId }) => {
         Header: "Status",
         accessor: "status",
         Cell: ({ value }) => {
+          // unwrap the label if it's an object, otherwise use the primitive
+          const label =
+            value && typeof value === "object" ? value.label : value;
+
           let icon;
-          switch (value) {
+          switch (label) {
             case "Completed":
               icon = <FaCheckCircle className="text-green-500" size={14} />;
               break;
@@ -88,10 +92,11 @@ const FundsweepTable = ({ appId }) => {
             default:
               icon = <TbAlertCircleFilled className="text-red-500" size={14} />;
           }
+
           return (
             <div className="flex items-center space-x-1">
               {icon}
-              <span>{value}</span>
+              <span>{label}</span> {/* now always a string */}
             </div>
           );
         },
