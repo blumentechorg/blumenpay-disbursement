@@ -52,7 +52,7 @@ const FundsweepTable = ({ appId }) => {
       },
       {
         Header: "Amount",
-        accessor: "amount",
+        accessor: "totalAmount",
         Cell: ({ value }) => {
           // default to 0 if value is null/undefined
           const num = value ?? 0;
@@ -61,15 +61,15 @@ const FundsweepTable = ({ appId }) => {
       },
       {
         Header: "Commission",
-        accessor: "blumenpaycommission",
+        accessor: "blumenPayCommission",
       },
       {
         Header: "Profit",
-        accessor: "blumenpayprofit",
+        accessor: "profit",
       },
       {
         Header: "Fee Incurred",
-        accessor: "feeincured",
+        accessor: "feeIncured",
       },
       {
         Header: "Status",
