@@ -442,7 +442,7 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
           {isPreviewOpen && previewData && (
             <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
               <div className="bg-white rounded-lg p-6 w-1/2 space-y-6">
-                <h2 className="text-lg font-semibold">FundSweep Preview</h2>
+                <h2 className="text-xl font-bold ">FundSweep Preview</h2>
 
                 {/* Data Table */}
                 <table className="w-full text-sm border-collapse">
