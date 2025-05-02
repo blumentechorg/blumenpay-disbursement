@@ -15,7 +15,7 @@
 // import { format, parse } from "date-fns";
 
 // // Custom DatePicker component enforcing YYYY-MM-DD format
-// const CustomDatePicker = ({ value, onChange }) => {
+// const CustomDatePicker = ({ value, onChange, placeholder }) => {
 //   const parsedDate = value ? parse(value, "yyyy-MM-dd", new Date()) : null;
 
 //   const handleDateChange = (date) => {
@@ -28,7 +28,7 @@
 //       selected={parsedDate}
 //       onChange={handleDateChange}
 //       dateFormat="yyyy-MM-dd"
-//       placeholderText="Select date"
+//       placeholderText={placeholder}
 //       className="px-2 py-1 border rounded w-full"
 //     />
 //   );
@@ -168,12 +168,20 @@
 
 //           {/* FundSweep Preview Generator */}
 //           <div className="mt-4 px-4 space-y-2">
-//             <div className="flex space-x-2 justify-end w-full ">
+//             <div className="flex space-x-2 justify-end w-full">
 //               <div className="w-40">
-//                 <CustomDatePicker value={startDate} onChange={setStartDate} />
+//                 <CustomDatePicker
+//                   value={startDate}
+//                   onChange={setStartDate}
+//                   placeholder="Start Date"
+//                 />
 //               </div>
 //               <div className="w-40">
-//                 <CustomDatePicker value={endDate} onChange={setEndDate} />
+//                 <CustomDatePicker
+//                   value={endDate}
+//                   onChange={setEndDate}
+//                   placeholder="End Date"
+//                 />
 //               </div>
 //               <button
 //                 onClick={handleGeneratePreview}
@@ -312,10 +320,6 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
   const [businessDetails, setBusinessDetails] = useState(null);
   const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(false);
-
-  // API Key states
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [newApiKey, setNewApiKey] = useState("");
 
   // FundSweep Preview states
   const [startDate, setStartDate] = useState("");
@@ -478,54 +482,66 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
               <div className="bg-white rounded-lg p-6 w-1/2 space-y-6">
                 <h2 className="text-xl font-bold">FundSweep Preview</h2>
 
-                {/* Data Table */}
-                <table className="w-full text-sm border-collapse">
-                  <tbody>
-                    {[
-                      ["Total Amount", formatAmount(previewData.totalAmount)],
-                      ["Cash Total", formatAmount(previewData.cashTotal)],
-                      ["Online Total", formatAmount(previewData.onlineTotal)],
-                      [
-                        "Commission",
-                        formatAmount(previewData.blumenPayCommission),
-                      ],
-                      [
-                        "Amount Payable",
-                        formatAmount(previewData.amountPayable),
-                      ],
-                      ["Fee Incurred", formatAmount(previewData.feeIncured)],
-                      ["Cash Tx Count", previewData.cashTransactionCount],
-                      ["Online Tx Count", previewData.onlineTransactionCount],
-                      ["Profit", formatAmount(previewData.profit)],
-                      [
-                        "Unresolved Amount",
-                        formatAmount(previewData.unresolvedAmount),
-                      ],
-                      [
-                        "Highest Amount",
-                        formatAmount(previewData.highestAmount),
-                      ],
-                      ["Lowest Amount", formatAmount(previewData.lowestAmount)],
-                      [
-                        "Window Start",
-                        moment(previewData.windowStartDate).format(
-                          "MMM D, YYYY h:mm A"
-                        ),
-                      ],
-                      [
-                        "Window End",
-                        moment(previewData.windowEndDate).format(
-                          "MMM D, YYYY h:mm A"
-                        ),
-                      ],
-                    ].map(([label, value]) => (
-                      <tr key={label} className="border-t">
-                        <td className="py-2 px-4 font-medium">{label}</td>
-                        <td className="py-2 px-4">{value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {/* Restyled Data Table */}
+                <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
+                  <table className="min-w-full text-xs border border-gray-300 table-auto">
+                    <tbody>
+                      {[
+                        ["Total Amount", formatAmount(previewData.totalAmount)],
+                        ["Cash Total", formatAmount(previewData.cashTotal)],
+                        ["Online Total", formatAmount(previewData.onlineTotal)],
+                        [
+                          "Commission",
+                          formatAmount(previewData.blumenPayCommission),
+                        ],
+                        [
+                          "Amount Payable",
+                          formatAmount(previewData.amountPayable),
+                        ],
+                        ["Fee Incurred", formatAmount(previewData.feeIncured)],
+                        ["Cash Tx Count", previewData.cashTransactionCount],
+                        ["Online Tx Count", previewData.onlineTransactionCount],
+                        ["Profit", formatAmount(previewData.profit)],
+                        [
+                          "Unresolved Amount",
+                          formatAmount(previewData.unresolvedAmount),
+                        ],
+                        [
+                          "Highest Amount",
+                          formatAmount(previewData.highestAmount),
+                        ],
+                        [
+                          "Lowest Amount",
+                          formatAmount(previewData.lowestAmount),
+                        ],
+                        [
+                          "Window Start",
+                          moment(previewData.windowStartDate).format(
+                            "MMM D, YYYY h:mm A"
+                          ),
+                        ],
+                        [
+                          "Window End",
+                          moment(previewData.windowEndDate).format(
+                            "MMM D, YYYY h:mm A"
+                          ),
+                        ],
+                      ].map(([label, value]) => (
+                        <tr
+                          key={label}
+                          className="border-t hover:bg-gray-50 hover:font-semibold"
+                        >
+                          <td className="border border-gray-300 px-4 py-2 font-medium">
+                            {label}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {value}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
                 {/* Actions */}
                 <div className="flex justify-end space-x-4">

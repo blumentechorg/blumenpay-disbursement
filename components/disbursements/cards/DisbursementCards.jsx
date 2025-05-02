@@ -126,7 +126,7 @@ export default function DisbursementCards({ appId }) {
 
               {/* New: Available Balance card */}
               {availableBalance != null && (
-                <div className="mt-4 lg:w-[300px] md:w-[360px]">
+                <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Card
                     title="Provider Balance"
                     amount={availableBalance}
