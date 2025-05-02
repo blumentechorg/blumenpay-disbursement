@@ -11,13 +11,13 @@ import {
 import axios from "@/lib/axiosInstance";
 
 export default function DisbursementCards({ appId }) {
-  // ←─ STATE DEFINITIONS YOU’LL NEED ─→
   const [activeTab, setActiveTab] = useState("pending");
   const [pendingReports, setPendingReports] = useState([]);
   const [completedReports, setCompletedReports] = useState([]);
+  const [availableBalance, setAvailableBalance] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // ←─ FETCH LOGIC ─→
+  // ←─ FETCH TRANSACTION REPORTS ─→
   const fetchReport = async () => {
     setLoading(true);
     try {
@@ -37,8 +37,25 @@ export default function DisbursementCards({ appId }) {
     }
   };
 
+  // ←─ FETCH PROVIDER BALANCE ─→
+  const fetchProviderBalance = async () => {
+    try {
+      const resp = await axios.get(`/Apps/ProviderBalance/${appId}`, {
+        timeout: 10000,
+      });
+      if (resp.data.isSuccess) {
+        setAvailableBalance(resp.data.data.availableBalance);
+      }
+    } catch (err) {
+      console.error("Error fetching provider balance:", err);
+    }
+  };
+
   useEffect(() => {
-    fetchReport();
+    if (appId != null) {
+      fetchReport();
+      fetchProviderBalance();
+    }
   }, [appId]);
 
   const currentReports =
@@ -95,6 +112,7 @@ export default function DisbursementCards({ appId }) {
 
           return (
             <div key={report.appId} className="space-y-4">
+              {/* Existing 4 cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {metrics.map(({ title, value, icon }) => (
                   <Card
@@ -105,6 +123,19 @@ export default function DisbursementCards({ appId }) {
                   />
                 ))}
               </div>
+
+              {/* New: Available Balance card */}
+              {availableBalance != null && (
+                <div className="mt-4 lg:w-[300px] md:w-[360px]">
+                  <Card
+                    title="Provider Balance"
+                    amount={availableBalance}
+                    IconComponent={
+                      <GiTakeMyMoney className="text-green-500 text-xl" />
+                    }
+                  />
+                </div>
+              )}
             </div>
           );
         })
@@ -122,7 +153,7 @@ function Card({ title, amount, IconComponent }) {
       </div>
       <div className="flex items-center justify-between py-4 px-5">
         <div className="text-2xl font-bold text-gray-800">
-          &#x20A6;{(amount ?? 0).toLocaleString()}
+          &#x20A6;{(Number(amount) || 0).toLocaleString()}
         </div>
       </div>
     </div>

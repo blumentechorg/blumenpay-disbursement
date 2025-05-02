@@ -53,6 +53,12 @@
 //   // Initialize FundSweep state
 //   const [initLoading, setInitLoading] = useState(false);
 
+//   // Helper to format numbers with commas and Naira sign
+//   const formatAmount = (value) => {
+//     const number = Number(value) || 0;
+//     return `₦${number.toLocaleString("en-NG")}`;
+//   };
+
 //   // Fetch business details by appId
 //   useEffect(() => {
 //     if (appId) {
@@ -163,16 +169,16 @@
 //           {/* FundSweep Preview Generator */}
 //           <div className="mt-4 px-4 space-y-2">
 //             <div className="flex space-x-2 justify-end w-full ">
-//               <div className="w-40 ">
+//               <div className="w-40">
 //                 <CustomDatePicker value={startDate} onChange={setStartDate} />
 //               </div>
-//               <div className=" w-40">
+//               <div className="w-40">
 //                 <CustomDatePicker value={endDate} onChange={setEndDate} />
 //               </div>
 //               <button
 //                 onClick={handleGeneratePreview}
 //                 disabled={previewLoading}
-//                 className="bg-blue-600 text-white  px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+//                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
 //               >
 //                 {previewLoading ? "Generating…" : "Generate FundSweep Preview"}
 //               </button>
@@ -188,24 +194,36 @@
 //           {isPreviewOpen && previewData && (
 //             <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
 //               <div className="bg-white rounded-lg p-6 w-1/2 space-y-6">
-//                 <h2 className="text-xl font-bold ">FundSweep Preview</h2>
+//                 <h2 className="text-xl font-bold">FundSweep Preview</h2>
 
 //                 {/* Data Table */}
 //                 <table className="w-full text-sm border-collapse">
 //                   <tbody>
 //                     {[
-//                       ["Total Amount", previewData.totalAmount],
-//                       ["Cash Total", previewData.cashTotal],
-//                       ["Online Total", previewData.onlineTotal],
-//                       ["Commission", previewData.blumenPayCommission],
-//                       ["Amount Payable", previewData.amountPayable],
-//                       ["Fee Incurred", previewData.feeIncured],
+//                       ["Total Amount", formatAmount(previewData.totalAmount)],
+//                       ["Cash Total", formatAmount(previewData.cashTotal)],
+//                       ["Online Total", formatAmount(previewData.onlineTotal)],
+//                       [
+//                         "Commission",
+//                         formatAmount(previewData.blumenPayCommission),
+//                       ],
+//                       [
+//                         "Amount Payable",
+//                         formatAmount(previewData.amountPayable),
+//                       ],
+//                       ["Fee Incurred", formatAmount(previewData.feeIncured)],
 //                       ["Cash Tx Count", previewData.cashTransactionCount],
 //                       ["Online Tx Count", previewData.onlineTransactionCount],
-//                       ["Profit", previewData.profit],
-//                       ["Unresolved Amount", previewData.unresolvedAmount],
-//                       ["Highest Amount", previewData.highestAmount],
-//                       ["Lowest Amount", previewData.lowestAmount],
+//                       ["Profit", formatAmount(previewData.profit)],
+//                       [
+//                         "Unresolved Amount",
+//                         formatAmount(previewData.unresolvedAmount),
+//                       ],
+//                       [
+//                         "Highest Amount",
+//                         formatAmount(previewData.highestAmount),
+//                       ],
+//                       ["Lowest Amount", formatAmount(previewData.lowestAmount)],
 //                       [
 //                         "Window Start",
 //                         moment(previewData.windowStartDate).format(
@@ -271,7 +289,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format, parse } from "date-fns";
 
 // Custom DatePicker component enforcing YYYY-MM-DD format
-const CustomDatePicker = ({ value, onChange }) => {
+const CustomDatePicker = ({ value, onChange, placeholder }) => {
   const parsedDate = value ? parse(value, "yyyy-MM-dd", new Date()) : null;
 
   const handleDateChange = (date) => {
@@ -284,7 +302,7 @@ const CustomDatePicker = ({ value, onChange }) => {
       selected={parsedDate}
       onChange={handleDateChange}
       dateFormat="yyyy-MM-dd"
-      placeholderText="Select date"
+      placeholderText={placeholder}
       className="px-2 py-1 border rounded w-full"
     />
   );
@@ -424,12 +442,20 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
 
           {/* FundSweep Preview Generator */}
           <div className="mt-4 px-4 space-y-2">
-            <div className="flex space-x-2 justify-end w-full ">
+            <div className="flex space-x-2 justify-end w-full">
               <div className="w-40">
-                <CustomDatePicker value={startDate} onChange={setStartDate} />
+                <CustomDatePicker
+                  value={startDate}
+                  onChange={setStartDate}
+                  placeholder="Start Date"
+                />
               </div>
               <div className="w-40">
-                <CustomDatePicker value={endDate} onChange={setEndDate} />
+                <CustomDatePicker
+                  value={endDate}
+                  onChange={setEndDate}
+                  placeholder="End Date"
+                />
               </div>
               <button
                 onClick={handleGeneratePreview}
