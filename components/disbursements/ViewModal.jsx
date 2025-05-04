@@ -109,14 +109,38 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
   };
 
   // Initialize FundSweep
+
+  // const handleInitFundSweep = async () => {
+  //   setInitLoading(true);
+  //   try {
+  //     const res = await axiosInstance.post("/Apps/InitFundSweep", {
+  //       appId,
+  //       startDate,
+  //       endDate,
+  //     });
+  //     if (res.data.isSuccess) {
+  //       toast.success("FundSweep initialized successfully");
+  //       setIsPreviewOpen(false);
+  //     } else {
+  //       toast.error(res.data.message || "Initialization failed");
+  //     }
+  //   } catch {
+  //     toast.error("Error initializing FundSweep");
+  //   } finally {
+  //     setInitLoading(false);
+  //   }
+  // };
+
   const handleInitFundSweep = async () => {
     setInitLoading(true);
     try {
-      const res = await axiosInstance.post("/Apps/InitFundSweep", {
-        appId,
-        startDate,
-        endDate,
-      });
+      const payload = { appId };
+
+      if (startDate) payload.startDate = startDate;
+      if (endDate) payload.endDate = endDate;
+
+      const res = await axiosInstance.post("/Apps/InitFundSweep", payload);
+
       if (res.data.isSuccess) {
         toast.success("FundSweep initialized successfully");
         setIsPreviewOpen(false);
