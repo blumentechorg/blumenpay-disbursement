@@ -140,6 +140,7 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
       if (endDate) payload.endDate = endDate;
 
       const res = await axiosInstance.post("/Apps/InitFundSweep", payload);
+      console.log("Sending InitFundSweep payload:", payload);
 
       if (res.data.isSuccess) {
         toast.success("FundSweep initialized successfully");
