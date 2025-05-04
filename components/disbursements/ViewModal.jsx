@@ -154,17 +154,6 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
     }
   };
 
-  // Delete FundSweep
-  const handleDeleteFundSweep = async () => {
-    try {
-      await axiosInstance.post(`/Apps/CancelFundSweep/${modalContent.id}`);
-      toast.success("FundSweep cancelled");
-      setIsPreviewOpen(false);
-    } catch {
-      toast.error("Error cancelling FundSweep");
-    }
-  };
-
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
