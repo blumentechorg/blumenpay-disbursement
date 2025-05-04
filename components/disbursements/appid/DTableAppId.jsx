@@ -730,8 +730,11 @@ const FundsweepTable = ({ appId }) => {
                       ),
                     ],
                   ].map(([label, value], idx) => (
-                    <tr key={idx}>
-                      <td className="border border-gray-300 px-4 py-2 font-medium">
+                    <tr
+                      key={idx}
+                      className="border-t hover:bg-gray-50 hover:font-semibold"
+                    >
+                      <td className="border border-gray-300 px-4 py-2 font-bold">
                         {label}
                       </td>
                       <td className="border border-gray-300 px-4 py-2">
@@ -759,7 +762,7 @@ const FundsweepTable = ({ appId }) => {
                     disabled={initLoading}
                     className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                   >
-                    {initLoading ? "Initializing…" : "Initialize FundSweep"}
+                    {initLoading ? "Initializing…" : "FundSweep"}
                   </button>
 
                   <button
