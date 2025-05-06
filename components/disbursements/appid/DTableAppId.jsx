@@ -21,6 +21,7 @@
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const [initLoading, setInitLoading] = useState(false);
 //   const [deleteLoading, setDeleteLoading] = useState(false);
+//   const [notification, setNotification] = useState(null);
 
 //   // Fetch fundsweep data
 //   useEffect(() => {
@@ -28,9 +29,7 @@
 //     setIsLoading(true);
 
 //     axiosInstance
-//       .get(`/Apps/Fundsweep/${appId}`, {
-//         params: { pageNumber, pageSize },
-//       })
+//       .get(`/Apps/Fundsweep/${appId}`, { params: { pageNumber, pageSize } })
 //       .then((resp) => {
 //         if (resp.data.isSuccess) {
 //           setData(resp.data.data);
@@ -107,6 +106,7 @@
 //             onClick={() => {
 //               setModalContent(row.original);
 //               setIsModalOpen(true);
+//               setNotification(null);
 //             }}
 //             className="text-[#343A40] text-xs underline hover:text-blue-700"
 //           >
@@ -148,12 +148,25 @@
 //   const handleFundSweep = async () => {
 //     setInitLoading(true);
 //     try {
-//       await axiosInstance.post("/Apps/FundSweep");
+//       const res = await axiosInstance.post("/Apps/FundSweep");
+//       if (res.data.isSuccess) {
+//         setNotification({
+//           type: "success",
+//           message: "FundSweep initialized successfully",
+//         });
+//       } else {
+//         setNotification({
+//           type: "error",
+//           message: res.data.message || "Initialization failed",
+//         });
+//       }
 //     } catch (err) {
-//       console.error("FundSweep error:", err);
+//       setNotification({
+//         type: "error",
+//         message: "Error initializing FundSweep",
+//       });
 //     } finally {
 //       setInitLoading(false);
-//       setIsModalOpen(false);
 //     }
 //   };
 
@@ -162,15 +175,24 @@
 //     if (!modalContent) return;
 //     setDeleteLoading(true);
 //     try {
-//       await axiosInstance.post(`/Apps/CancelFundSweep/${modalContent.id}`, {
-//         provider: "string",
-//         fundSweepId: modalContent.id,
-//       });
+//       const res = await axiosInstance.post(
+//         `/Apps/CancelFundSweep/${modalContent.id}`
+//       );
+//       if (res.data.isSuccess) {
+//         setNotification({
+//           type: "success",
+//           message: "FundSweep cancelled successfully",
+//         });
+//       } else {
+//         setNotification({
+//           type: "error",
+//           message: res.data.message || "Cancellation failed",
+//         });
+//       }
 //     } catch (err) {
-//       console.error("Delete FundSweep error:", err);
+//       setNotification({ type: "error", message: "Error cancelling FundSweep" });
 //     } finally {
 //       setDeleteLoading(false);
-//       setIsModalOpen(false);
 //     }
 //   };
 
@@ -286,11 +308,29 @@
 //       {/* Modal */}
 //       {isModalOpen && modalContent && (
 //         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-//           <div className="bg-white rounded-lg p-6 w-3/4 max-h-[90vh] overflow-y-auto space-y-6">
-//             <h2 className="text-xl font-bold">FundSweep Details</h2>
+//           <div className="bg-white rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col">
+//             {/* Header */}
+//             <div className="p-4 border-b flex justify-between items-center">
+//               <h2 className="text-xl font-bold">FundSweep Details</h2>
+//             </div>
 
-//             <div className="overflow-x-auto">
-//               <table className="w-full border border-gray-300 text-sm">
+//             {/* Notification Banner */}
+//             {notification && (
+//               <div
+//                 className={`mx-4 mt-2 p-2 rounded ${
+//                   notification.type === "success"
+//                     ? "bg-green-100 text-green-800"
+//                     : "bg-red-100 text-red-800"
+//                 }`}
+//               >
+//                 <TbAlertCircleFilled className="inline-block mr-1" />
+//                 {notification.message}
+//               </div>
+//             )}
+
+//             {/* Scrollable Content */}
+//             <div className="flex-1 overflow-y-auto p-4">
+//               <table className="w-full table-auto text-sm border">
 //                 <thead>
 //                   <tr className="bg-gray-100">
 //                     <th className="border border-gray-300 px-4 py-2 text-left">
@@ -303,9 +343,6 @@
 //                 </thead>
 //                 <tbody>
 //                   {[
-//                     // ["ID", modalContent.id],
-//                     // ["FundSweep Setup ID", modalContent.fundSweepSetupId],
-//                     // ["App ID", modalContent.appId],
 //                     ["Reference Number", modalContent.referenceNumber],
 //                     ["Percentage", `${modalContent.percentage ?? 0}%`],
 //                     ["Bank Name", modalContent.bankName],
@@ -315,8 +352,6 @@
 //                       (modalContent.status?.label ?? modalContent.status) ||
 //                         "—",
 //                     ],
-//                     // ["Generated By", modalContent.generatedBy],
-//                     // ["Processed By", modalContent.processedBy],
 //                     [
 //                       "Total Amount",
 //                       `₦${(modalContent.totalAmount ?? 0).toLocaleString()}`,
@@ -343,12 +378,6 @@
 //                       "Fee Incurred",
 //                       `₦${(modalContent.feeIncured ?? 0).toLocaleString()}`,
 //                     ],
-//                     // [
-//                     //   "Total Amount Deposited",
-//                     //   `₦${(
-//                     //     modalContent.totalAmountDeposited ?? 0
-//                     //   ).toLocaleString()}`,
-//                     // ],
 //                     [
 //                       "Unresolved Amount",
 //                       `₦${(
@@ -402,7 +431,8 @@
 //               </table>
 //             </div>
 
-//             <div className="flex justify-end space-x-4">
+//             {/* Fixed Footer Buttons */}
+//             <div className="p-4 border-t bg-gray-50 flex justify-end space-x-3">
 //               <button
 //                 onClick={() => setIsModalOpen(false)}
 //                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
@@ -426,7 +456,7 @@
 //                     disabled={deleteLoading}
 //                     className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
 //                   >
-//                     {deleteLoading ? "Deleting…" : "Cancel FundSweep"}
+//                     {deleteLoading ? "Deleting…" : "Delete Fundsweep"}
 //                   </button>
 //                 </>
 //               )}
@@ -463,25 +493,31 @@ const FundsweepTable = ({ appId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initLoading, setInitLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
 
-  // Fetch fundsweep data
-  useEffect(() => {
+  // --- 1) centralize data fetch ---
+  const fetchFundsweep = async () => {
     if (!appId) return;
     setIsLoading(true);
-
-    axiosInstance
-      .get(`/Apps/Fundsweep/${appId}`, {
+    try {
+      const resp = await axiosInstance.get(`/Apps/Fundsweep/${appId}`, {
         params: { pageNumber, pageSize },
-      })
-      .then((resp) => {
-        if (resp.data.isSuccess) {
-          setData(resp.data.data);
-          setTotalCount(resp.data.totalCount);
-          setTotalPages(resp.data.totalPages);
-        }
-      })
-      .catch((err) => console.error("Error fetching fundsweep:", err))
-      .finally(() => setIsLoading(false));
+      });
+      if (resp.data.isSuccess) {
+        setData(resp.data.data);
+        setTotalCount(resp.data.totalCount);
+        setTotalPages(resp.data.totalPages);
+      }
+    } catch (err) {
+      console.error("Error fetching fundsweep:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- 2) fetch on mount & when pageNumber/pageSize change ---
+  useEffect(() => {
+    fetchFundsweep();
   }, [appId, pageNumber, pageSize]);
 
   // Table columns
@@ -549,6 +585,7 @@ const FundsweepTable = ({ appId }) => {
             onClick={() => {
               setModalContent(row.original);
               setIsModalOpen(true);
+              setNotification(null);
             }}
             className="text-[#343A40] text-xs underline hover:text-blue-700"
           >
@@ -586,33 +623,57 @@ const FundsweepTable = ({ appId }) => {
     gotoPage(newPage - 1);
   };
 
-  // Initialize FundSweep
+  // --- 3) Initialize FundSweep and refresh ---
   const handleFundSweep = async () => {
     setInitLoading(true);
     try {
-      await axiosInstance.post("/Apps/FundSweep");
+      const res = await axiosInstance.post("/Apps/FundSweep");
+      if (res.data.isSuccess) {
+        setNotification({
+          type: "success",
+          message: "FundSweep initialized successfully",
+        });
+        await fetchFundsweep();
+      } else {
+        setNotification({
+          type: "error",
+          message: res.data.message || "Initialization failed",
+        });
+      }
     } catch (err) {
-      console.error("FundSweep error:", err);
+      setNotification({
+        type: "error",
+        message: "Error initializing FundSweep",
+      });
     } finally {
       setInitLoading(false);
-      setIsModalOpen(false);
     }
   };
 
-  // Delete FundSweep
+  // --- 4) Delete FundSweep and refresh ---
   const handleDeleteFundSweep = async () => {
     if (!modalContent) return;
     setDeleteLoading(true);
     try {
-      await axiosInstance.post(`/Apps/CancelFundSweep/${modalContent.id}`, {
-        provider: "string",
-        fundSweepId: modalContent.id,
-      });
+      const res = await axiosInstance.post(
+        `/Apps/CancelFundSweep/${modalContent.id}`
+      );
+      if (res.data.isSuccess) {
+        setNotification({
+          type: "success",
+          message: "FundSweep cancelled successfully",
+        });
+        await fetchFundsweep();
+      } else {
+        setNotification({
+          type: "error",
+          message: res.data.message || "Cancellation failed",
+        });
+      }
     } catch (err) {
-      console.error("Delete FundSweep error:", err);
+      setNotification({ type: "error", message: "Error cancelling FundSweep" });
     } finally {
       setDeleteLoading(false);
-      setIsModalOpen(false);
     }
   };
 
@@ -728,11 +789,29 @@ const FundsweepTable = ({ appId }) => {
       {/* Modal */}
       {isModalOpen && modalContent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-6">
-            <h2 className="text-xl font-bold">FundSweep Details</h2>
+          <div className="bg-white rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-xl font-bold">FundSweep Details</h2>
+            </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full border border-gray-300 text-sm">
+            {/* Notification Banner */}
+            {notification && (
+              <div
+                className={`mx-4 mt-2 p-2 rounded ${
+                  notification.type === "success"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                <TbAlertCircleFilled className="inline-block mr-1" />
+                {notification.message}
+              </div>
+            )}
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              <table className="w-full table-auto text-sm border">
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="border border-gray-300 px-4 py-2 text-left">
@@ -833,7 +912,8 @@ const FundsweepTable = ({ appId }) => {
               </table>
             </div>
 
-            <div className="flex justify-end space-x-4">
+            {/* Footer Buttons */}
+            <div className="p-4 border-t bg-gray-50 flex justify-end space-x-3">
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
@@ -857,7 +937,7 @@ const FundsweepTable = ({ appId }) => {
                     disabled={deleteLoading}
                     className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
                   >
-                    {deleteLoading ? "Deleting…" : "Cancel FundSweep"}
+                    {deleteLoading ? "Deleting…" : "Delete Fundsweep"}
                   </button>
                 </>
               )}
