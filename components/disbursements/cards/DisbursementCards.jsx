@@ -26,9 +26,13 @@ export default function DisbursementCards({ appId }) {
         timeout: 10000,
       });
       if (resp.data.isSuccess) {
-        const { pending, completed } = resp.data.data;
-        setPendingReports(Array.isArray(pending) ? pending : [pending]);
-        setCompletedReports(Array.isArray(completed) ? completed : [completed]);
+        const { pending, completed } = resp.data.data || {};
+        setPendingReports(
+          Array.isArray(pending) ? pending : pending ? [pending] : []
+        );
+        setCompletedReports(
+          Array.isArray(completed) ? completed : completed ? [completed] : []
+        );
       }
     } catch (err) {
       console.error("Error fetching fundsweep report:", err);
@@ -44,7 +48,7 @@ export default function DisbursementCards({ appId }) {
         timeout: 10000,
       });
       if (resp.data.isSuccess) {
-        setAvailableBalance(resp.data.data.availableBalance);
+        setAvailableBalance(resp.data.data?.availableBalance ?? 0);
       }
     } catch (err) {
       console.error("Error fetching provider balance:", err);
@@ -82,63 +86,68 @@ export default function DisbursementCards({ appId }) {
 
       {/* Loading / Empty / Cards */}
       {loading ? (
-        <p className="text-center">Loading...</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-gray-200 h-28 rounded-lg" />
+          ))}
+        </div>
       ) : currentReports.length === 0 ? (
         <p className="text-center text-gray-500">No data available.</p>
       ) : (
-        currentReports.map((report) => {
-          const metrics = [
-            {
-              title: "Amount",
-              value: report.amount,
-              icon: <FaMoneyBillTransfer className="text-blue-500 text-xl" />,
-            },
-            {
-              title: "Commission",
-              value: report.blumenpaycommission,
-              icon: <FaCashRegister className="text-green-500 text-xl" />,
-            },
-            {
-              title: "Profit",
-              value: report.blumenpayprofit,
-              icon: <FaDollarSign className="text-indigo-500 text-xl" />,
-            },
-            {
-              title: "Fee Incurred",
-              value: report.feeincured,
-              icon: <FaReceipt className="text-red-500 text-xl" />,
-            },
-          ];
+        <>
+          {currentReports.map((report, index) => {
+            const metrics = [
+              {
+                title: "Amount",
+                value: report.amount,
+                icon: <FaMoneyBillTransfer className="text-blue-500 text-xl" />,
+              },
+              {
+                title: "Commission",
+                value: report.blumenpaycommission,
+                icon: <FaCashRegister className="text-green-500 text-xl" />,
+              },
+              {
+                title: "Profit",
+                value: report.blumenpayprofit,
+                icon: <FaDollarSign className="text-indigo-500 text-xl" />,
+              },
+              {
+                title: "Fee Incurred",
+                value: report.feeincured,
+                icon: <FaReceipt className="text-red-500 text-xl" />,
+              },
+            ];
 
-          return (
-            <div key={report.appId} className="space-y-4">
-              {/* Existing 4 cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {metrics.map(({ title, value, icon }) => (
-                  <Card
-                    key={title}
-                    title={title}
-                    amount={value}
-                    IconComponent={icon}
-                  />
-                ))}
-              </div>
-
-              {/* New: Available Balance card */}
-              {availableBalance != null && (
-                <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card
-                    title="Provider Balance"
-                    amount={availableBalance}
-                    IconComponent={
-                      <GiTakeMyMoney className="text-green-500 text-xl" />
-                    }
-                  />
+            return (
+              <div key={`report-${index}`} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {metrics.map(({ title, value, icon }) => (
+                    <Card
+                      key={title}
+                      title={title}
+                      amount={value}
+                      IconComponent={icon}
+                    />
+                  ))}
                 </div>
-              )}
+              </div>
+            );
+          })}
+
+          {/* Single Available Balance Card */}
+          {availableBalance != null && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card
+                title="Provider Balance"
+                amount={availableBalance}
+                IconComponent={
+                  <GiTakeMyMoney className="text-green-500 text-xl" />
+                }
+              />
             </div>
-          );
-        })
+          )}
+        </>
       )}
     </div>
   );
@@ -153,7 +162,7 @@ function Card({ title, amount, IconComponent }) {
       </div>
       <div className="flex items-center justify-between py-4 px-5">
         <div className="text-2xl font-bold text-gray-800">
-          &#x20A6;{(Number(amount) || 0).toLocaleString()}
+          &#x20A6;{Number(amount ?? 0).toLocaleString()}
         </div>
       </div>
     </div>
