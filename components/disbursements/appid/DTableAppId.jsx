@@ -21,24 +21,33 @@
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const [initLoading, setInitLoading] = useState(false);
 //   const [deleteLoading, setDeleteLoading] = useState(false);
+//   const [hideActionButtons, setHideActionButtons] = useState(false);
+
 //   const [notification, setNotification] = useState(null);
 
-//   // Fetch fundsweep data
-//   useEffect(() => {
+//   // --- 1) centralize data fetch ---
+//   const fetchFundsweep = async () => {
 //     if (!appId) return;
 //     setIsLoading(true);
+//     try {
+//       const resp = await axiosInstance.get(`/Apps/Fundsweep/${appId}`, {
+//         params: { pageNumber, pageSize },
+//       });
+//       if (resp.data.isSuccess) {
+//         setData(resp.data.data);
+//         setTotalCount(resp.data.totalCount);
+//         setTotalPages(resp.data.totalPages);
+//       }
+//     } catch (err) {
+//       console.error("Error fetching fundsweep:", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
 
-//     axiosInstance
-//       .get(`/Apps/Fundsweep/${appId}`, { params: { pageNumber, pageSize } })
-//       .then((resp) => {
-//         if (resp.data.isSuccess) {
-//           setData(resp.data.data);
-//           setTotalCount(resp.data.totalCount);
-//           setTotalPages(resp.data.totalPages);
-//         }
-//       })
-//       .catch((err) => console.error("Error fetching fundsweep:", err))
-//       .finally(() => setIsLoading(false));
+//   // --- 2) fetch on mount & when pageNumber/pageSize change ---
+//   useEffect(() => {
+//     fetchFundsweep();
 //   }, [appId, pageNumber, pageSize]);
 
 //   // Table columns
@@ -87,10 +96,18 @@
 //       },
 //       {
 //         Header: "Created",
-//         accessor: "createdAt",
+//         accessor: "transactions",
 //         Cell: ({ value }) => {
+//           // grab the first transaction's createdAt (if any)
+//           const createdAt =
+//             Array.isArray(value) && value.length > 0
+//               ? value[0].createdAt
+//               : null;
+
+//           if (!createdAt) return "—";
+
 //           const now = moment();
-//           const then = moment(value);
+//           const then = moment(createdAt);
 //           const mins = now.diff(then, "minutes");
 //           if (mins < 60) return `${mins} mins ago`;
 //           const hrs = now.diff(then, "hours");
@@ -131,7 +148,7 @@
 //     {
 //       columns,
 //       data,
-//       initialState: { pageIndex: pageNumber - 1, pageSize },
+//       state: { pageIndex: pageNumber - 1, pageSize },
 //       manualPagination: true,
 //       pageCount: totalPages,
 //     },
@@ -141,10 +158,11 @@
 //   const handlePageChange = (newPage) => {
 //     if (newPage < 1 || newPage > totalPages) return;
 //     setPageNumber(newPage);
-//     gotoPage(newPage - 1);
+//     // React-Table will pick up the new pageIndex from `state.pageIndex`
+//     // and render that page—no internal setState in render required.
 //   };
 
-//   // Initialize FundSweep
+//   // --- 3) Initialize FundSweep and refresh ---
 //   const handleFundSweep = async () => {
 //     setInitLoading(true);
 //     try {
@@ -154,6 +172,8 @@
 //           type: "success",
 //           message: "FundSweep initialized successfully",
 //         });
+//         setHideActionButtons(true);
+//         await fetchFundsweep();
 //       } else {
 //         setNotification({
 //           type: "error",
@@ -170,7 +190,7 @@
 //     }
 //   };
 
-//   // Delete FundSweep
+//   // --- 4) Delete FundSweep and refresh ---
 //   const handleDeleteFundSweep = async () => {
 //     if (!modalContent) return;
 //     setDeleteLoading(true);
@@ -183,6 +203,8 @@
 //           type: "success",
 //           message: "FundSweep cancelled successfully",
 //         });
+//         setHideActionButtons(true);
+//         await fetchFundsweep();
 //       } else {
 //         setNotification({
 //           type: "error",
@@ -431,7 +453,7 @@
 //               </table>
 //             </div>
 
-//             {/* Fixed Footer Buttons */}
+//             {/* Footer Buttons */}
 //             <div className="p-4 border-t bg-gray-50 flex justify-end space-x-3">
 //               <button
 //                 onClick={() => setIsModalOpen(false)}
@@ -441,25 +463,26 @@
 //               </button>
 
 //               {(modalContent.status?.label ?? modalContent.status) ===
-//                 "Created" && (
-//                 <>
-//                   <button
-//                     onClick={handleFundSweep}
-//                     disabled={initLoading}
-//                     className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-//                   >
-//                     {initLoading ? "Initializing…" : "FundSweep"}
-//                   </button>
+//                 "Created" &&
+//                 !hideActionButtons && (
+//                   <>
+//                     <button
+//                       onClick={handleFundSweep}
+//                       disabled={initLoading}
+//                       className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+//                     >
+//                       {initLoading ? "Initializing…" : "FundSweep"}
+//                     </button>
 
-//                   <button
-//                     onClick={handleDeleteFundSweep}
-//                     disabled={deleteLoading}
-//                     className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
-//                   >
-//                     {deleteLoading ? "Deleting…" : "Delete Fundsweep"}
-//                   </button>
-//                 </>
-//               )}
+//                     <button
+//                       onClick={handleDeleteFundSweep}
+//                       disabled={deleteLoading}
+//                       className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+//                     >
+//                       {deleteLoading ? "Deleting…" : "Delete Fundsweep"}
+//                     </button>
+//                   </>
+//                 )}
 //             </div>
 //           </div>
 //         </div>
@@ -493,6 +516,8 @@ const FundsweepTable = ({ appId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initLoading, setInitLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [hideActionButtons, setHideActionButtons] = useState(false);
+
   const [notification, setNotification] = useState(null);
 
   // --- 1) centralize data fetch ---
@@ -566,10 +591,16 @@ const FundsweepTable = ({ appId }) => {
       },
       {
         Header: "Created",
-        accessor: "createdAt",
+        accessor: "transactions",
         Cell: ({ value }) => {
+          const createdAt =
+            Array.isArray(value) && value.length > 0
+              ? value[0].createdAt
+              : null;
+          if (!createdAt) return "—";
+
           const now = moment();
-          const then = moment(value);
+          const then = moment(createdAt);
           const mins = now.diff(then, "minutes");
           if (mins < 60) return `${mins} mins ago`;
           const hrs = now.diff(then, "hours");
@@ -582,6 +613,7 @@ const FundsweepTable = ({ appId }) => {
         accessor: "action",
         Cell: ({ row }) => (
           <button
+            key={`view-${row.original.id}`}
             onClick={() => {
               setModalContent(row.original);
               setIsModalOpen(true);
@@ -605,12 +637,12 @@ const FundsweepTable = ({ appId }) => {
     prepareRow,
     canPreviousPage,
     canNextPage,
-    gotoPage,
+    // gotoPage, // no longer needed
   } = useTable(
     {
       columns,
       data,
-      initialState: { pageIndex: pageNumber - 1, pageSize },
+      state: { pageIndex: pageNumber - 1, pageSize },
       manualPagination: true,
       pageCount: totalPages,
     },
@@ -620,7 +652,6 @@ const FundsweepTable = ({ appId }) => {
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
     setPageNumber(newPage);
-    gotoPage(newPage - 1);
   };
 
   // --- 3) Initialize FundSweep and refresh ---
@@ -633,6 +664,7 @@ const FundsweepTable = ({ appId }) => {
           type: "success",
           message: "FundSweep initialized successfully",
         });
+        setHideActionButtons(true);
         await fetchFundsweep();
       } else {
         setNotification({
@@ -663,6 +695,7 @@ const FundsweepTable = ({ appId }) => {
           type: "success",
           message: "FundSweep cancelled successfully",
         });
+        setHideActionButtons(true);
         await fetchFundsweep();
       } else {
         setNotification({
@@ -703,9 +736,12 @@ const FundsweepTable = ({ appId }) => {
           <tbody {...getTableBodyProps()}>
             {isLoading
               ? Array.from({ length: 5 }).map((_, idx) => (
-                  <tr key={idx} className="animate-pulse">
+                  <tr key={`skeleton-${idx}`} className="animate-pulse">
                     {headerGroups[0].headers.map((_, ci) => (
-                      <td key={ci} className="border border-gray-300 px-4 py-2">
+                      <td
+                        key={`skeleton-cell-${ci}`}
+                        className="border border-gray-300 px-4 py-2"
+                      >
                         <div className="h-4 bg-gray-300 rounded" />
                       </td>
                     ))}
@@ -716,7 +752,7 @@ const FundsweepTable = ({ appId }) => {
                   return (
                     <tr
                       {...row.getRowProps()}
-                      key={row.id}
+                      key={`row-${row.id}`}
                       className="hover:bg-gray-50 hover:font-semibold"
                     >
                       {row.cells.map((cell) => (
@@ -731,6 +767,16 @@ const FundsweepTable = ({ appId }) => {
                     </tr>
                   );
                 })}
+            {!isLoading && data.length === 0 && (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="text-center py-4 text-gray-500"
+                >
+                  No Fundsweep records found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
 
@@ -744,7 +790,7 @@ const FundsweepTable = ({ appId }) => {
               className="border rounded px-1 py-1"
             >
               {[5, 10, 15].map((n) => (
-                <option key={n} value={n}>
+                <option key={`pagesize-${n}`} value={n}>
                   {n}
                 </option>
               ))}
@@ -760,7 +806,7 @@ const FundsweepTable = ({ appId }) => {
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((item) => (
               <button
-                key={item}
+                key={`page-${item}`}
                 onClick={() => handlePageChange(item)}
                 className={`px-2 py-1 border rounded ${
                   pageNumber === item
@@ -885,19 +931,23 @@ const FundsweepTable = ({ appId }) => {
                     ],
                     [
                       "Window Start",
-                      moment(modalContent.windowStartDate).format(
-                        "MMM D, YYYY h:mm A"
-                      ),
+                      modalContent.windowStartDate
+                        ? moment(modalContent.windowStartDate).format(
+                            "MMM D, YYYY h:mm A"
+                          )
+                        : "—",
                     ],
                     [
                       "Window End",
-                      moment(modalContent.windowEndDate).format(
-                        "MMM D, YYYY h:mm A"
-                      ),
+                      modalContent.windowEndDate
+                        ? moment(modalContent.windowEndDate).format(
+                            "MMM D, YYYY h:mm A"
+                          )
+                        : "—",
                     ],
                   ].map(([label, value], idx) => (
                     <tr
-                      key={idx}
+                      key={`detail-${label}-${idx}`}
                       className="border-t hover:bg-gray-50 hover:font-semibold"
                     >
                       <td className="border border-gray-300 px-4 py-2 font-bold">
@@ -922,25 +972,26 @@ const FundsweepTable = ({ appId }) => {
               </button>
 
               {(modalContent.status?.label ?? modalContent.status) ===
-                "Created" && (
-                <>
-                  <button
-                    onClick={handleFundSweep}
-                    disabled={initLoading}
-                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-                  >
-                    {initLoading ? "Initializing…" : "FundSweep"}
-                  </button>
+                "Created" &&
+                !hideActionButtons && (
+                  <>
+                    <button
+                      onClick={handleFundSweep}
+                      disabled={initLoading}
+                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                    >
+                      {initLoading ? "Initializing…" : "FundSweep"}
+                    </button>
 
-                  <button
-                    onClick={handleDeleteFundSweep}
-                    disabled={deleteLoading}
-                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
-                  >
-                    {deleteLoading ? "Deleting…" : "Delete Fundsweep"}
-                  </button>
-                </>
-              )}
+                    <button
+                      onClick={handleDeleteFundSweep}
+                      disabled={deleteLoading}
+                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                    >
+                      {deleteLoading ? "Deleting…" : "Delete Fundsweep"}
+                    </button>
+                  </>
+                )}
             </div>
           </div>
         </div>
