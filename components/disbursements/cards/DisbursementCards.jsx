@@ -56,8 +56,9 @@ export default function DisbursementCards({ appId }) {
   };
 
   useEffect(() => {
+    fetchReport();
+
     if (appId != null) {
-      fetchReport();
       fetchProviderBalance();
     }
   }, [appId]);
