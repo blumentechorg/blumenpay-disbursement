@@ -591,16 +591,12 @@ const FundsweepTable = ({ appId }) => {
       },
       {
         Header: "Created",
-        accessor: "transactions",
+        accessor: "createdAt",
         Cell: ({ value }) => {
-          const createdAt =
-            Array.isArray(value) && value.length > 0
-              ? value[0].createdAt
-              : null;
-          if (!createdAt) return "—";
+          if (!value) return "—";
 
           const now = moment();
-          const then = moment(createdAt);
+          const then = moment(value);
           const mins = now.diff(then, "minutes");
           if (mins < 60) return `${mins} mins ago`;
           const hrs = now.diff(then, "hours");
@@ -608,6 +604,7 @@ const FundsweepTable = ({ appId }) => {
           return then.format("YYYY-MM-DD");
         },
       },
+
       {
         Header: "Action",
         accessor: "action",
