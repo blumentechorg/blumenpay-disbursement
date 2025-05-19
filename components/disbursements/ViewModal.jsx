@@ -337,6 +337,81 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
             <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
               <div className="bg-white rounded-lg p-6 w-1/2 space-y-4">
                 {/* Notification & table… */}
+                {notification && (
+                  <div
+                    className={`p-2 rounded ${
+                      notification.type === "success"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    <TbAlertCircleFilled className="inline-block mr-1" />
+                    {notification.message}
+                  </div>
+                )}
+
+                <h2 className="text-xl font-bold">FundSweep Preview</h2>
+                <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
+                  <table className="min-w-full text-xs border border-gray-300 table-auto">
+                    <thead className="bg-gray-100 font-semibold">
+                      <tr>
+                        <th className="border px-4 py-2 text-left">Name</th>
+                        <th className="border px-4 py-2 text-left">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Total Amount", formatAmount(previewData.totalAmount)],
+                        ["Cash Total", formatAmount(previewData.cashTotal)],
+                        ["Online Total", formatAmount(previewData.onlineTotal)],
+                        [
+                          "Commission",
+                          formatAmount(previewData.blumenPayCommission),
+                        ],
+                        [
+                          "Amount Payable",
+                          formatAmount(previewData.amountPayable),
+                        ],
+                        ["Fee Incurred", formatAmount(previewData.feeIncured)],
+                        ["Cash Tx Count", previewData.cashTransactionCount],
+                        ["Online Tx Count", previewData.onlineTransactionCount],
+                        ["Profit", formatAmount(previewData.profit)],
+                        [
+                          "Unresolved Amount",
+                          formatAmount(previewData.unresolvedAmount),
+                        ],
+                        [
+                          "Highest Amount",
+                          formatAmount(previewData.highestAmount),
+                        ],
+                        [
+                          "Lowest Amount",
+                          formatAmount(previewData.lowestAmount),
+                        ],
+                        [
+                          "Window Start",
+                          moment(previewData.windowStartDate).format(
+                            "MMM D, YYYY h:mm A"
+                          ),
+                        ],
+                        [
+                          "Window End",
+                          moment(previewData.windowEndDate).format(
+                            "MMM D, YYYY h:mm A"
+                          ),
+                        ],
+                      ].map(([label, value]) => (
+                        <tr key={label} className="border-t hover:bg-gray-50">
+                          <td className="border px-4 py-2 font-bold">
+                            {label}
+                          </td>
+                          <td className="border px-4 py-2">{value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
                 <div className="flex justify-end space-x-4">
                   <button
                     onClick={() => setIsPreviewOpen(false)}
