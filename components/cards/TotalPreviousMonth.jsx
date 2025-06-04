@@ -32,26 +32,28 @@ export default function Card() {
   const isPositiveChange = changeLastMonth >= 0;
 
   return (
-    <div className="bg-white shadow-lg rounded-lg font-light">
-      {/* Title and Logo */}
-      <div className="flex items-center border-b min-w-full py-4 px-5 space-x-2">
-        <div className="text-gray-700 text-sm">Total Previous Month</div>
-        <div className="text-blue-500 text-xl">
-          <Pending />
-        </div>
-      </div>
-
-      {/* Amount and Arrow */}
-      <div className="py-4 space-y-8">
-        <div className="flex items-center px-5 space-x-2">
-          <div className="text-2xl font-bold text-gray-800">
-            &#x20A6;{totalPreviousMonth.toLocaleString()}
+    <div className="w-full max-w-[90vw] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] xl:max-w-[1200px] px- ">
+      <div className="bg-white shadow-lg rounded-lg font-light h-full ">
+        {/* Title and Logo */}
+        <div className="flex items-center border-b min-w-full py-4 px-5 space-x-2">
+          <div className="text-gray-700 text-sm">Total Previous Month</div>
+          <div className="text-blue-500 text-xl">
+            <Pending />
           </div>
-          {isPositiveChange ? (
-            <FaArrowTrendUp className="text-green-500 text-xl" />
-          ) : (
-            <FaArrowTrendDown className="text-red-500 text-xl" />
-          )}
+        </div>
+
+        {/* Amount and Arrow */}
+        <div className="py-4 space-y-8">
+          <div className="flex items-center px-5 space-x-2">
+            <div className="text-2xl font-bold text-gray-800">
+              &#x20A6;{totalPreviousMonth.toLocaleString()}
+            </div>
+            {isPositiveChange ? (
+              <FaArrowTrendUp className="text-green-500 text-xl" />
+            ) : (
+              <FaArrowTrendDown className="text-red-500 text-xl" />
+            )}
+          </div>
         </div>
       </div>
     </div>
