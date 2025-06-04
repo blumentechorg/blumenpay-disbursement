@@ -19,7 +19,7 @@ export default function Activityfeed({ onSearchChange }) {
       <div className="flex text-sm items-center border bg-white border-gray-300 rounded-lg h-8 w-[170px]">
         <div className="font-bold px-2">Recent Transactions</div>
         {/* <input
-          type="text"
+          t        ype="text"
           value={searchQuery}
           onChange={handleSearchChange}
           placeholder="Search by reference number..."

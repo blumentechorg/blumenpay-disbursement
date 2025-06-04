@@ -87,7 +87,7 @@ export default function DisbursementCards({ appId }) {
 
       {/* Loading / Empty / Cards */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="bg-gray-200 h-28 rounded-lg" />
           ))}
@@ -122,7 +122,7 @@ export default function DisbursementCards({ appId }) {
 
             return (
               <div key={`report-${index}`} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {metrics.map(({ title, value, icon }) => (
                     <Card
                       key={title}

@@ -29,31 +29,33 @@ export default function Card() {
   }, []);
 
   return (
-    <div className="bg-white shadow-lg rounded-lg font-light">
-      {/* Title and Logo */}
-      <div className="flex items-center border-b min-w-full py-4 px-5 space-x-2">
-        <div className="text-gray-700 text-sm">Total All Time</div>
-        <div className="text-blue-500 text-xl">
-          <Total />
-        </div>
-      </div>
-
-      {/* Amount and Arrow */}
-      <div className="py-4 space-y-8">
-        <div className="flex items-center px-5 space-x-2">
-          <div className="text-2xl font-bold text-gray-800">
-            &#x20A6;{totalAllTime.toLocaleString()}
+    <div className="w-full max-w-[90vw] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] xl:max-w-[1200px] px-">
+      <div className="bg-white shadow-lg rounded-lg font-light ">
+        {/* Title and Logo */}
+        <div className="flex items-center border-b min-w-full py-4 px-5 space-x-2">
+          <div className="text-gray-700 text-sm">Total All Time</div>
+          <div className="text-blue-500 text-xl">
+            <Total />
           </div>
-          {/* Default arrow (upward) is shown as a visual cue */}
-          <FaArrowTrendUp className="text-green-500 text-xl" />
         </div>
 
-        {/* Display Count All Time */}
-        <div className="text-sm px-5 rounded flex items-center space-x-2">
-          <div className="bg-[#0052CC] text-white p-1 rounded-lg text-xs">
-            {countAllTime.toLocaleString()}
+        {/* Amount and Arrow */}
+        <div className="py-4 space-y-8">
+          <div className="flex items-center px-5 space-x-2">
+            <div className="text-2xl font-bold text-gray-800">
+              &#x20A6;{totalAllTime.toLocaleString()}
+            </div>
+            {/* Default arrow (upward) is shown as a visual cue */}
+            <FaArrowTrendUp className="text-green-500 text-xl" />
           </div>
-          <div>Transactions All Time</div>
+
+          {/* Display Count All Time */}
+          <div className="text-sm px-5 rounded flex items-center space-x-2">
+            <div className="bg-[#0052CC] text-white p-1 rounded-lg text-xs">
+              {countAllTime.toLocaleString()}
+            </div>
+            <div>Transactions All Time</div>
+          </div>
         </div>
       </div>
     </div>

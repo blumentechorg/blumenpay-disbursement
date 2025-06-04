@@ -25,15 +25,15 @@ const DashboardLayout = ({ children }) => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex ">
       <div className="flex-none border-r min-h-screen sticky top-0 lg:block hidden">
         <Sidebar user={user} logout={logout} />
       </div>
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen ">
         <div className="sticky  top-0 z-10">
           <Navbar user={user} logout={logout} />
         </div>
-        <div className="flex-1 overflow-y-auto px-4 pt-10 bg-gray-100">
+        <div className="flex-1 overflow-y-auto px-2 md:px-4 pt-10 bg-gray-100">
           {children}
         </div>
       </div>
