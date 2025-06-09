@@ -28,7 +28,7 @@ export default function Card() {
   }, []);
 
   return (
-    <div className="w-full max-w-[90vw] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] xl:max-w-[1200px] px-">
+    <div className="w-full max-w-[95vw] sm:max-w-[700px] md:max-w-[800px] lg:max-w-[1000px] xl:max-w-[1200px] px-">
       <div className="bg-white shadow-lg rounded-lg font-light ">
         {/* Title and Logo */}
         <div className="flex items-center border-b min-w-full py-4 px-5 space-x-2">
