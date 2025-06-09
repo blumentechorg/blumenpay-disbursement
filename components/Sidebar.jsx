@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Title from "@/public/icons/header/title";
 import title from "@/public/images/title.png";
-import Logo from "@/public/icons/header/logo";
+import logo from "@/public/icons/header/logo.png";
 import Caretupdown from "@/public/icons/sidebar/caretupdown";
 import Overview from "@/public/icons/sidebar/overview";
 import Transactions from "@/public/icons/sidebar/transactions";
@@ -80,8 +80,9 @@ export default function Sidebar() {
       {/* Logo and Title */}
       <div className="flex items-center justify-between h-20 border-b border-gray-300 px-2">
         <div className="flex space-x-2 pl-2">
-          <Logo />
-          <Title />
+          {/* <Logo />
+          <Title /> */}
+          <Image src={logo} width={130} height={130} alt="logo" />
         </div>
         <div>
           <Caretupdown />
