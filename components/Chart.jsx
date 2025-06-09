@@ -383,16 +383,16 @@ const Chartjs = () => {
     <div className="w-full flex flex-col items-center">
       {/* Filter Section */}
       <div className="text-xs rounded-lg mb-4 w-full max-w-[800px]">
-        <div className="flex flex-wrap gap-2 items-center justify-start">
-          <div className="w-full sm:w-[150px] text-[10px]">
+        <div className="md:flex md:flex-wrap space-y-2 md:space-y-0 gap-2 items-center justify-start">
+          <div className="md:w-full w-60 text-[10px]">
             <CustomDatePicker value={start} onChange={setStart} />
           </div>
-          <div className="w-full sm:w-[150px] text-[10px]">
+          <div className="md:w-full w-60 text-[10px]">
             <CustomDatePicker value={end} onChange={setEnd} />
           </div>
           <button
             onClick={fetchData}
-            className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md text-sm"
+            className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md text-sm "
           >
             Filter
           </button>
