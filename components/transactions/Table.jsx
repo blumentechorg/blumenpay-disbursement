@@ -335,159 +335,161 @@ const TransactionTable = ({ filters }) => {
   const paginationItems = getPaginationItems();
 
   return (
-    <div className="space-y-5">
-      <div>
-        <FloatingSearchContainer
-          onSelectAll={(isSelected) => {
-            const newSelections = {};
-            data.forEach((row) => (newSelections[row.id] = isSelected));
-            setSelectedRows(newSelections);
-          }}
-          onSearchChange={setSearchQuery}
-        />
-      </div>
-      <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto cursor-pointer">
-        <table
-          {...getTableProps()}
-          className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
-        >
-          <thead className="bg-gray-100 text-gray-700 font-semibold">
-            {headerGroups.map((headerGroup) => {
-              const { key, ...rest } = headerGroup.getHeaderGroupProps();
-              return (
-                <tr key={key} {...rest} className="block sm:table-row">
-                  {headerGroup.headers.map((column) => {
-                    const { key: columnKey, ...columnRest } =
-                      column.getHeaderProps();
+    <div className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-full">
+      <div className="space-y-5">
+        <div>
+          <FloatingSearchContainer
+            onSelectAll={(isSelected) => {
+              const newSelections = {};
+              data.forEach((row) => (newSelections[row.id] = isSelected));
+              setSelectedRows(newSelections);
+            }}
+            onSearchChange={setSearchQuery}
+          />
+        </div>
+        <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto cursor-pointer">
+          <table
+            {...getTableProps()}
+            className="min-w-full text-xs border-collapse border border-gray-300 rounded-lg table-auto"
+          >
+            <thead className="bg-gray-100 text-gray-700 font-semibold">
+              {headerGroups.map((headerGroup) => {
+                const { key, ...rest } = headerGroup.getHeaderGroupProps();
+                return (
+                  <tr key={key} {...rest} className="table-row">
+                    {headerGroup.headers.map((column) => {
+                      const { key: columnKey, ...columnRest } =
+                        column.getHeaderProps();
+                      return (
+                        <th
+                          key={columnKey}
+                          {...columnRest}
+                          className={`border border-gray-300 px-4 py-2 text-left ${
+                            column.className || ""
+                          }`}
+                        >
+                          {column.render("Header")}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {isLoading
+                ? Array.from({ length: 5 }).map((_, index) => (
+                    <tr key={index} className="animate-pulse">
+                      {headerGroups[0].headers.map((_, colIndex) => (
+                        <td
+                          key={colIndex}
+                          className="border border-gray-300 px-4 py-2"
+                        >
+                          <div className="h-4 bg-gray-300 rounded"></div>
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                : page.map((row) => {
+                    prepareRow(row);
+                    const { key, ...rowProps } = row.getRowProps();
                     return (
-                      <th
-                        key={columnKey}
-                        {...columnRest}
-                        className={`border border-gray-300 px-4 py-2 text-left ${
-                          column.className || ""
-                        }`}
+                      <tr
+                        key={key}
+                        {...rowProps}
+                        className="hover:bg-gray-50 hover:font-semibold table-row"
                       >
-                        {column.render("Header")}
-                      </th>
+                        {row.cells.map((cell) => {
+                          const { key: cellKey, ...cellProps } =
+                            cell.getCellProps();
+                          return (
+                            <td
+                              key={cellKey}
+                              {...cellProps}
+                              className={`border border-gray-300 px-4 py-2 table-cell ${
+                                cell.column.className || ""
+                              }`}
+                              data-label={cell.column.Header}
+                            >
+                              {cell.render("Cell")}
+                            </td>
+                          );
+                        })}
+                      </tr>
                     );
                   })}
-                </tr>
-              );
-            })}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {isLoading
-              ? Array.from({ length: 5 }).map((_, index) => (
-                  <tr key={index} className="animate-pulse">
-                    {headerGroups[0].headers.map((_, colIndex) => (
-                      <td
-                        key={colIndex}
-                        className="border border-gray-300 px-4 py-2"
-                      >
-                        <div className="h-4 bg-gray-300 rounded"></div>
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              : page.map((row) => {
-                  prepareRow(row);
-                  const { key, ...rowProps } = row.getRowProps();
-                  return (
-                    <tr
-                      key={key}
-                      {...rowProps}
-                      className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
-                    >
-                      {row.cells.map((cell) => {
-                        const { key: cellKey, ...cellProps } =
-                          cell.getCellProps();
-                        return (
-                          <td
-                            key={cellKey}
-                            {...cellProps}
-                            className={`border border-gray-300 px-4 py-2 block sm:table-cell ${
-                              cell.column.className || ""
-                            }`}
-                            data-label={cell.column.Header}
-                          >
-                            {cell.render("Cell")}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-          </tbody>
-        </table>
-        <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0">
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-700">Rows per page:</span>
-            <select
-              value={pageSize}
-              onChange={(e) => setPageSize(Number(e.target.value))}
-              className="px-1 py-1 border rounded-md bg-white text-gray-700"
-            >
-              {[4, 8, 10, 20, 50].map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => handlePageChange(pageNumber - 1)}
-              disabled={!canPreviousPage || pageNumber <= 1}
-              className={`px-1 py-1 border rounded-md ${
-                !canPreviousPage || pageNumber <= 1
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-100"
-              }`}
-            >
-              <IoMdArrowDropleft size={15} />
-            </button>
-            {paginationItems.map((item, index) =>
-              item === "ellipsis" ? (
-                <span key={index} className="px-2 py-1">
-                  ...
-                </span>
-              ) : (
-                <button
-                  key={index}
-                  onClick={() => handlePageChange(item)}
-                  className={`px-2 py-1 border rounded-md ${
-                    pageNumber === item
-                      ? "bg-black text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {item}
-                </button>
-              )
-            )}
-            <button
-              onClick={() => handlePageChange(pageNumber + 1)}
-              disabled={!canNextPage || pageNumber >= dynamicTotalPages}
-              className={`px-1 py-1 border rounded-md ${
-                !canNextPage || pageNumber >= dynamicTotalPages
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-100"
-              }`}
-            >
-              <IoMdArrowDropright size={15} />
-            </button>
-          </div>
-          <div className="text-gray-600">
-            Showing {(pageNumber - 1) * pageSize + 1}-
-            {Math.min(pageNumber * pageSize, dynamicTotalCount)} of{" "}
-            {dynamicTotalCount}
+            </tbody>
+          </table>
+          <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0">
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-700">Rows per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="px-1 py-1 border rounded-md bg-white text-gray-700"
+              >
+                {[4, 8, 10, 20, 50].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => handlePageChange(pageNumber - 1)}
+                disabled={!canPreviousPage || pageNumber <= 1}
+                className={`px-1 py-1 border rounded-md ${
+                  !canPreviousPage || pageNumber <= 1
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-black text-white hover:bg-gray-100"
+                }`}
+              >
+                <IoMdArrowDropleft size={15} />
+              </button>
+              {paginationItems.map((item, index) =>
+                item === "ellipsis" ? (
+                  <span key={index} className="px-2 py-1">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={index}
+                    onClick={() => handlePageChange(item)}
+                    className={`px-2 py-1 border rounded-md ${
+                      pageNumber === item
+                        ? "bg-black text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                )
+              )}
+              <button
+                onClick={() => handlePageChange(pageNumber + 1)}
+                disabled={!canNextPage || pageNumber >= dynamicTotalPages}
+                className={`px-1 py-1 border rounded-md ${
+                  !canNextPage || pageNumber >= dynamicTotalPages
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-black text-white hover:bg-gray-100"
+                }`}
+              >
+                <IoMdArrowDropright size={15} />
+              </button>
+            </div>
+            <div className="text-gray-600">
+              Showing {(pageNumber - 1) * pageSize + 1}-
+              {Math.min(pageNumber * pageSize, dynamicTotalCount)} of{" "}
+              {dynamicTotalCount}
+            </div>
           </div>
         </div>
+        <TransactionModal
+          modalContent={modalContent}
+          onClose={() => setModalContent(null)}
+        />
       </div>
-      <TransactionModal
-        modalContent={modalContent}
-        onClose={() => setModalContent(null)}
-      />
     </div>
   );
 };
