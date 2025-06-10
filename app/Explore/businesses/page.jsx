@@ -23,7 +23,7 @@ export default function BusinessPage() {
           <div className=" border-r min-h-screen  hidden lg:block ">
             <PFilter onFilterChange={handleFilterChange} />
           </div>
-          <div className="flex-1 flex flex-col min-h-screen pl-5 ">
+          <div className="flex-1 flex flex-col min-h-screen md:pl-5 ">
             {/* Sticky Navbar */}
             <div className=" space-y-2">
               <Breadcrumbs />

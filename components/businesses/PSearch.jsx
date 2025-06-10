@@ -171,7 +171,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
           />
           <label className="pl-2 text-xs text-gray-700">All Businesses</label>
         </div>
-        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-60">
+        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-24 md:w-60">
           <FiSearch className="text-gray-500 mr-2" />
           <input
             type="text"
@@ -188,7 +188,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
         {isAnySelectionMade && (
           <button
             onClick={handleCancelAll}
-            className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 w-[180px] rounded-lg px-4 py-2 space-x-2"
+            className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 md:w-[180px] rounded-lg px-4 py-2 space-x-2"
           >
             <span>Cancel All Selection</span>
             <span>
@@ -209,7 +209,9 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
             {/* Increased width of the form container */}
             <div className="bg-white rounded-lg p-6 w-[800px]  px-10 shadow-lg overflow-y-auto max-h-[90vh]">
               <header className="flex justify-between items-center border-b py-8 mb-4">
-                <h3 className="text-2xl font-bold">Add New Business</h3>
+                <h3 className="md:text-2xl text-[10px] font-bold">
+                  Add New Business
+                </h3>
                 <button
                   className="text-gray-600 hover:text-gray-800 focus:outline-none"
                   onClick={() => setIsModalOpen(false)}
