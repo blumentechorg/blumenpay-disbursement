@@ -286,7 +286,7 @@ const BusinessTable = ({ filters }) => {
               {headerGroups.map((headerGroup) => {
                 const { key, ...rest } = headerGroup.getHeaderGroupProps();
                 return (
-                  <tr key={key} {...rest} className="block sm:table-row">
+                  <tr key={key} {...rest} className="table-row">
                     {headerGroup.headers.map((column) => {
                       const { key: columnKey, ...columnRest } =
                         column.getHeaderProps();
@@ -327,7 +327,7 @@ const BusinessTable = ({ filters }) => {
                       <tr
                         key={key}
                         {...rowProps}
-                        className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
+                        className="hover:bg-gray-50 hover:font-semibold table-row"
                       >
                         {row.cells.map((cell) => {
                           const { key: cellKey, ...cellProps } =
@@ -336,7 +336,7 @@ const BusinessTable = ({ filters }) => {
                             <td
                               key={cellKey}
                               {...cellProps}
-                              className={`border border-gray-300 px-4 py-2 block sm:table-cell ${
+                              className={`border border-gray-300 px-4 py-2 table-cell ${
                                 cell.column.className || ""
                               }`}
                               data-label={cell.column.Header}
@@ -350,7 +350,7 @@ const BusinessTable = ({ filters }) => {
                   })}
             </tbody>
           </table>
-          <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row justify-between text-xs items-center p-4 bg-gray-50 border-t border-gray-300 space-y-2 sm:space-y-0 w-full">
             <div className="flex items-center space-x-2">
               <span className="text-gray-700">Rows per page:</span>
               <select

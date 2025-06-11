@@ -161,7 +161,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
   return (
     <div className="flex bg-white shadow-lg p-3 justify-between text-sm rounded-lg w-full border border-gray-200">
       {/* Left side – checkbox and search input */}
-      <div className="flex space-x-5">
+      <div className="flex md:space-x-5 px-1 md:px-0">
         <div className="flex items-center">
           <input
             type="checkbox"
@@ -184,11 +184,11 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
       </div>
 
       {/* Right side – Cancel All, Add new business button and menu */}
-      <div className="flex space-x-5">
+      <div className="flex md:space-x-5">
         {isAnySelectionMade && (
           <button
             onClick={handleCancelAll}
-            className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 md:w-[180px] rounded-lg px-4 py-2 space-x-2"
+            className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 md:w-[180px] rounded-lg md:px-4 py-2 space-x-2"
           >
             <span>Cancel All Selection</span>
             <span>
@@ -198,7 +198,7 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
         )}
 
         <button
-          className="w-full h-[32px] bg-blue-700 uppercase text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none"
+          className="w-full h-[32px] bg-blue-700 uppercase text-white text-xs rounded-sm px-1 md:p-1.5 hover:bg-blue-800 focus:outline-none"
           onClick={() => setIsModalOpen(true)}
         >
           Add new business
