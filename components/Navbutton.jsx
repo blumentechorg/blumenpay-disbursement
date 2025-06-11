@@ -61,9 +61,9 @@ export default function Navbutton() {
           <div className="flex items-center space-x-1 text-sm md:text-base">
             <span>{user?.email || "User"}</span>
           </div>
-          <div className="border-r pr-3">
+          {/* <div className="border-r pr-3">
             <Image src={User} alt="avatar" height={24} width={24} />
-          </div>
+          </div> */}
           <div>
             <Bell />
           </div>
