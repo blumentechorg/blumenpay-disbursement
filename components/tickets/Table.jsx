@@ -79,7 +79,7 @@ const Chartjs = () => {
         Transaction Chart
       </h2>
       {/* Filter Section */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8 max-w-3xl mx-auto">
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8 max-w-3xl ">
         <h3 className="text-lg font-semibold mb-4">Filter by Date</h3>
         <div className="flex flex-col sm:flex-row gap-4 items-center">
           <div className="flex flex-col w-full">

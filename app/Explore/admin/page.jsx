@@ -20,7 +20,7 @@ export default function ProvidersPage() {
       <div>
         <div className="flex">
           {/* Sticky Sidebar */}
-          <div className="flex-1 flex flex-col min-h-screen pl-5 ">
+          <div className="flex-1 flex flex-col min-h-screen lg:pl-5 ">
             {/* Sticky Navbar */}
             <div className=" space-y-2">
               <Breadcrumbs />
