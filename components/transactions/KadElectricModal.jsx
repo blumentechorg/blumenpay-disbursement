@@ -32,14 +32,31 @@ const CopyReference = ({ reference }) => {
 
 const KadElectricModal = ({ modalContent, onClose }) => {
 	const [appDetails, setAppDetails] = useState(null);
-	const [isSendingToken, setIsSendingToken] = useState(false); // Loading state for Send Token
-
-	// New states for Retry Form
+	const [isSendingToken, setIsSendingToken] = useState(false);
 	const [showRetryForm, setShowRetryForm] = useState(false);
 	const [retryReference, setRetryReference] = useState("");
+	const [retryResponse, setRetryResponse] = useState(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [currentModalContent, setCurrentModalContent] = useState(modalContent);
+	const [tokenResponse, setTokenResponse] = useState(null);
 
-	// Fetch app details when modalContent.appId changes
+	// Initialize retryReference when showing the form
+	const handleShowRetryForm = () => {
+		const firstTransactionRef =
+			currentModalContent.transactions?.[0]?.referenceNumber || "";
+		setRetryReference(firstTransactionRef);
+		setShowRetryForm(true);
+		setRetryResponse(null);
+	};
+
+	// Refresh data whenever modal opens or modalContent changes
 	useEffect(() => {
+		setCurrentModalContent(modalContent);
+		setRetryResponse(null);
+		setTokenResponse(null);
+		setShowRetryForm(false);
+		setRetryReference("");
+
 		if (modalContent?.appId) {
 			axiosInstance
 				.get(`/Apps/${modalContent.appId}`)
@@ -52,9 +69,9 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 					console.error("Error fetching app details:", error);
 				});
 		}
-	}, [modalContent?.appId]);
+	}, [modalContent]);
 
-	if (!modalContent) return null;
+	if (!currentModalContent) return null;
 
 	const handleBackdropClick = (e) => {
 		if (e.target === e.currentTarget) {
@@ -62,13 +79,11 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 		}
 	};
 
-	// Format transaction date
-	const transactionDate = modalContent.createdAt || modalContent.date;
+	const transactionDate =
+		currentModalContent.createdAt || currentModalContent.date;
 	const formattedDate = moment(transactionDate).format("h:mm A, MMM D");
+	const statusLabel = currentModalContent.status?.label || "";
 
-	const statusLabel = modalContent.status?.label || "";
-
-	// Render status icon
 	const renderStatusIcon = () => {
 		switch (statusLabel) {
 			case "Success":
@@ -82,59 +97,84 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 		}
 	};
 
-	// Determine if the transaction is prepaid or postpaid
-	const isPrepaid = !!modalContent.prepaid;
-	const isPostpaid = !!modalContent.postpaid;
+	const isPrepaid = !!currentModalContent.prepaid;
+	const isPostpaid = !!currentModalContent.postpaid;
 
-	// Handle Send Token action
 	const handleSendToken = async () => {
-		if (!modalContent.prepaid?.kadTransactionId) {
+		if (!currentModalContent.prepaid?.kadTransactionId) {
 			console.error("kadTransactionId is missing in the payload");
 			return;
 		}
 		setIsSendingToken(true);
+		setTokenResponse(null);
 		try {
 			const response = await axiosInstance.get(
-				`https://blumenpay-1.onrender.com/KadElectric/Sms/Token/${modalContent.prepaid.kadTransactionId}`
+				`https://blumenpay.onrender.com/KadElectric/Sms/Token/${currentModalContent.prepaid.kadTransactionId}`
 			);
-			if (response.data.isSuccess) {
-				console.log("Token sent successfully:", response.data);
-			} else {
-				console.error("Failed to send token:", response.data.message);
-			}
+			setTokenResponse({
+				isSuccess: response.data.isSuccess,
+				message: response.data.message || "Token sent successfully",
+			});
 		} catch (error) {
 			console.error("Error sending token:", error);
+			setTokenResponse({
+				isSuccess: false,
+				message: "Failed to send token",
+			});
 		} finally {
 			setIsSendingToken(false);
 		}
 	};
 
-	// Handle Retry Form submission:
 	const handleRetrySubmit = async (e) => {
 		e.preventDefault();
+		setIsSubmitting(true);
 		try {
 			const response = await axiosInstance.post("/KadElectric/OnlineFinalize", {
 				reference: retryReference,
 			});
-			if (response.data.isSuccess) {
-				// Show success message and refresh the page
-				alert("Retry successful! The page will now refresh.");
-				window.location.reload();
-			} else {
-				console.error("Online finalize failed:", response.data.message);
-				alert("Retry failed: " + response.data.message);
+			setRetryResponse(response.data);
+			// Refresh the modal content after successful retry
+			if (response.data.isSuccess && currentModalContent?.appId) {
+				const appResponse = await axiosInstance.get(
+					`/Apps/${currentModalContent.appId}`
+				);
+				if (appResponse.data.isSuccess) {
+					setAppDetails(appResponse.data.data);
+				}
 			}
 		} catch (error) {
 			console.error("Error finalizing online transaction:", error);
-			alert("Error finalizing online transaction.");
+			// Use the error response from the server if available
+			if (error.response) {
+				setRetryResponse({
+					isSuccess: false,
+					message:
+						error.response.data.message || "Error finalizing transaction",
+					data: error.response.data, // Include the full error response
+				});
+			} else if (error.request) {
+				setRetryResponse({
+					isSuccess: false,
+					message: "No response received from server",
+					data: null,
+				});
+			} else {
+				setRetryResponse({
+					isSuccess: false,
+					message: error.message,
+					data: null,
+				});
+			}
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
-	// Other actions remain unchanged
 	const handleRefund = async () => {
 		try {
 			const response = await axiosInstance.post("/KadElectric/Refund", {
-				id: modalContent.id,
+				id: currentModalContent.id,
 			});
 			if (response.data.isSuccess) {
 				// Handle success
@@ -144,15 +184,14 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 		}
 	};
 
-	// Handle Send Error action using the new endpoint and modalContent.id
 	const handleSendError = async () => {
 		try {
-			if (!modalContent.id) {
+			if (!currentModalContent.id) {
 				console.error("Transaction id is missing in the payload");
 				return;
 			}
 			const response = await axiosInstance.get(
-				`/KadElectric/Errors/Notify/${modalContent.id}`
+				`/KadElectric/Errors/Notify/${currentModalContent.id}`
 			);
 			if (response.data.isSuccess) {
 				console.log("Error notification sent successfully:", response.data);
@@ -208,25 +247,25 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Customer Name:</span>{" "}
 									<span className='uppercase'>
-										{modalContent.kadCustomer?.customerName || "N/A"}
+										{currentModalContent.kadCustomer?.customerName || "N/A"}
 									</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Service Provider:</span>{" "}
 									<span className='uppercase'>
-										{modalContent.provider || "Kaduna Electric"}
+										{currentModalContent.provider || "Kaduna Electric"}
 									</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Amount:</span>{" "}
 									<span className='uppercase'>
-										{modalContent.amount?.toLocaleString() || "N/A"}
+										{currentModalContent.amount?.toLocaleString() || "N/A"}
 									</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Payment Method:</span>{" "}
 									<span className='uppercase'>
-										{modalContent.paymentMethod?.label || "N/A"}
+										{currentModalContent.paymentMethod?.label || "N/A"}
 									</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
@@ -260,17 +299,17 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									<span className='font-light'>Business Name:</span>{" "}
 									<span className='uppercase flex gap-1'>
 										<img
-											src={modalContent.app?.logo}
-											alt={modalContent.app?.logo}
+											src={currentModalContent.app?.logo}
+											alt={currentModalContent.app?.logo}
 											className='w-10'
 										/>
-										{modalContent.app?.name || "Kaduna Electric"}
+										{currentModalContent.app?.name || "Kaduna Electric"}
 									</span>
 								</div>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Description:</span>{" "}
 									<span className='uppercase'>
-										{modalContent.app?.description || "N/A"}
+										{currentModalContent.app?.description || "N/A"}
 									</span>
 								</p>
 							</div>
@@ -288,33 +327,52 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									<h4 className='text-gray-700 text-xs font-medium mb-2'>
 										Prepaid
 									</h4>
-									<p className='text-gray-700 text-xs font-medium'>
+									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>Meter Number:</span>{" "}
-										<span>{modalContent.prepaid.meterNumber}</span>
+										<span className='flex items-center gap-1'>
+											{currentModalContent.prepaid.meterNumber}
+											<CopyReference
+												reference={currentModalContent.prepaid.meterNumber}
+											/>
+										</span>
 									</p>
-									<p className='text-gray-700 text-xs font-medium'>
+									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>Token:</span>{" "}
-										<span>{modalContent.prepaid.token || "N/A"}</span>
+										<span className='flex items-center gap-1'>
+											{currentModalContent.prepaid.token || "N/A"}
+											{currentModalContent.prepaid.token && (
+												<CopyReference
+													reference={currentModalContent.prepaid.token}
+												/>
+											)}
+										</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Amount:</span>{" "}
-										<span>₦{modalContent.prepaid.amount.toLocaleString()}</span>
+										<span>
+											₦{currentModalContent.prepaid.amount.toLocaleString()}
+										</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Tariff Code:</span>{" "}
-										<span>{modalContent.prepaid.tariffCode}</span>
+										<span>{currentModalContent.prepaid.tariffCode}</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Tariff Rate:</span>{" "}
-										<span>{modalContent.prepaid.tariffRate}</span>
+										<span>{currentModalContent.prepaid.tariffRate}</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Total Units Vended:</span>{" "}
-										<span>{modalContent.prepaid.totalUnitVended}</span>
+										<span>{currentModalContent.prepaid.totalUnitVended}</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>RRN:</span>{" "}
-										<span>{modalContent.rrn || "N/A"}</span>
+										<span className='flex items-center gap-1'>
+											{currentModalContent.rrn || "N/A"}
+											{currentModalContent.rrn && (
+												<CopyReference reference={currentModalContent.rrn} />
+											)}
+										</span>
 									</p>
 								</div>
 							) : isPostpaid ? (
@@ -324,38 +382,45 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									</h4>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Transaction Id:</span>{" "}
-										<span>{modalContent.postpaid?.kadTransactionId}</span>
+										<span>
+											{currentModalContent.postpaid?.kadTransactionId}
+										</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Mode of Payment:</span>{" "}
-										<span>{modalContent.postpaid?.modeOfPayment}</span>
+										<span>{currentModalContent.postpaid?.modeOfPayment}</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Amount:</span>{" "}
 										<span>
 											₦
-											{modalContent.postpaid?.paymentChannelAmount.toLocaleString()}
+											{currentModalContent.postpaid?.paymentChannelAmount.toLocaleString()}
 										</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Date:</span>{" "}
 										<span>
-											{moment(modalContent.postpaid?.paymentChannelDate).format(
-												"h:mm A, MMM D"
-											)}
+											{moment(
+												currentModalContent.postpaid?.paymentChannelDate
+											).format("h:mm A, MMM D")}
 										</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Receipt Number:</span>{" "}
-										<span>{modalContent.postpaid?.receiptNo}</span>
+										<span>{currentModalContent.postpaid?.receiptNo}</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium'>
 										<span className='font-light'>Telephone Number:</span>{" "}
-										<span>{modalContent.postpaid?.telephoneNumber}</span>
+										<span>{currentModalContent.postpaid?.telephoneNumber}</span>
 									</p>
 									<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
 										<span className='font-light'>RRN:</span>{" "}
-										<span>{modalContent.rrn || "N/A"}</span>
+										<span className='flex items-center gap-1'>
+											{currentModalContent.rrn || "N/A"}
+											{currentModalContent.rrn && (
+												<CopyReference reference={currentModalContent.rrn} />
+											)}
+										</span>
 									</p>
 								</div>
 							) : (
@@ -375,23 +440,23 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 							<div className='space-y-3'>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Error:</span>{" "}
-									<span>{modalContent.error || "N/A"}</span>
+									<span>{currentModalContent.error || "N/A"}</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Can Retry:</span>{" "}
-									<span>{modalContent.canRetry ? "Yes" : "No"}</span>
+									<span>{currentModalContent.canRetry ? "Yes" : "No"}</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Can Refund:</span>{" "}
-									<span>{modalContent.canRefund ? "Yes" : "No"}</span>
+									<span>{currentModalContent.canRefund ? "Yes" : "No"}</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Can Send Token:</span>{" "}
-									<span>{modalContent.canSendToken ? "Yes" : "No"}</span>
+									<span>{currentModalContent.canSendToken ? "Yes" : "No"}</span>
 								</p>
 								<p className='text-gray-700 text-xs font-medium'>
 									<span className='font-light'>Can Send Error:</span>{" "}
-									<span>{modalContent.canSendError ? "Yes" : "No"}</span>
+									<span>{currentModalContent.canSendError ? "Yes" : "No"}</span>
 								</p>
 							</div>
 						</div>
@@ -402,10 +467,10 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 						<h3 className='text-gray-700 text-sm font-semibold mb-2'>
 							Transactions
 						</h3>
-						{modalContent.transactions &&
-						modalContent.transactions.length > 0 ? (
+						{currentModalContent.transactions &&
+						currentModalContent.transactions.length > 0 ? (
 							<div className='p-4 bg-gray-50 rounded-md border space-y-4'>
-								{modalContent.transactions.map((transaction, index) => (
+								{currentModalContent.transactions.map((transaction, index) => (
 									<div key={index} className='space-y-3'>
 										<p className='text-gray-700 text-xs font-medium'>
 											<span className='font-light'>Date:</span>{" "}
@@ -442,7 +507,7 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 											<span className='font-light'>Status:</span>{" "}
 											<span>{transaction.status?.label}</span>
 										</p>
-										{index !== modalContent.transactions.length - 1 && (
+										{index !== currentModalContent.transactions.length - 1 && (
 											<Dottedline />
 										)}
 									</div>
@@ -455,20 +520,216 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 						)}
 					</div>
 
+					{/* Token Response */}
+					{tokenResponse && (
+						<div className='mt-5 px-4'>
+							<h3 className='text-gray-700 text-sm font-semibold mb-2'>
+								Token Response
+							</h3>
+							<div
+								className={`p-4 rounded-md border ${
+									tokenResponse.isSuccess
+										? "bg-green-50 border-green-200"
+										: "bg-red-50 border-red-200"
+								}`}
+							>
+								<div className='space-y-2'>
+									<p
+										className={`text-xs font-medium ${
+											tokenResponse.isSuccess
+												? "text-green-700"
+												: "text-red-700"
+										}`}
+									>
+										{tokenResponse.isSuccess ? "✅ Success" : "❌ Error"}
+									</p>
+									<p className='text-xs text-gray-700'>
+										{tokenResponse.message || "No message provided"}
+									</p>
+								</div>
+							</div>
+						</div>
+					)}
+
+					{/* Retry Response */}
+					{retryResponse && (
+						<div className='mt-5 px-4'>
+							<h3 className='text-gray-700 text-sm font-semibold mb-2'>
+								Retry Response
+							</h3>
+							<div
+								className={`p-4 rounded-md border ${
+									retryResponse.isSuccess
+										? "bg-green-50 border-green-200"
+										: "bg-red-50 border-red-200"
+								}`}
+							>
+								<div className='space-y-2'>
+									<p
+										className={`text-xs font-medium ${
+											retryResponse.isSuccess
+												? "text-green-700"
+												: "text-red-700"
+										}`}
+									>
+										{retryResponse.isSuccess ? "✅ Success" : "❌ Error"}
+									</p>
+									<p className='text-xs text-gray-700'>
+										{retryResponse.message ||
+											retryResponse.data?.message ||
+											"No message provided"}
+									</p>
+
+									{/* Display the retry response details */}
+									{retryResponse.isSuccess && retryResponse.data && (
+										<div className='space-y-3 mt-3'>
+											<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
+												<span className='font-light'>Meter Number:</span>{" "}
+												<span className='flex items-center gap-1'>
+													{retryResponse.data.meterNumber}
+													<CopyReference
+														reference={retryResponse.data.meterNumber}
+													/>
+												</span>
+											</p>
+											<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
+												<span className='font-light'>Token:</span>{" "}
+												<span className='flex items-center gap-1'>
+													{retryResponse.data.token || "N/A"}
+													{retryResponse.data.token && (
+														<CopyReference
+															reference={retryResponse.data.token}
+														/>
+													)}
+												</span>
+											</p>
+											<p className='text-gray-700 text-xs font-medium'>
+												<span className='font-light'>Total Units Vended:</span>{" "}
+												<span>{retryResponse.data.totalUnitVended}</span>
+											</p>
+											<p className='text-gray-700 text-xs font-medium'>
+												<span className='font-light'>Token Comment:</span>{" "}
+												<span>{retryResponse.data.tokenComment || "N/A"}</span>
+											</p>
+											<p className='text-gray-700 text-xs font-medium'>
+												<span className='font-light'>Amount:</span>{" "}
+												<span>
+													₦
+													{parseFloat(
+														retryResponse.data.amount
+													).toLocaleString()}
+												</span>
+											</p>
+											<p className='text-gray-700 text-xs font-medium'>
+												<span className='font-light'>Tariff Code:</span>{" "}
+												<span>{retryResponse.data.tariffCode || "N/A"}</span>
+											</p>
+											<p className='text-gray-700 text-xs font-medium'>
+												<span className='font-light'>Tariff Rate:</span>{" "}
+												<span>{retryResponse.data.tariffRate || "N/A"}</span>
+											</p>
+										</div>
+									)}
+
+									{/* Enhanced error display */}
+									{!retryResponse.isSuccess && retryResponse.data && (
+										<div className='mt-3'>
+											{retryResponse.data.error && (
+												<p className='text-xs text-red-600'>
+													{retryResponse.data.error}
+												</p>
+											)}
+											{retryResponse.data.errorMessage && (
+												<p className='text-xs text-red-600'>
+													{retryResponse.data.errorMessage}
+												</p>
+											)}
+											{retryResponse.data.errors && (
+												<div className='space-y-2'>
+													{Object.entries(retryResponse.data.errors).map(
+														([key, value]) => (
+															<p key={key} className='text-xs text-red-600'>
+																<span className='font-medium'>{key}:</span>{" "}
+																{value}
+															</p>
+														)
+													)}
+												</div>
+											)}
+											{/* {!retryResponse.data.error &&
+												!retryResponse.data.errorMessage &&
+												!retryResponse.data.errors && (
+													<pre className='text-xs bg-white p-2 rounded overflow-x-auto'>
+														{JSON.stringify(retryResponse.data, null, 2)}
+													</pre>
+												)} */}
+										</div>
+									)}
+								</div>
+							</div>
+						</div>
+					)}
+
 					{/* Status Actions */}
 					<div className='my-10 px-4'>
-						<h3 className='text-gray-700 font-semibold mb-4'>Actions</h3>
+						{/* Retry Form */}
+						{showRetryForm && (
+							<form
+								onSubmit={handleRetrySubmit}
+								className='space-y-4 border p-4 rounded-md bg-white'
+							>
+								<div>
+									<label
+										className='block text-xs text-gray-700 mb-1'
+										htmlFor='retryReference'
+									>
+										Reference Number
+									</label>
+									<input
+										id='retryReference'
+										type='text'
+										value={retryReference}
+										onChange={(e) => setRetryReference(e.target.value)}
+										className='w-full border rounded px-2 py-2 text-xs'
+										placeholder='Enter reference number'
+										required
+									/>
+								</div>
+								<div className='flex gap-4'>
+									<button
+										type='submit'
+										className='bg-green-600 text-white px-4 py-2 rounded-sm text-xs w-full'
+										disabled={isSubmitting}
+									>
+										{isSubmitting ? "Submitting..." : "Submit"}
+									</button>
+									<button
+										type='button'
+										onClick={() => {
+											setShowRetryForm(false);
+											setRetryReference("");
+											setRetryResponse(null);
+										}}
+										className='bg-gray-300 text-gray-700 px-4 py-2 rounded-sm text-xs w-full'
+										disabled={isSubmitting}
+									>
+										Cancel
+									</button>
+								</div>
+							</form>
+						)}
+						<h3 className='text-gray-700 pt-4 font-semibold mb-4'>Actions</h3>
 						<div className='flex flex-col space-y-4'>
 							<div className='flex space-x-4 text-xs'>
-								{modalContent.canRetry && (
+								{currentModalContent.canRetry && (
 									<button
-										onClick={() => setShowRetryForm(true)}
+										onClick={handleShowRetryForm}
 										className='bg-[#0052CC] text-white px-4 py-2 rounded-sm w-full'
 									>
 										RETRY
 									</button>
 								)}
-								{modalContent.canRefund && (
+								{currentModalContent.canRefund && (
 									<button
 										onClick={handleRefund}
 										className='bg-[#0052CC] text-white px-4 py-2 rounded-sm w-full'
@@ -476,7 +737,7 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 										REFUND
 									</button>
 								)}
-								{modalContent.canSendToken && (
+								{currentModalContent.canSendToken && (
 									<button
 										onClick={handleSendToken}
 										className='bg-[#0052CC] text-white px-4 py-2 rounded-sm w-full'
@@ -485,7 +746,7 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 										{isSendingToken ? "Sending..." : "SEND TOKEN"}
 									</button>
 								)}
-								{modalContent.canSendError && (
+								{currentModalContent.canSendError && (
 									<button
 										onClick={handleSendError}
 										className='bg-[#0052CC] text-white px-4 py-2 rounded-sm w-full'
@@ -494,48 +755,6 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 									</button>
 								)}
 							</div>
-							{/* Retry Form */}
-							{showRetryForm && (
-								<form
-									onSubmit={handleRetrySubmit}
-									className='space-y-4 border p-4 rounded-md bg-white'
-								>
-									<div>
-										<label
-											className='block text-xs text-gray-700 mb-1'
-											htmlFor='retryReference'
-										>
-											Enter Reference Number
-										</label>
-										<input
-											id='retryReference'
-											type='text'
-											value={retryReference}
-											onChange={(e) => setRetryReference(e.target.value)}
-											className='w-full border rounded px-2 py-2 text-xs'
-											required
-										/>
-									</div>
-									<div className='flex gap-4'>
-										<button
-											type='submit'
-											className='bg-green-600 text-white px-4 py-2 rounded-sm text-xs w-full'
-										>
-											Submit
-										</button>
-										<button
-											type='button'
-											onClick={() => {
-												setShowRetryForm(false);
-												setRetryReference("");
-											}}
-											className='bg-gray-300 text-gray-700 px-4 py-2 rounded-sm text-xs w-full'
-										>
-											Cancel
-										</button>
-									</div>
-								</form>
-							)}
 						</div>
 					</div>
 				</div>
