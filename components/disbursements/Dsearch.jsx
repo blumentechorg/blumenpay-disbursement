@@ -67,7 +67,7 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
         </div>
 
         {/* Search and Filter Container */}
-        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 md:w-60 ">
+        <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-18 md:w-60 ">
           {/* Search Icon */}
           <FiSearch className="text-gray-500 mr-2" />
           {/* Search Input */}
