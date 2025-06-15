@@ -1,9 +1,12 @@
+// KadFilters.jsx
 "use client";
 import React, { useState } from "react";
 
 const KadFilters = ({ onFilterChange }) => {
 	const [filters, setFilters] = useState({
-		referenceNumber: "",
+		meterNumber: "",
+		telephoneNumber: "",
+		transactionRef: "",
 		provider: "",
 		status: "",
 		startDate: "",
@@ -13,7 +16,8 @@ const KadFilters = ({ onFilterChange }) => {
 		canRetry: "",
 		canRefund: "",
 		canSendToken: "",
-		canSendError: "",
+		withError: "",
+		UnprocessedVendingRequests: "", // new boolean filter
 	});
 
 	// Options for dropdowns
@@ -21,50 +25,60 @@ const KadFilters = ({ onFilterChange }) => {
 	const providers = ["Cash", "BankTransfer"];
 	const types = ["KadElectric", "Payment"];
 
-	// Handle change in filters
 	const handleFilterChange = (field, value) => {
-		const updatedFilters = { ...filters, [field]: value };
-		setFilters(updatedFilters);
-		onFilterChange(updatedFilters); // Pass updated filters to parent
+		const updated = { ...filters, [field]: value };
+		setFilters(updated);
+		onFilterChange(updated);
 	};
 
-	// Clear all filters
-	const clearAllFilters = () => {
-		const clearedFilters = {
-			referenceNumber: "",
-			provider: "",
-			status: "",
-			startDate: "",
-			endDate: "",
-			type: "",
-			business: "",
-			canRetry: "",
-			canRefund: "",
-			canSendToken: "",
-			canSendError: "",
-		};
-		setFilters(clearedFilters);
-		onFilterChange(clearedFilters);
+	const clearAll = () => {
+		const cleared = Object.fromEntries(
+			Object.keys(filters).map((k) => [k, ""])
+		);
+		setFilters(cleared);
+		onFilterChange(cleared);
 	};
 
 	return (
 		<div className='p-6 rounded-lg max-w-md mx-auto text-sm'>
-			<h2 className='font-semibold mb-4'>Filter</h2>
+			<h2 className='font-semibold mb-4'>Filters</h2>
 
-			{/* Reference Number */}
+			{/* Meter Number */}
 			<div className='mb-4'>
 				<input
 					type='text'
 					placeholder='Meter Number'
-					value={filters.referenceNumber}
+					value={filters.meterNumber}
+					onChange={(e) => handleFilterChange("meterNumber", e.target.value)}
+					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
+				/>
+			</div>
+
+			{/* Telephone Number */}
+			<div className='mb-4'>
+				<input
+					type='text'
+					placeholder='Telephone Number'
+					value={filters.telephoneNumber}
 					onChange={(e) =>
-						handleFilterChange("referenceNumber", e.target.value)
+						handleFilterChange("telephoneNumber", e.target.value)
 					}
 					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
 				/>
 			</div>
 
-			{/* Provider */}
+			{/* Transaction Reference */}
+			<div className='mb-4'>
+				<input
+					type='text'
+					placeholder='Transaction Ref'
+					value={filters.transactionRef}
+					onChange={(e) => handleFilterChange("transactionRef", e.target.value)}
+					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
+				/>
+			</div>
+
+			{/* Provider
 			<div className='mb-4'>
 				<select
 					value={filters.provider}
@@ -78,23 +92,23 @@ const KadFilters = ({ onFilterChange }) => {
 						</option>
 					))}
 				</select>
-			</div>
+			</div> */}
 
 			{/* Status */}
-			<div className='mb-4'>
+			{/* <div className='mb-4'>
 				<select
 					value={filters.status}
 					onChange={(e) => handleFilterChange("status", e.target.value)}
 					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
 				>
 					<option value=''>Status</option>
-					{statuses.map((status) => (
-						<option key={status} value={status}>
-							{status}
+					{statuses.map((s) => (
+						<option key={s} value={s}>
+							{s}
 						</option>
 					))}
 				</select>
-			</div>
+			</div> */}
 
 			{/* Date Range */}
 			<div className='mb-4'>
@@ -116,47 +130,56 @@ const KadFilters = ({ onFilterChange }) => {
 				/>
 			</div>
 
-			{/* New Boolean Filters */}
-			<div className='mb-4'>
+			{/* Type */}
+			{/* <div className='mb-4'>
 				<select
-					value={filters.canRetry}
-					onChange={(e) => handleFilterChange("canRetry", e.target.value)}
+					value={filters.type}
+					onChange={(e) => handleFilterChange("type", e.target.value)}
 					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
 				>
-					<option value=''>Can Retry (All)</option>
+					<option value=''>Type</option>
+					{types.map((t) => (
+						<option key={t} value={t}>
+							{t}
+						</option>
+					))}
+				</select>
+			</div> */}
+
+			{/* Business */}
+			{/* <div className='mb-4'>
+				<input
+					type='text'
+					placeholder='Business'
+					value={filters.business}
+					onChange={(e) => handleFilterChange("business", e.target.value)}
+					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
+				/>
+			</div> */}
+
+			{/* With Error */}
+			<div className='mb-4'>
+				<select
+					value={filters.withError}
+					onChange={(e) => handleFilterChange("withError", e.target.value)}
+					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
+				>
+					<option value=''>With Error (All)</option>
 					<option value='true'>True</option>
 					<option value='false'>False</option>
 				</select>
 			</div>
+
+			{/* Unprocessed Vending Requests */}
 			<div className='mb-4'>
 				<select
-					value={filters.canRefund}
-					onChange={(e) => handleFilterChange("canRefund", e.target.value)}
+					value={filters.UnprocessedVendingRequests}
+					onChange={(e) =>
+						handleFilterChange("UnprocessedVendingRequests", e.target.value)
+					}
 					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
 				>
-					<option value=''>Can Refund (All)</option>
-					<option value='true'>True</option>
-					<option value='false'>False</option>
-				</select>
-			</div>
-			<div className='mb-4'>
-				<select
-					value={filters.canSendToken}
-					onChange={(e) => handleFilterChange("canSendToken", e.target.value)}
-					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
-				>
-					<option value=''>Can Send Token (All)</option>
-					<option value='true'>True</option>
-					<option value='false'>False</option>
-				</select>
-			</div>
-			<div className='mb-4'>
-				<select
-					value={filters.canSendError}
-					onChange={(e) => handleFilterChange("canSendError", e.target.value)}
-					className='w-[200px] h-[32px] border-gray-300 bg-[#DADDE1] text-xs rounded-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-gray-500'
-				>
-					<option value=''>Can Send Error (All)</option>
+					<option value=''>Unprocessed Vending Requests</option>
 					<option value='true'>True</option>
 					<option value='false'>False</option>
 				</select>
@@ -165,7 +188,7 @@ const KadFilters = ({ onFilterChange }) => {
 			{/* Clear All */}
 			<div className='mt-4'>
 				<button
-					onClick={clearAllFilters}
+					onClick={clearAll}
 					className='w-[200px] h-[32px] bg-blue-700 text-white text-xs rounded-sm p-1.5 hover:bg-blue-800 focus:outline-none'
 				>
 					Clear All
