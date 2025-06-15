@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import React, { useState, useMemo } from "react";
@@ -141,4 +139,6 @@ const TicketTable = ({ filters }) => {
       )}
     </div>
   );
+};
 
+export default TicketTable;
