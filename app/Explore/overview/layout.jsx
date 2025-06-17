@@ -14,7 +14,7 @@ const OverviewLayout = ({ children }) => {
             {/* Sticky Navbar */}
 
             {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto  md:px-4 pt-5 bg-gray-100 ">
+            <div className="flex-1 overflow-y-auto lg:px-4 pt-5 bg-gray-100 ">
               <Breadcrumbs />
               <Breadcrumb />
               {children}

@@ -545,7 +545,7 @@ const ActivityTable = ({ searchQuery = "" }) => {
   const paginationItems = getPaginationItems();
 
   return (
-    <div className="w-full max-w-[95vw] sm:max-w-[700px] md:max-w-full">
+    <div className="w-full max-w-[95vw] sm:max-w-[700px] md:max-w-[790px] lg:max-w-full">
       <div className="space-y-5">
         <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
           <table
