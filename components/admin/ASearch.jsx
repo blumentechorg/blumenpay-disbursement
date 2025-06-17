@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
-import { IoFilterOutline } from "react-icons/io5";
+
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -114,7 +114,7 @@ export default function FloatingSearchContainer({
             onChange={handleSelectAllChange}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <span className="pl-2 text-xs md:text-base">All Admins</span>
+          <span className="pl-2 text-xs ">All Admins</span>
         </label>
 
         <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 mx-2">
@@ -131,13 +131,14 @@ export default function FloatingSearchContainer({
 
       <div className="ml-auto flex items-center space-x-2">
         {isAnySelection && (
-          <button
-            onClick={handleCancelAll}
-            className="flex items-center text-xs hover:underline bg-gray-200 h-8 rounded-lg px-4 focus:outline-none"
-          >
-            <span>Cancel All Selection</span>
-            <IoFilterOutline className="ml-1" />
-          </button>
+          <div className="hidden md:block">
+            <button
+              onClick={handleCancelAll}
+              className=" items-center text-xs hover:underline bg-gray-200 h-8 rounded-lg px-4 focus:outline-none"
+            >
+              <span>Cancel All Selection</span>
+            </button>
+          </div>
         )}
 
         <button

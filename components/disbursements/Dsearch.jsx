@@ -95,15 +95,12 @@ const FloatingSearchContainer = ({ onSelectAll }) => {
       {/* Cancel All Selection Button (Conditionally Rendered) */}
       <div className="flex">
         {isAnySelectionMade && (
-          <div className="">
+          <div className="hidden md:block">
             <button
               onClick={handleCancelAll}
               className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 rounded-lg px-4 py-2 space-x-2"
             >
               <div> Cancel All Selection</div>
-              <div>
-                <IoFilterOutline className="mt-0.5" />
-              </div>
             </button>
           </div>
         )}

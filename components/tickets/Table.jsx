@@ -76,67 +76,72 @@ const TicketTable = ({ filters }) => {
   });
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow border">
-      <FloatingContainer
-        filtersOpen={filtersOpen}
-        setFiltersOpen={setFiltersOpen}
-        onSearch={handleSearch}
-        onStatusChange={handleStatusChange}
-        onUserChange={handleUserChange}
-      />
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-100 text-left">
-          <tr>
-            <th className="px-4 py-2">Ticket ID</th>
-            <th className="px-4 py-2">Provider Name</th>
-            <th className="px-4 py-2">Subject</th>
-            <th className="px-4 py-2">Priority</th>
-            <th className="px-4 py-2">Date</th>
-            <th className="px-4 py-2">Status</th>
-            <th className="px-4 py-2">Admin</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {filtered.map((item, index) => (
-            <tr key={index} className="hover:bg-gray-50">
-              <td className="px-4 py-2">{item.id}</td>
-              <td className="px-4 py-2">{item.provider}</td>
-              <td className="px-4 py-2">{item.subject}</td>
-              <td className="px-4 py-2">
-                <span
-                  className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                    item.priority === "High"
-                      ? "bg-yellow-500"
-                      : item.priority === "Medium"
-                      ? "bg-blue-500"
-                      : item.priority === "Critical"
-                      ? "bg-red-600"
-                      : "bg-green-500"
-                  }`}
-                ></span>
-                {item.priority}
-              </td>
-              <td className="px-4 py-2">
-                {new Date(item.date).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                -{" "}
-                {new Date(item.date).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })}
-              </td>
-              <td className="px-4 py-2">{item.status}</td>
-              <td className="px-4 py-2">{item.admin}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="">
+      <div className="mb-8 ">
+        <FloatingContainer
+          filtersOpen={filtersOpen}
+          setFiltersOpen={setFiltersOpen}
+          onSearch={handleSearch}
+          onStatusChange={handleStatusChange}
+          onUserChange={handleUserChange}
+        />
+      </div>
 
-      {filtered.length === 0 && (
-        <div className="p-4 text-center text-gray-500">No tickets found</div>
-      )}
+      <div className=" bg-white rounded-lg shadow border">
+        <table className="min-w-full divide-y divide-gray-200 text-sm">
+          <thead className="bg-gray-100 text-left">
+            <tr>
+              <th className="px-4 py-2">Ticket ID</th>
+              <th className="px-4 py-2">Provider Name</th>
+              <th className="px-4 py-2">Subject</th>
+              <th className="px-4 py-2">Priority</th>
+              <th className="px-4 py-2">Date</th>
+              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Admin</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {filtered.map((item, index) => (
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{item.id}</td>
+                <td className="px-4 py-2">{item.provider}</td>
+                <td className="px-4 py-2">{item.subject}</td>
+                <td className="px-4 py-2">
+                  <span
+                    className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                      item.priority === "High"
+                        ? "bg-yellow-500"
+                        : item.priority === "Medium"
+                        ? "bg-blue-500"
+                        : item.priority === "Critical"
+                        ? "bg-red-600"
+                        : "bg-green-500"
+                    }`}
+                  ></span>
+                  {item.priority}
+                </td>
+                <td className="px-4 py-2">
+                  {new Date(item.date).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  -{" "}
+                  {new Date(item.date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </td>
+                <td className="px-4 py-2">{item.status}</td>
+                <td className="px-4 py-2">{item.admin}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {filtered.length === 0 && (
+          <div className="p-4 text-center text-gray-500">No tickets found</div>
+        )}
+      </div>
     </div>
   );
 };

@@ -186,15 +186,14 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
       {/* Right side – Cancel All, Add new business button and menu */}
       <div className="flex md:space-x-5">
         {isAnySelectionMade && (
-          <button
-            onClick={handleCancelAll}
-            className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 md:w-[180px] rounded-lg md:px-4 py-2 space-x-2"
-          >
-            <span>Cancel All Selection</span>
-            <span>
-              <IoFilterOutline className="mt-0.5" />
-            </span>
-          </button>
+          <div className="hidden md:block">
+            <button
+              onClick={handleCancelAll}
+              className="flex text-xs hover:underline focus:outline-none bg-[#DADDE1] h-8 md:w-[180px] rounded-lg md:px-4 py-2 space-x-2"
+            >
+              <span>Cancel All Selection</span>
+            </button>
+          </div>
         )}
 
         <button
