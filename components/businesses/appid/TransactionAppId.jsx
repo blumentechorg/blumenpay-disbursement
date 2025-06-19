@@ -186,7 +186,7 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
               <tr
                 {...hg.getHeaderGroupProps()}
                 key={hg.id}
-                className="block sm:table-row"
+                className="table-row"
               >
                 {hg.headers.map((col) => (
                   <th
@@ -217,13 +217,13 @@ const TransactionAppId = ({ searchQuery = "", appId }) => {
                     <tr
                       {...row.getRowProps()}
                       key={row.id}
-                      className="hover:bg-gray-50 hover:font-semibold block sm:table-row"
+                      className="hover:bg-gray-50 hover:font-semibold table-row"
                     >
                       {row.cells.map((cell) => (
                         <td
                           {...cell.getCellProps()}
                           key={cell.column.id}
-                          className="border border-gray-300 px-4 py-2 block sm:table-cell"
+                          className="border border-gray-300 px-4 py-2 table-cell"
                           data-label={cell.column.Header}
                         >
                           {cell.render("Cell")}

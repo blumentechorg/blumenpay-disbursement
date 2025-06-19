@@ -204,15 +204,15 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
         </button>
 
         {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-3 md:px-0">
             {/* Increased width of the form container */}
-            <div className="bg-white rounded-lg p-6 w-[800px]  px-10 shadow-lg overflow-y-auto max-h-[90vh]">
+            <div className="bg-white rounded-lg p-6 w-[800px] px-10 shadow-lg overflow-y-auto max-h-[90vh] ">
               <header className="flex justify-between items-center border-b py-8 mb-4">
                 <h3 className="md:text-2xl text-[10px] font-bold">
                   Add New Business
                 </h3>
                 <button
-                  className="text-gray-600 hover:text-gray-800 focus:outline-none"
+                  className="text-gray-600 hover:text-gray-800 focus:outline-none "
                   onClick={() => setIsModalOpen(false)}
                 >
                   ✕
