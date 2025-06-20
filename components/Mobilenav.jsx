@@ -16,10 +16,12 @@ import Admin from "@/public/icons/sidebar/admin";
 import Logout from "@/public/icons/sidebar/logout";
 import LogoutModal from "./LogoutModal";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function MobileNav() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [transactionsDropdownOpen, setTransactionsDropdownOpen] =
@@ -182,7 +184,13 @@ export default function MobileNav() {
                     <Link
                       href={menu.href}
                       onClick={toggleMenu}
-                      className="flex items-center space-x-3 text-base font-medium hover:underline"
+                      className={`flex items-center space-x-3 text-base font-medium hover:underline
+                        ${
+                          pathname.startsWith(menu.href)
+                            ? "text-blue-400 font-semibold"
+                            : ""
+                        }
+                      `}
                     >
                       <span className="text-white">{menu.icon}</span>
                       <span>{menu.name}</span>

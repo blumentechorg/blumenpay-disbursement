@@ -253,7 +253,7 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
         onClick={handleBackdropClick}
       >
         <div
-          className="bg-gray-100 h-full shadow-lg relative overflow-y-auto w-4/5"
+          className="bg-gray-100 w-[320px] md:w-[420px] lg:w-1/3 h-full shadow-lg relative overflow-y-auto "
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -285,7 +285,7 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
 
           {/* FundSweep & Disburse controls */}
           <div className="mt-4 px-4 space-y-2">
-            <div className="flex space-x-2 justify-end w-full">
+            <div className="flex flex-wrap space-x-2 justify-end w-full">
               <div className="w-40">
                 <CustomDatePicker
                   value={startDate}
@@ -318,13 +318,13 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
 
           {/* Tables */}
           <div className="space-y-10 py-5">
-            <div className="flex-1 space-y-4 overflow-y-auto pt-5 bg-gray-100">
+            <div className="flex-1 space-y-4 overflow-y-auto pt-5 bg-gray-100 px-3 lg:px-0">
               <label className="uppercase text-xl font-semibold p-5">
                 Fundsweep table
               </label>
               <DTableAppId key={tableKey} filters={filters} appId={appId} />
             </div>
-            <div className="flex-1 space-y-4 overflow-y-auto pt-5 bg-gray-100">
+            <div className="flex-1 space-y-4 overflow-y-auto pt-5 bg-gray-100 px-3 lg:px-0">
               <label className="uppercase text-xl font-semibold p-5">
                 transaction table
               </label>
@@ -334,8 +334,8 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
 
           {/* Preview Modal */}
           {isPreviewOpen && previewData && (
-            <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-              <div className="bg-white rounded-lg p-6 w-1/2 space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center ">
+              <div className="bg-white rounded-lg p-6 lg:w-1/2 space-y-4 px-3 md:px-0">
                 {/* Notification & table… */}
                 {notification && (
                   <div
@@ -435,7 +435,7 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
 
           {/* Disburse Modal */}
           {isDisburseModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center space-y-4 px-3 md:px-0">
               <div className="bg-white rounded-lg p-6 w-full max-w-md flex flex-col justify-between space-y-4 shadow-lg">
                 {notification && (
                   <div

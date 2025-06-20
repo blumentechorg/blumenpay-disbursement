@@ -264,7 +264,7 @@ const BusinessModal = ({ modalContent, appId, onClose }) => {
             </div>
 
             {/* Business cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-5 py-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-y-10 gap-x-5 py-5">
               <TotalTodayAppId appId={appId} />
               <TotalYesterdayAppId appId={appId} />
               <TotalThisWeekAppId appId={appId} />

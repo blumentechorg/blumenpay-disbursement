@@ -339,8 +339,8 @@ const FundsweepTable = ({ appId }) => {
 
       {/* Modal */}
       {isModalOpen && modalContent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-3 md:px-0">
+          <div className="bg-white rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col ">
             {/* Header */}
             <div className="p-4 border-b flex justify-between items-center">
               <h2 className="text-xl font-bold">FundSweep Details</h2>
