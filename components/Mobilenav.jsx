@@ -125,7 +125,7 @@ export default function MobileNav() {
         {/* Slide-in Panel */}
         <nav
           ref={panelRef}
-          className={`fixed top-0 left-0 z-50 h-full w-72 bg-blue-950 text-white shadow-lg
+          className={`fixed top-0 left-0 z-50 h-full w-72  bg-blue-950 text-white shadow-lg
     transform transition-transform duration-300 ease-in-out
     ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}
     flex flex-col

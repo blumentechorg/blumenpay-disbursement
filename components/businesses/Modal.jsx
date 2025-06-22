@@ -123,7 +123,7 @@ const BusinessModal = ({ modalContent, appId, onClose }) => {
         onClick={handleBackdropClick}
       >
         <div
-          className="bg-gray-100  h-full shadow-lg relative overflow-y-auto w-4/5"
+          className="bg-gray-100  h-full shadow-lg relative overflow-y-auto w-[350px] md:w-4/5"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
