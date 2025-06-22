@@ -172,13 +172,13 @@ const FloatingSearchContainer = ({ onSelectAll, onSearchChange }) => {
           <label className="pl-2 text-xs text-gray-700">All Businesses</label>
         </div>
         <div className="flex items-center border border-gray-300 rounded-lg h-8 px-2 w-[80px] md:w-60">
-          <FiSearch className="text-gray-500 mr-2" />
+          <FiSearch className="text-gray-500 " />
           <input
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="Search..."
-            className="flex-1 text-sm focus:outline-none"
+            className=" text-sm focus:outline-none"
           />
         </div>
       </div>

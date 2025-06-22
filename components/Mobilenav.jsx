@@ -211,14 +211,13 @@ export default function MobileNav() {
               <span>Log Out</span>
             </button>
           </div>
-
-          <LogoutModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            onLogout={handleLogout}
-          />
         </nav>
       </div>
+      <LogoutModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onLogout={handleLogout}
+      />
     </div>
   );
 }

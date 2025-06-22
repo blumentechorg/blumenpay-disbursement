@@ -150,6 +150,7 @@ export default function Sidebar() {
             </span>
             Log Out
           </button>
+
           <LogoutModal
             isOpen={isModalOpen}
             onClose={closeModal}

@@ -246,7 +246,7 @@ export default function FloatingBar({
   };
 
   return (
-    <div className="sticky top-0 z-10 bg-white border-b px-4 py-3 w-full">
+    <div className="  z-10 bg-white border-b px-4 py-3 w-full">
       <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-4">
         {/* Transactions label */}
         <div className="flex items-center space-x-1">
