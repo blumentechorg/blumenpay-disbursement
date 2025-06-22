@@ -265,7 +265,7 @@ const DisbursementTable = ({ filters }) => {
   };
 
   return (
-    <div className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[790px] lg:max-w-full">
+    <div className=" max-w-[95vw] sm:max-w-[600px] md:max-w-[790px] lg:max-w-full">
       <div className="space-y-5">
         <div>
           <FloatingSearchContainer
