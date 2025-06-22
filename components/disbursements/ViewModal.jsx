@@ -253,7 +253,7 @@ const ViewModal = ({ modalContent, appId, onClose }) => {
         onClick={handleBackdropClick}
       >
         <div
-          className="bg-gray-100 w-[350px] md:w-4/5 lg:w-1/3 h-full shadow-lg relative overflow-y-auto "
+          className="bg-gray-100 w-[350px] md:w-4/5 lg:w-[1000px] h-full shadow-lg relative overflow-y-auto "
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
