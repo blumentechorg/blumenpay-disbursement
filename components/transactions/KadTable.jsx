@@ -122,7 +122,11 @@ const KadTransactionTable = ({ filters }) => {
 			{
 				Header: "Purchase Type",
 				accessor: (row) => {
-					// Determine purchase type based on kadCustomer data
+					// Use the paymentType field directly from the API response
+					if (row.paymentType) {
+						return row.paymentType;
+					}
+					// Fallback to kadCustomer data if paymentType is not available
 					if (row.kadCustomer) {
 						return row.kadCustomer.isPPM ? "Prepaid" : "Postpaid";
 					}
