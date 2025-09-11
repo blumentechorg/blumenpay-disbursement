@@ -771,23 +771,98 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 										{typeChangeResponse.message || "No message provided"}
 									</p>
 
-									{/* Display the type change response details */}
+									{/* Display the type change response details - including token when successful */}
 									{typeChangeResponse.isSuccess && typeChangeResponse.data && (
 										<div className='space-y-3 mt-3'>
-											<p className='text-gray-700 text-xs font-medium'>
-												<span className='font-light'>Reference:</span>{" "}
-												<span>
-													{typeChangeResponse.data.reference || "N/A"}
-												</span>
-											</p>
-											<p className='text-gray-700 text-xs font-medium'>
-												<span className='font-light'>Status:</span>{" "}
-												<span>{typeChangeResponse.data.status || "N/A"}</span>
-											</p>
-											<p className='text-gray-700 text-xs font-medium'>
-												<span className='font-light'>Message:</span>{" "}
-												<span>{typeChangeResponse.data.message || "N/A"}</span>
-											</p>
+											{typeChangeResponse.data.meterNumber && (
+												<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
+													<span className='font-light'>Meter Number:</span>{" "}
+													<span className='flex items-center gap-1'>
+														{typeChangeResponse.data.meterNumber}
+														<CopyReference
+															reference={typeChangeResponse.data.meterNumber}
+														/>
+													</span>
+												</p>
+											)}
+											{typeChangeResponse.data.token && (
+												<p className='text-gray-700 text-xs font-medium flex items-center gap-1'>
+													<span className='font-light'>Token:</span>{" "}
+													<span className='flex items-center gap-1'>
+														{typeChangeResponse.data.token || "N/A"}
+														{typeChangeResponse.data.token && (
+															<CopyReference
+																reference={typeChangeResponse.data.token}
+															/>
+														)}
+													</span>
+												</p>
+											)}
+											{typeChangeResponse.data.totalUnitVended && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>
+														Total Units Vended:
+													</span>{" "}
+													<span>{typeChangeResponse.data.totalUnitVended}</span>
+												</p>
+											)}
+											{typeChangeResponse.data.tokenComment && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>Token Comment:</span>{" "}
+													<span>
+														{typeChangeResponse.data.tokenComment || "N/A"}
+													</span>
+												</p>
+											)}
+											{typeChangeResponse.data.amount && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>Amount:</span>{" "}
+													<span>
+														₦
+														{parseFloat(
+															typeChangeResponse.data.amount
+														).toLocaleString()}
+													</span>
+												</p>
+											)}
+											{typeChangeResponse.data.tariffCode && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>Tariff Code:</span>{" "}
+													<span>
+														{typeChangeResponse.data.tariffCode || "N/A"}
+													</span>
+												</p>
+											)}
+											{typeChangeResponse.data.tariffRate && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>Tariff Rate:</span>{" "}
+													<span>
+														{typeChangeResponse.data.tariffRate || "N/A"}
+													</span>
+												</p>
+											)}
+											{typeChangeResponse.data.reference && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>Reference:</span>{" "}
+													<span>
+														{typeChangeResponse.data.reference || "N/A"}
+													</span>
+												</p>
+											)}
+											{typeChangeResponse.data.status && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>Status:</span>{" "}
+													<span>{typeChangeResponse.data.status || "N/A"}</span>
+												</p>
+											)}
+											{typeChangeResponse.data.message && (
+												<p className='text-gray-700 text-xs font-medium'>
+													<span className='font-light'>Message:</span>{" "}
+													<span>
+														{typeChangeResponse.data.message || "N/A"}
+													</span>
+												</p>
+											)}
 										</div>
 									)}
 
