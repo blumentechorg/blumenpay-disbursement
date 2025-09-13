@@ -119,7 +119,10 @@ const KadElectricModal = ({ modalContent, onClose }) => {
 	const isPostpaid = !!currentModalContent.postpaid;
 
 	// Determine payment type based on kadCustomer data
-	const paymentType = currentModalContent.kadCustomer?.isPPM
+	// Determine payment type - use paymentType field first, fallback to kadCustomer data
+	const paymentType = currentModalContent.paymentType
+		? currentModalContent.paymentType
+		: currentModalContent.kadCustomer?.isPPM
 		? "Prepaid"
 		: "Postpaid";
 
